@@ -10,25 +10,10 @@ import java.util.Objects;
 public abstract class AbstractEntity {
     @Id
     @GeneratedValue
-    private int id;
+    private Integer id;
 
-    public int getId() {
+    public Integer getId() {
         return id;
-    }
-
-    private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 
     @Override
@@ -36,7 +21,7 @@ public abstract class AbstractEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AbstractEntity that = (AbstractEntity) o;
-        return id == that.id;
+        return Objects.equals(id, that.id);
     }
 
     @Override
