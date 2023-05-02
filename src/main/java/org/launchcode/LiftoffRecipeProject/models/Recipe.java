@@ -6,7 +6,6 @@ public class Recipe extends AbstractEntity {
 
     //todo: establish DB relationships with other classes
     private String name;
-
     private List<String> ingredients;
     private String directions;
     private int time;
