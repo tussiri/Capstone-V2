@@ -20,9 +20,6 @@ public class Recipe extends AbstractEntity {
     @Column(nullable=false)
     private int time;
 
-    @Column(nullable=true)
-    private Boolean favorite;
-
     @Column(nullable=false)
     private String description;
 
@@ -43,12 +40,11 @@ public class Recipe extends AbstractEntity {
 
     public Recipe(){}
 
-    public Recipe(String name, List<String> ingredients, String directions, int time, Boolean favorite, String description, String category, String picture, List<String> allergens) {
+    public Recipe(String name, List<String> ingredients, String directions, int time, String description, String category, String picture, List<String> allergens) {
         this.name = name;
         this.ingredients = ingredients;
         this.directions = directions;
         this.time = time;
-        this.favorite = favorite;
         this.description = description;
         this.category = category;
         this.picture = picture;
@@ -63,13 +59,7 @@ public class Recipe extends AbstractEntity {
         this.user = user;
     }
 
-    public Boolean getFavorite() {
-        return favorite;
-    }
 
-    public void setFavorite(Boolean favorite) {
-        this.favorite = favorite;
-    }
 
     public String getDescription() {
         return description;

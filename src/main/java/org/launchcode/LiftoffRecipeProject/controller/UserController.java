@@ -20,6 +20,7 @@ public class UserController {
 //    TODO: Add functionality to add or remove a users favorite on a recipe
 //    TODO: Add code to include a list of favorite recipes and add and remove favorites
 //    TODO: Add functionality to rate and review a recipe
+//    TODO: Add functionality for login and viewing all recipes and or favorited recipes
 
     @Autowired
     UserRepository userRepository;
