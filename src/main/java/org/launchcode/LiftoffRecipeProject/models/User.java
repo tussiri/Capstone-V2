@@ -31,7 +31,7 @@ public class User extends AbstractEntity {
 
     private LocalDate dateOfBirth;
 
-
+    private List<Integer> favorites;
 
     public User(String email, String password, String firstName, String lastName, LocalDate dateOfBirth) {
         this.email = email;
@@ -47,7 +47,13 @@ public class User extends AbstractEntity {
 
     public User(){}
 
+    public List<Integer> getFavorites() {
+        return favorites;
+    }
 
+    public void setFavorites(List<Integer> favorites) {
+        this.favorites = favorites;
+    }
 
     public String getEmail() {
         return email;
