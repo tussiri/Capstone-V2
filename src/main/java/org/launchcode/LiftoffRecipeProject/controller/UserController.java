@@ -1,6 +1,5 @@
 package org.launchcode.LiftoffRecipeProject.controller;
 
-import jakarta.transaction.Transactional;
 import org.launchcode.LiftoffRecipeProject.models.Recipe;
 import org.launchcode.LiftoffRecipeProject.models.User;
 import org.launchcode.LiftoffRecipeProject.repository.UserRepository;
@@ -45,7 +44,7 @@ public class UserController {
         return new ResponseEntity<>(recipes,HttpStatus.OK);
     }
 
-    @Transactional
+
     @PostMapping()
     public ResponseEntity<User> createUser(@RequestBody User user) {
         User newUser = userRepository.save(user);
@@ -53,7 +52,6 @@ public class UserController {
     }
 
 
-    @Transactional
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody User updatedUser) {
         User existingUser = userRepository.findById(id).orElse(null);
@@ -69,7 +67,7 @@ public class UserController {
         return new ResponseEntity<>(existingUser, HttpStatus.OK);
     }
 
-    @Transactional
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id){
         Optional<User> user = userRepository.findById(id);

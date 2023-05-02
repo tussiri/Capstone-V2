@@ -60,7 +60,7 @@ public class RecipeController {
 //        return new ResponseEntity<>(newRecipe, HttpStatus.CREATED);
 //    }
 
-    @PostMapping("/{userId}")
+    @PostMapping("/{id}")
     public ResponseEntity<Recipe> createRecipe(@PathVariable Integer userId, @Valid @RequestBody Recipe recipe) {
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
@@ -81,7 +81,6 @@ public class RecipeController {
             updatedRecipe.setIngredients(recipe.getIngredients());
             updatedRecipe.setDirections(recipe.getDirections());
             updatedRecipe.setTime(recipe.getTime());
-            updatedRecipe.setFavorite(recipe.getFavorite());
             updatedRecipe.setDescription(recipe.getDescription());
             updatedRecipe.setCategory(recipe.getCategory());
             updatedRecipe.setPicture(recipe.getPicture());
@@ -96,7 +95,7 @@ public class RecipeController {
 
     @Transactional
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRecipe(@PathVariable int id) {
+    public ResponseEntity<Void> deleteRecipe(@PathVariable int id, Integer userId) {
         Optional<Recipe> existingRecipe = recipeRepository.findById(id);
         if (existingRecipe.isPresent()) {
             recipeRepository.deleteById(id);
