@@ -1,39 +1,71 @@
 package org.launchcode.LiftoffRecipeProject.models;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+
 import java.util.List;
 
+@Entity
 public class Recipe extends AbstractEntity {
 
-    //todo: establish DB relationships with other classes
+    @Column(nullable=false)
     private String name;
+
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> ingredients;
+
+    @Column(nullable=false)
     private String directions;
+
+    @Column(nullable=false)
     private int time;
-    private Boolean favorite;
+
+    @Column(nullable=false)
     private String description;
+
+    @Column(nullable=false)
     private String category;
+
+    @Column(nullable=true)
     private String picture;
+
+    @Column(nullable=true)
     private List<String> allergens;
 
-    public Recipe(String name, List<String> ingredients, String directions, int time, Boolean favorite, String description, String category, String picture, List<String> allergens) {
+
+    @ManyToOne
+    @JoinColumn(name="user_id", nullable=false)
+    @JsonIgnore
+    private User user;
+
+    public Recipe(){}
+
+    public Recipe(String name, List<String> ingredients, String directions, int time, String description, String category, String picture, List<String> allergens) {
+
+
         this.name = name;
         this.ingredients = ingredients;
         this.directions = directions;
         this.time = time;
-        this.favorite = favorite;
+
         this.description = description;
         this.category = category;
         this.picture = picture;
         this.allergens = allergens;
     }
 
-    public Boolean getFavorite() {
-        return favorite;
+
+    public User getUser(){
+        return user;
     }
 
-    public void setFavorite(Boolean favorite) {
-        this.favorite = favorite;
+    public void setUser(User user){
+        this.user = user;
     }
+
+
+
 
     public String getDescription() {
         return description;
@@ -98,4 +130,6 @@ public class Recipe extends AbstractEntity {
     public void setTime(int time) {
         this.time = time;
     }
+
 }
+
