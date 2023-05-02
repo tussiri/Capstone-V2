@@ -1,5 +1,6 @@
 package org.launchcode.LiftoffRecipeProject.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -30,6 +31,8 @@ public class User extends AbstractEntity {
 
     private LocalDate dateOfBirth;
 
+
+
     public User(String email, String password, String firstName, String lastName, LocalDate dateOfBirth) {
         this.email = email;
         setPassword(password);
@@ -38,10 +41,13 @@ public class User extends AbstractEntity {
         this.dateOfBirth = dateOfBirth;
     }
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,  fetch=FetchType.LAZY)
+    @OneToMany( cascade = CascadeType.ALL,  fetch=FetchType.LAZY)
+    @JsonIgnoreProperties("user")
     private List<Recipe> recipes = new ArrayList<>();
 
     public User(){}
+
+
 
     public String getEmail() {
         return email;

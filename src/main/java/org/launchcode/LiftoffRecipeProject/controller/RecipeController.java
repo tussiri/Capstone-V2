@@ -1,6 +1,9 @@
 package org.launchcode.LiftoffRecipeProject.controller;
 
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.launchcode.LiftoffRecipeProject.models.Recipe;
+import org.launchcode.LiftoffRecipeProject.models.User;
 import org.launchcode.LiftoffRecipeProject.repository.RecipeRepository;
 import org.launchcode.LiftoffRecipeProject.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,11 @@ import java.util.Optional;
 @RequestMapping("/recipes")
 public class RecipeController {
 
+//    TODO: Add search requests
+//    TODO: Add custom method for searching
+//    TODO: Add sorting functionality to the getAllRecipes method
+
+
     @Autowired
     private RecipeRepository recipeRepository;
 
@@ -22,10 +30,12 @@ public class RecipeController {
     private UserRepository userRepository;
 
     @GetMapping
-    public ResponseEntity<List<Recipe>> getAllRecipes() {
-        List<Recipe> recipes = recipeRepository.findAll();
+    public ResponseEntity <List<Recipe>> getAllRecipes() {
+        List<Recipe> recipes = (List<Recipe>) recipeRepository.findAll();
         return new ResponseEntity<>(recipes, HttpStatus.OK);
     }
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Recipe> getRecipeById(@PathVariable int id) {
@@ -38,12 +48,30 @@ public class RecipeController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<Recipe> createRecipe(@RequestBody Recipe recipe) {
+//    @Transactional
+//    @PostMapping("/{id}")
+//    public ResponseEntity<Recipe> createRecipe(@PathVariable Integer id, @Valid @RequestBody Recipe recipe) {
+//        User user = userRepository.findById(id).orElse(null);
+//        if (user == null) {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//        recipe.setUser(user);
+//        Recipe newRecipe = recipeRepository.save(recipe);
+//        return new ResponseEntity<>(newRecipe, HttpStatus.CREATED);
+//    }
+
+    @PostMapping("/{userId}")
+    public ResponseEntity<Recipe> createRecipe(@PathVariable Integer userId, @Valid @RequestBody Recipe recipe) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        recipe.setUser(user); // set the user field on the recipe object
         Recipe newRecipe = recipeRepository.save(recipe);
         return new ResponseEntity<>(newRecipe, HttpStatus.CREATED);
     }
 
+    @Transactional
     @PutMapping("/{id}")
     public ResponseEntity<Recipe> updateRecipe(@PathVariable int id, @RequestBody Recipe recipe) {
         Optional<Recipe> existingRecipe = recipeRepository.findById(id);
@@ -66,6 +94,7 @@ public class RecipeController {
         }
     }
 
+    @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRecipe(@PathVariable int id) {
         Optional<Recipe> existingRecipe = recipeRepository.findById(id);

@@ -33,7 +33,7 @@ public class AuthenticationController {
 
         User newUser = new User();
         newUser.setEmail(userDTO.getEmail());
-        newUser.setPassword(userDTO.getPassword());
+        newUser.setPassword(bCryptPasswordEncoder.encode (userDTO.getPassword()));
         newUser.setFirstName(userDTO.getFirstName());
         newUser.setLastName(userDTO.getLastName());
         newUser.setDateOfBirth(userDTO.getDateOfBirth());
@@ -41,9 +41,5 @@ public class AuthenticationController {
 
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
-
-
-
-
 
 }

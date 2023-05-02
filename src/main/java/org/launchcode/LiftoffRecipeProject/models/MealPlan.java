@@ -1,12 +1,10 @@
 package org.launchcode.LiftoffRecipeProject.models;
 
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 import java.util.Set;
 
+@Entity
 public class MealPlan extends AbstractEntity{
 
     @ManyToOne

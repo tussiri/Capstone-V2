@@ -29,7 +29,7 @@ public class Review extends AbstractEntity {
         this.recipe = recipe;
     }
 
-    public int getId(){
+    public Integer getId(){
         return super.getId();
     }
     public String getComment() {

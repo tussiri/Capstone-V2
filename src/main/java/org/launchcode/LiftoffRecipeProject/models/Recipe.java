@@ -1,9 +1,7 @@
 package org.launchcode.LiftoffRecipeProject.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 
 import java.util.List;
 
@@ -37,6 +35,12 @@ public class Recipe extends AbstractEntity {
     @Column(nullable=true)
     private List<String> allergens;
 
+
+    @ManyToOne
+    @JoinColumn(name="user_id", nullable=false)
+    @JsonIgnore
+    private User user;
+
     public Recipe(){}
 
     public Recipe(String name, List<String> ingredients, String directions, int time, Boolean favorite, String description, String category, String picture, List<String> allergens) {
@@ -49,6 +53,14 @@ public class Recipe extends AbstractEntity {
         this.category = category;
         this.picture = picture;
         this.allergens = allergens;
+    }
+
+    public User getUser(){
+        return user;
+    }
+
+    public void setUser(User user){
+        this.user = user;
     }
 
     public Boolean getFavorite() {
