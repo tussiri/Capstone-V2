@@ -1,5 +1,6 @@
 package org.launchcode.LiftoffRecipeProject.models;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -41,15 +42,19 @@ public class Recipe extends AbstractEntity {
     public Recipe(){}
 
     public Recipe(String name, List<String> ingredients, String directions, int time, String description, String category, String picture, List<String> allergens) {
+
+
         this.name = name;
         this.ingredients = ingredients;
         this.directions = directions;
         this.time = time;
+
         this.description = description;
         this.category = category;
         this.picture = picture;
         this.allergens = allergens;
     }
+
 
     public User getUser(){
         return user;
@@ -58,6 +63,7 @@ public class Recipe extends AbstractEntity {
     public void setUser(User user){
         this.user = user;
     }
+
 
 
 
@@ -124,4 +130,6 @@ public class Recipe extends AbstractEntity {
     public void setTime(int time) {
         this.time = time;
     }
+
 }
+
