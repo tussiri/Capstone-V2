@@ -2,7 +2,8 @@ package org.launchcode.LiftoffRecipeProject.controller;
 
 import org.launchcode.LiftoffRecipeProject.models.Recipe;
 import org.launchcode.LiftoffRecipeProject.models.User;
-import org.launchcode.LiftoffRecipeProject.repository.UserRepository;
+import org.launchcode.LiftoffRecipeProject.data.RecipeRepository;
+import org.launchcode.LiftoffRecipeProject.data.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,9 @@ public class UserController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    RecipeRepository recipeRepository;
 
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUser(@PathVariable Integer userId) {
@@ -51,6 +55,19 @@ public class UserController {
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
+    @PostMapping("/{userId}/favorites/{recipeId}")
+    public ResponseEntity<Void> addFavoriteRecipe(@PathVariable Integer userId, @PathVariable Integer recipeId){
+        User user = userRepository.findById(userId).orElse(null);
+        Recipe recipe = recipeRepository.findById(recipeId).orElse(null);
+
+        if(user == null||recipe==null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        user.addFavoriteRecipe(recipe);
+        userRepository.save(user);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody User updatedUser) {
@@ -68,6 +85,8 @@ public class UserController {
     }
 
 
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id){
         Optional<User> user = userRepository.findById(id);
@@ -77,6 +96,20 @@ public class UserController {
         }else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @DeleteMapping("/{userId}/favorites/{recipeId}")
+    public ResponseEntity<Void> removeFavoriteRecipe(@PathVariable Integer userId, @PathVariable Integer recipeId) {
+        User user = userRepository.findById(userId).orElse(null);
+        Recipe recipe = recipeRepository.findById(recipeId).orElse(null);
+
+        if (user == null || recipe == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        user.removeFavoriteRecipe(recipe);
+        userRepository.save(user);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

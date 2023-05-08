@@ -4,7 +4,7 @@ package org.launchcode.LiftoffRecipeProject.controller;
 import jakarta.validation.Valid;
 import org.launchcode.LiftoffRecipeProject.DTO.UserDTO;
 import org.launchcode.LiftoffRecipeProject.models.User;
-import org.launchcode.LiftoffRecipeProject.repository.UserRepository;
+import org.launchcode.LiftoffRecipeProject.data.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
