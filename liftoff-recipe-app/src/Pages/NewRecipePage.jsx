@@ -4,6 +4,8 @@ import Logo from "../Assets/logo-removebg-preview 1.png";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button";
+import FavoriteTwoToneIcon from "@mui/icons-material/FavoriteTwoTone";
 
 function NewRecipePage() {
   const categories = [
@@ -36,6 +38,13 @@ function NewRecipePage() {
       label: "Dessert",
     },
   ];
+
+  const [flag, setFlag] = React.useState(true);
+
+  const handleClick = () => {
+    setFlag(!flag);
+  };
+
   return (
     <>
       <h1
@@ -54,12 +63,16 @@ function NewRecipePage() {
         maxWidth="30"
         style={{ position: "relative", top: "-60px", left: "650px" }}
       ></img>
-
+      <FavoriteTwoToneIcon
+        onClick={handleClick}
+        style={flag ? { color: "black" } : { color: "crimson" }}
+        fontSize="large"
+      />
       <h3
         style={{
           position: "relative",
           top: "-30px",
-          left: "-400px",
+          left: "-250px",
         }}
       >
         Name
@@ -73,7 +86,7 @@ function NewRecipePage() {
           width: "54ch",
           position: "relative",
           top: "-40px",
-          left: "-155px",
+          left: "-5px",
         }}
       />
 
@@ -81,7 +94,7 @@ function NewRecipePage() {
         style={{
           position: "relative",
           top: "-30px",
-          left: "-385px",
+          left: "-235px",
         }}
       >
         Category
@@ -95,7 +108,7 @@ function NewRecipePage() {
           width: "25ch",
           position: "relative",
           top: "-40px",
-          left: "-300px",
+          left: "-150px",
         }}
       >
         {categories.map((option) => (
@@ -109,7 +122,7 @@ function NewRecipePage() {
         style={{
           position: "relative",
           top: "-30px",
-          left: "-375px",
+          left: "-225px",
         }}
       >
         Description
@@ -124,15 +137,15 @@ function NewRecipePage() {
           width: "54ch",
           position: "relative",
           top: "-40px",
-          left: "-155px",
+          left: "-5px",
         }}
       />
 
       <div
         style={{
           position: "relative",
-          top: "-10px",
-          left: "-155px",
+          top: "-20px",
+          left: "-5px",
         }}
       >
         <TextField
@@ -165,6 +178,80 @@ function NewRecipePage() {
             padding: "1%",
           }}
         />
+      </div>
+
+      <h3
+        style={{
+          position: "relative",
+          top: "-30px",
+          left: "-225px",
+        }}
+      >
+        Ingredients
+      </h3>
+
+      <TextField
+        id="outlined-multiline-flexible"
+        size="small"
+        multiline
+        maxRows={5}
+        style={{
+          width: "54ch",
+          position: "relative",
+          top: "-40px",
+          left: "-5px",
+        }}
+      />
+
+      <h3
+        style={{
+          position: "relative",
+          top: "-30px",
+          left: "-225px",
+        }}
+      >
+        Allergens
+      </h3>
+
+      <TextField
+        id="outlined-basic"
+        variant="outlined"
+        size="small"
+        style={{
+          width: "54ch",
+          position: "relative",
+          top: "-40px",
+          left: "-5px",
+        }}
+      />
+
+      <h3
+        style={{
+          position: "relative",
+          top: "-30px",
+          left: "-225px",
+        }}
+      >
+        Directions
+      </h3>
+
+      <TextField
+        id="outlined-multiline-flexible"
+        size="small"
+        multiline
+        maxRows={5}
+        style={{
+          width: "54ch",
+          position: "relative",
+          top: "-40px",
+          left: "-5px",
+        }}
+      />
+
+      <div style={{ position: "relative", top: "20px" }}>
+        <Button variant="contained" color="success">
+          Submit
+        </Button>
       </div>
     </>
   );
