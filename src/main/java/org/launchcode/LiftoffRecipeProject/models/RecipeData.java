@@ -1,7 +1,9 @@
 package org.launchcode.LiftoffRecipeProject.models;
 
-public class RecipeData {
+import jakarta.persistence.Entity;
+
+@Entity
+public class RecipeData extends AbstractEntity{
 
     //todo: make functions for searching existing recipes
-
 }

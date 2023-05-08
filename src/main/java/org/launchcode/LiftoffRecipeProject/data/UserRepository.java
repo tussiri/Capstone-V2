@@ -1,4 +1,4 @@
-package org.launchcode.LiftoffRecipeProject.repository;
+package org.launchcode.LiftoffRecipeProject.data;
 
 import org.launchcode.LiftoffRecipeProject.models.User;
 import org.springframework.data.repository.CrudRepository;

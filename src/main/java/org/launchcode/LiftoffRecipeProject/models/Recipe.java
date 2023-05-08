@@ -4,7 +4,9 @@ package org.launchcode.LiftoffRecipeProject.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Recipe extends AbstractEntity {
@@ -48,7 +50,6 @@ public class Recipe extends AbstractEntity {
         this.ingredients = ingredients;
         this.directions = directions;
         this.time = time;
-
         this.description = description;
         this.category = category;
         this.picture = picture;
@@ -64,8 +65,12 @@ public class Recipe extends AbstractEntity {
         this.user = user;
     }
 
+    @ManyToMany(mappedBy="favoriteRecipes", fetch=FetchType.LAZY)
+    private Set<User>favoritedBy = new HashSet<>();
 
-
+    public Set<User> getFavoritedBy(){
+        return favoritedBy;
+    }
 
     public String getDescription() {
         return description;
