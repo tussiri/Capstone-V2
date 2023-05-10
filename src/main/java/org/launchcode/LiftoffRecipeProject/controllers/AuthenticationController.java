@@ -1,10 +1,10 @@
-package org.launchcode.LiftoffRecipeProject.controller;
+package org.launchcode.LiftoffRecipeProject.controllers;
 
 
 import jakarta.validation.Valid;
 import org.launchcode.LiftoffRecipeProject.DTO.UserDTO;
-import org.launchcode.LiftoffRecipeProject.models.User;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
+import org.launchcode.LiftoffRecipeProject.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +21,11 @@ public class AuthenticationController {
     @Autowired
     UserRepository userRepository;
 
-    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public AuthenticationController(){
+        this.bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    }
 
     @PostMapping("/register")
     public ResponseEntity<User> register(@Valid @RequestBody UserDTO userDTO){
@@ -30,14 +33,27 @@ public class AuthenticationController {
         if (existingUser != null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        System.out.println("Received UserDTO: " + userDTO);
 
-        User newUser = new User();
-        newUser.setEmail(userDTO.getEmail());
-        newUser.setPassword(bCryptPasswordEncoder.encode (userDTO.getPassword()));
-        newUser.setFirstName(userDTO.getFirstName());
-        newUser.setLastName(userDTO.getLastName());
-        newUser.setDateOfBirth(userDTO.getDateOfBirth());
-        userRepository.save(newUser);
+        User newUser = new User(
+                userDTO.getEmail(),
+                bCryptPasswordEncoder.encode(userDTO.getPassword()),
+                userDTO.getFirstName(),
+                userDTO.getLastName(),
+                userDTO.getDateOfBirth()
+        );
+        System.out.println("Constructed User: " + newUser);
+        System.out.println("Received UserDTO: ");
+        System.out.println("Email: " + userDTO.getEmail());
+        System.out.println("Password: " + userDTO.getPassword());
+        System.out.println("First Name: " + userDTO.getFirstName());
+        System.out.println("Last Name: " + userDTO.getLastName());
+        System.out.println("Date of Birth: " + userDTO.getDateOfBirth());
+
+        User registeredUser = userRepository.save(newUser);
+        System.out.println("Saved User: " + newUser);
+
+        Integer userId=registeredUser.getId();
 
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }

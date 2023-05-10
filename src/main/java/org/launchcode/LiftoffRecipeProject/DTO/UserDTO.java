@@ -7,6 +7,8 @@ import java.time.LocalDate;
 
 public class UserDTO {
 
+    private Integer id;
+
     @Email
     @NotBlank
     private String email;
@@ -19,6 +21,14 @@ public class UserDTO {
     private String lastName;
 
     private LocalDate dateOfBirth;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getFirstName() {
         return firstName;
