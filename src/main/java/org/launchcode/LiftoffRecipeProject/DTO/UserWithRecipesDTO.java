@@ -1,40 +1,26 @@
-package org.launchcode.LiftoffRecipeProject.models;
+package org.launchcode.LiftoffRecipeProject.DTO;
 
-import jakarta.persistence.*;
+import org.launchcode.LiftoffRecipeProject.models.Recipe;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Entity
-@Table(name = "users")
-public class User extends AbstractEntity {
+public class UserWithRecipesDTO {
 
+    private Integer id;
     private String firstName;
     private String lastName;
     private String email;
-    private String password;
     private Date dateOfBirth;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Recipe> recipes;
 
-    public User(String email, String password, String firstName, String lastName, LocalDate dateOfBirth) {
-        this.email = email;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.dateOfBirth = Date.from(dateOfBirth.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        if(this.recipes==null) {
-            this.recipes = new ArrayList<>();
-        }
+    public Integer getId() {
+        return id;
     }
 
-    public User(){}
-
-    // Getters and setters
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -58,14 +44,6 @@ public class User extends AbstractEntity {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public Date getDateOfBirth() {

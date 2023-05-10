@@ -1,75 +1,99 @@
 package org.launchcode.LiftoffRecipeProject.models;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
+@Table(name = "recipes")
 public class Recipe extends AbstractEntity {
 
-    @Column(nullable=false)
     private String name;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> ingredients;
 
-    @Column(nullable=false)
+    @Column(name="directions", columnDefinition="MEDIUMTEXT")
     private String directions;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private int time;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
+    private Boolean favorite;
+
+    @Column(columnDefinition="MEDIUMTEXT")
     private String description;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String category;
 
-    @Column(nullable=true)
     private String picture;
 
-    @Column(nullable=true)
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> allergens;
 
-
     @ManyToOne
-    @JoinColumn(name="user_id", nullable=false)
+    @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
 
-    public Recipe(){}
+    public Recipe() {
+    }
 
-    public Recipe(String name, List<String> ingredients, String directions, int time, String description, String category, String picture, List<String> allergens) {
-
-
+    public Recipe(String name, List<String> ingredients, String directions, int time, Boolean favorite, String description, String category, String picture, List<String> allergens) {
         this.name = name;
         this.ingredients = ingredients;
         this.directions = directions;
         this.time = time;
+        this.favorite = favorite;
         this.description = description;
         this.category = category;
         this.picture = picture;
         this.allergens = allergens;
     }
 
+    // Getters and setters
 
-    public User getUser(){
-        return user;
+    public String getName() {
+        return name;
     }
 
-    public void setUser(User user){
-        this.user = user;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    @ManyToMany(mappedBy="favoriteRecipes", fetch=FetchType.LAZY)
-    private Set<User>favoritedBy = new HashSet<>();
+    public List<String> getIngredients() {
+        return ingredients;
+    }
 
-    public Set<User> getFavoritedBy(){
-        return favoritedBy;
+    public void setIngredients(List<String> ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    public String getDirections() {
+        return directions;
+    }
+
+    public void setDirections(String directions) {
+        this.directions = directions;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
+
+    public Boolean getFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(Boolean favorite) {
+        this.favorite = favorite;
     }
 
     public String getDescription() {
@@ -104,37 +128,12 @@ public class Recipe extends AbstractEntity {
         this.allergens = allergens;
     }
 
-    public String getName() {
-        return name;
+    public User getUser() {
+        return user;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUser(User user) {
+        this.user = user;
     }
-
-    public List<String> getIngredients() {
-        return ingredients;
-    }
-
-    public void setIngredients(List<String> ingredients) {
-        this.ingredients = ingredients;
-    }
-
-    public String getDirections() {
-        return directions;
-    }
-
-    public void setDirections(String directions) {
-        this.directions = directions;
-    }
-
-    public int getTime() {
-        return time;
-    }
-
-    public void setTime(int time) {
-        this.time = time;
-    }
-
 }
 
