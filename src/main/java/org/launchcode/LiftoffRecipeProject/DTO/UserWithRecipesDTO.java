@@ -1,17 +1,32 @@
 package org.launchcode.LiftoffRecipeProject.DTO;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.launchcode.LiftoffRecipeProject.models.Recipe;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 public class UserWithRecipesDTO {
 
     private Integer id;
+
+    @NotBlank(message="First name cannot be blank")
+    @Size(min=1, max=30, message="First name must be between 1 and 30 characters")
     private String firstName;
+
+    @NotBlank(message="Last name cannot be blank")
+    @Size(min=1, max=30, message="Last name must be between 1 and 30 characters")
     private String lastName;
+
+    @Email(message = "Invalid email address")
+    @NotBlank(message = "Email is required")
     private String email;
-    private Date dateOfBirth;
+
+    @NotBlank(message="Birthdate is required")
+    private LocalDate dateOfBirth;
+
     private List<Recipe> recipes;
 
     public Integer getId() {
@@ -46,11 +61,11 @@ public class UserWithRecipesDTO {
         this.email = email;
     }
 
-    public Date getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 

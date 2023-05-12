@@ -2,6 +2,8 @@ package org.launchcode.LiftoffRecipeProject.controllers;
 
 
 import jakarta.validation.Valid;
+import org.launchcode.LiftoffRecipeProject.DTO.LoginDTO;
+import org.launchcode.LiftoffRecipeProject.DTO.ResponseWrapper;
 import org.launchcode.LiftoffRecipeProject.DTO.UserDTO;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
 import org.launchcode.LiftoffRecipeProject.models.User;
@@ -18,22 +20,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthenticationController {
 
-    @Autowired
-    UserRepository userRepository;
-
+    private final UserRepository userRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public AuthenticationController(){
-        this.bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    public AuthenticationController(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder){
+        this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@Valid @RequestBody UserDTO userDTO){
+    public ResponseEntity<ResponseWrapper<UserDTO>> register(@Valid @RequestBody UserDTO userDTO) {
         User existingUser = userRepository.findByEmail(userDTO.getEmail());
-        if (existingUser != null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (existingUser != null) {
+            return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.BAD_REQUEST.value(), "User already exists", null), HttpStatus.BAD_REQUEST);
         }
-        System.out.println("Received UserDTO: " + userDTO);
 
         User newUser = new User(
                 userDTO.getEmail(),
@@ -42,23 +43,47 @@ public class AuthenticationController {
                 userDTO.getLastName(),
                 userDTO.getDateOfBirth()
         );
-        System.out.println("Constructed User: " + newUser);
-        System.out.println("Received UserDTO: ");
-        System.out.println("Email: " + userDTO.getEmail());
-        System.out.println("Password: " + userDTO.getPassword());
-        System.out.println("First Name: " + userDTO.getFirstName());
-        System.out.println("Last Name: " + userDTO.getLastName());
-        System.out.println("Date of Birth: " + userDTO.getDateOfBirth());
 
         User registeredUser = userRepository.save(newUser);
-        System.out.println("Saved User: " + newUser);
+        Integer userId = registeredUser.getId();
 
-        Integer userId=registeredUser.getId();
+        System.out.println("Received UserDTO: " + userDTO);
 
-        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+        UserDTO mappedUserDTO = new UserDTO();
+        mappedUserDTO.setId(registeredUser.getId());
+        mappedUserDTO.setEmail(registeredUser.getEmail());
+        mappedUserDTO.setFirstName(registeredUser.getFirstName());
+        mappedUserDTO.setLastName(registeredUser.getLastName());
+        mappedUserDTO.setDateOfBirth(registeredUser.getDateOfBirth());
+
+        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.CREATED.value(), "User registered successfully", mappedUserDTO), HttpStatus.CREATED);
     }
+//
+//        System.out.println("Constructed User: " + newUser);
+//        System.out.println("Received UserDTO: ");
+//        System.out.println("Email: " + userDTO.getEmail());
+//        System.out.println("Password: " + userDTO.getPassword());
+//        System.out.println("First Name: " + userDTO.getFirstName());
+//        System.out.println("Last Name: " + userDTO.getLastName());
+//        System.out.println("Date of Birth: " + userDTO.getDateOfBirth());
+//        System.out.println("Saved User: " + newUser);
 
+    @PostMapping("/login")
+    public ResponseEntity<ResponseWrapper<UserDTO>> loginUser(@RequestBody LoginDTO loginDTO) {
+        User user = userRepository.findByEmail(loginDTO.getEmail());
 
+        if (user != null && user.getPassword().equals(loginDTO.getPassword())) {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setId(user.getId());
+            userDTO.setFirstName(user.getFirstName());
+            userDTO.setLastName(user.getLastName());
+            userDTO.setEmail(user.getEmail());
+            userDTO.setPassword(null);
+            userDTO.setDateOfBirth(user.getDateOfBirth());
 
-
+            return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Login successful", userDTO), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.UNAUTHORIZED.value(), "Invalid email or password", null), HttpStatus.UNAUTHORIZED);
+        }
+    }
 }
