@@ -1,18 +1,43 @@
 package org.launchcode.LiftoffRecipeProject.DTO;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.util.List;
 
 public class RecipeDTO {
+
     private Integer id;
+
+    @NotBlank(message = "Recipe name required")
+    @Size(min=1, max=100, message = "Recipe name must be between 1 and 100 characters")
     private String name;
+
     private String description;
+
+    @NotBlank(message = "Recipe category required")
     private String category;
+
+    @NotEmpty(message = "Ingredients required")
+    @Size(min=1, message = "Ingredients must have at least 1 item")
     private List<String> ingredients;
+
+    @NotBlank(message = "Directions required")
+    @Size(min=1, message = "Directions must have at least 1 step")
     private String directions;
+
+    @NotNull(message = "Time is required")
     private Integer time;
+
     private boolean favorite;
+
     private String picture;
+
     private List<String> allergens;
+
+    private Double rating;
 
     public Integer getId() {
         return id;
@@ -92,5 +117,13 @@ public class RecipeDTO {
 
     public void setAllergens(List<String> allergens) {
         this.allergens = allergens;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
 }

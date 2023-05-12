@@ -11,8 +11,10 @@ public class Recipe extends AbstractEntity {
 
     private String name;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> ingredients;
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+    @JoinTable(name="recipe_ingredients", joinColumns =@JoinColumn(name="recipe_id"),
+    inverseJoinColumns =@JoinColumn(name="ingredient_id"))
+    private List<Ingredient> ingredients;
 
     @Column(name="directions", columnDefinition="MEDIUMTEXT")
     private String directions;
@@ -34,6 +36,8 @@ public class Recipe extends AbstractEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> allergens;
 
+    private Double rating;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
@@ -42,7 +46,7 @@ public class Recipe extends AbstractEntity {
     public Recipe() {
     }
 
-    public Recipe(String name, List<String> ingredients, String directions, int time, Boolean favorite, String description, String category, String picture, List<String> allergens) {
+    public Recipe(String name, List<Ingredient> ingredients, String directions, int time, Boolean favorite, String description, String category, String picture, List<String> allergens) {
         this.name = name;
         this.ingredients = ingredients;
         this.directions = directions;
@@ -64,11 +68,11 @@ public class Recipe extends AbstractEntity {
         this.name = name;
     }
 
-    public List<String> getIngredients() {
+    public List<Ingredient> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(List<String> ingredients) {
+    public void setIngredients(List<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
 
@@ -134,6 +138,14 @@ public class Recipe extends AbstractEntity {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
 }
 

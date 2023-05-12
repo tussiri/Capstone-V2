@@ -3,9 +3,7 @@ package org.launchcode.LiftoffRecipeProject.models;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -16,7 +14,7 @@ public class User extends AbstractEntity {
     private String lastName;
     private String email;
     private String password;
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Recipe> recipes;
@@ -26,7 +24,7 @@ public class User extends AbstractEntity {
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.dateOfBirth = Date.from(dateOfBirth.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        this.dateOfBirth = LocalDate.from(dateOfBirth);
         if(this.recipes==null) {
             this.recipes = new ArrayList<>();
         }
@@ -68,11 +66,11 @@ public class User extends AbstractEntity {
         this.password = password;
     }
 
-    public Date getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
