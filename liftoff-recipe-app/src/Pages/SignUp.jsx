@@ -15,12 +15,6 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 function SignUp() {
   const [showPassword, setShowPassword] = React.useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    firstName: "",
-    lastName: "",
-  });
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
