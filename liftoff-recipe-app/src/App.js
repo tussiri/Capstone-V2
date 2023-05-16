@@ -6,7 +6,10 @@ import NewRecipePage from "./Pages/NewRecipePage";
 function App() {
   return (
     <div className="App">
+       <HomePage/>
+      <Login/>
       <NewRecipePage />
+      <AccountInfo/>
     </div>
   );
 }
