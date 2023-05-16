@@ -30,6 +30,8 @@ public class UserDTO {
     @NotNull(message="Birthdate is required")
     private LocalDate dateOfBirth;
 
+    private String token;
+
     public Integer getId() {
         return id;
     }
@@ -78,4 +80,11 @@ public class UserDTO {
         this.password = password;
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 }

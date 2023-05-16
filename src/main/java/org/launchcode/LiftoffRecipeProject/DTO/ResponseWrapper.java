@@ -7,6 +7,7 @@ public class ResponseWrapper<T> {
     private int status;
     private String message;
     private T data;
+    private String token;
 
     public ResponseWrapper(String userRetrievedSuccessfully, UserDTO userDTO) {
     }
@@ -15,6 +16,7 @@ public class ResponseWrapper<T> {
         this.status = status;
         this.message = message;
         this.data = data;
+        this.token= token;
     }
 
     public ResponseWrapper(String usersRetrievedSuccessfully, List<UserDTO> userDTOs) {
@@ -46,5 +48,13 @@ public class ResponseWrapper<T> {
 
     public void setData(T data) {
         this.data = data;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }
