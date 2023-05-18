@@ -1,8 +1,10 @@
 package org.launchcode.LiftoffRecipeProject.controllers;
 
 import jakarta.validation.Valid;
+import org.launchcode.LiftoffRecipeProject.data.RecipeRepository;
 import org.launchcode.LiftoffRecipeProject.data.ReviewRepository;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
+import org.launchcode.LiftoffRecipeProject.models.Recipe;
 import org.launchcode.LiftoffRecipeProject.models.Review;
 import org.launchcode.LiftoffRecipeProject.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class ReviewController {
     @Autowired
     private ReviewRepository reviewRepository;
 
+
+    private RecipeRepository recipeRepository;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -30,14 +35,16 @@ public class ReviewController {
 //        return "redirect:";
 //    }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<Review> createReview(@PathVariable Integer userId, @Valid @RequestBody Review review) {
+    @PostMapping("/user/{userId}/recipe/{recipeId}")
+    public ResponseEntity<Review> createReview(@PathVariable Integer userId, @PathVariable Integer recipeId, @Valid @RequestBody Review review) {
         try {
             User user = userRepository.findById(userId).orElse(null);
+            Recipe recipe = recipeRepository.findById(recipeId).orElse(null);
             if (user == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             review.setUser(user);
+            review.setRecipe(recipe);
             Review newReview = reviewRepository.save(review);
             return new ResponseEntity<>(newReview, HttpStatus.CREATED);
         }catch(Exception e){
@@ -48,11 +55,19 @@ public class ReviewController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Review>> getAllReviws() {
+    public ResponseEntity<List<Review>> getAllReviews() {
         List<Review> reviews = (List<Review>) reviewRepository.findAll();
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 
+    @GetMapping("/recipe/{recipeId}")
+    public ResponseEntity<List<Review>> getReviewsByRecipeId(@PathVariable Integer recipeId) {
+        List<Review> reviews = reviewRepository.findByRecipeId(recipeId);
+        if (reviews.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(reviews, HttpStatus.OK);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Review> getReviewById(@PathVariable int id) {
@@ -90,8 +105,4 @@ public class ReviewController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
-
-
-
 }
