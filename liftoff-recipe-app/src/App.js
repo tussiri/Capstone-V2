@@ -6,7 +6,8 @@ import NewRecipePage from "./Pages/NewRecipePage";
 function App() {
   return (
     <div className="App">
-      <NewRecipePage />
+      <SignUp />
+      {/* <NewRecipePage /> */}
     </div>
   );
 }
