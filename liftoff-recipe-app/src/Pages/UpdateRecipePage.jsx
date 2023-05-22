@@ -7,7 +7,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import FavoriteTwoToneIcon from "@mui/icons-material/FavoriteTwoTone";
 
-function NewRecipePage() {
+function UpdateRecipePage() {
   const [file, setFile] = useState();
   function handleChange(e) {
     console.log(e.target.files);
@@ -59,7 +59,7 @@ function NewRecipePage() {
           top: "20px",
         }}
       >
-        New Recipe
+        Update Recipe
       </h1>
 
       <img
@@ -284,11 +284,11 @@ function NewRecipePage() {
       </div>
       <div style={{ position: "relative", top: "20px" }}>
         <Button variant="contained" color="success">
-          Submit
+          Update
         </Button>
       </div>
     </>
   );
 }
 
-export default NewRecipePage;
+export default UpdateRecipePage;
