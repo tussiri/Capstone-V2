@@ -29,8 +29,7 @@ public class RecipeSpecification implements Specification<Recipe> {
                 System.out.println("Adding ingredients criteria: " + criteria.getValue());
                 Join<Recipe, Ingredient> ingredientsJoin = root.join("ingredients");
                 return builder.like(ingredientsJoin.get("name"), "%" + criteria.getValue() + "%");
-//            return builder.like(ingredientsJoin, "%" + criteria.getValue() + "%");
-//            return builder.like(root.<String>get("ingredients"), "%" + criteria.getValue() + "%");
+
             } else if (criteria.getKey().equalsIgnoreCase("time")) {
                 if (criteria.getOperation().equalsIgnoreCase(">")) {
                     System.out.println("Adding time criteria (greater than): " + criteria.getValue());

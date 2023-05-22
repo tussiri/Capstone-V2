@@ -31,6 +31,7 @@ public class UserDTO {
     private LocalDate dateOfBirth;
 
     private String token;
+    private String sessionToken;
 
     public Integer getId() {
         return id;
@@ -86,5 +87,13 @@ public class UserDTO {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getSessionToken() {
+        return sessionToken;
+    }
+
+    public void setSessionToken(String sessionToken) {
+        this.sessionToken = sessionToken;
     }
 }
