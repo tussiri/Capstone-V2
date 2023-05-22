@@ -149,4 +149,8 @@ public class RecipeService {
     public Page<RecipeDTO> searchRecipes(Specification<Recipe> spec, Pageable pageable){
         return recipeRepository.findAll(spec, pageable).map(this::mapToDTO);
     }
+
+    public Page<Recipe> getRecipesByIngredient(String ingredientName, Pageable pageable){
+        return recipeRepository.getRecipesByIngredient(ingredientName,pageable);
+    }
 }

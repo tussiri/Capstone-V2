@@ -6,8 +6,10 @@ import jakarta.validation.Valid;
 import org.launchcode.LiftoffRecipeProject.DTO.RecipeDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.ResponseWrapper;
 import org.launchcode.LiftoffRecipeProject.exception.ResourceNotFoundException;
+import org.launchcode.LiftoffRecipeProject.models.Ingredient;
 import org.launchcode.LiftoffRecipeProject.models.Recipe;
 import org.launchcode.LiftoffRecipeProject.models.SearchCriteria;
+import org.launchcode.LiftoffRecipeProject.services.IngredientService;
 import org.launchcode.LiftoffRecipeProject.services.RecipeService;
 import org.launchcode.LiftoffRecipeProject.specification.RecipeSpecification;
 import org.slf4j.Logger;
@@ -21,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,9 +35,12 @@ public class RecipeController {
 
     private RecipeService recipeService;
 
+    private IngredientService ingredientService;
+
     @Autowired
-    public RecipeController(RecipeService recipeService) {
+    public RecipeController(RecipeService recipeService, IngredientService ingredientService) {
         this.recipeService = recipeService;
+        this.ingredientService=ingredientService;
     }
 
 
@@ -108,7 +114,12 @@ public class RecipeController {
         for (String criterion : criteriaList) {
             String[] parts = criterion.split(",");
             if (parts.length == 3) {
-                params.add(new SearchCriteria(parts[0], parts[1], parts[2]));
+                if ("ingredients".equals(parts[0]) && "like".equals(parts[1])) {
+                    List<Ingredient> ingredients = ingredientService.findByNameIn(Arrays.asList(parts[2].split("\\s+")));
+                    params.add(new SearchCriteria(parts[0], parts[1], ingredients));
+                } else {
+                    params.add(new SearchCriteria(parts[0], parts[1], parts[2]));
+                }
             } else {
                 System.out.println("Ignored criterion due to incorrect format: " + criterion);
             }
