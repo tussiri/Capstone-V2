@@ -4,10 +4,10 @@ import jakarta.validation.Valid;
 import org.launchcode.LiftoffRecipeProject.data.ReviewRepository;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
 import org.launchcode.LiftoffRecipeProject.models.Review;
+import org.launchcode.LiftoffRecipeProject.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,7 +48,7 @@ public class ReviewController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Review>> getAllReviws() {
+    public ResponseEntity<List<Review>> getAllReviews() {
         List<Review> reviews = (List<Review>) reviewRepository.findAll();
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
@@ -76,7 +76,7 @@ public class ReviewController {
         }
     }
 
-    @PutMapping("{/id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Review> updateReview(@PathVariable int id, @RequestBody Review review){
         Optional<Review> selectedReview = reviewRepository.findById(id);
         if(selectedReview.isPresent()){
