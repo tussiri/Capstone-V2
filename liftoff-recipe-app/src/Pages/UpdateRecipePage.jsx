@@ -37,6 +37,21 @@ function UpdateRecipePage() {
     },
   ];
 
+  const DietaryPref=[
+          {
+            value: "Vgn",
+            label: "Vegan",
+          },
+          {
+            value: "Veg",
+            label: "Vegetarian",
+          },
+          {
+            value: "Non-Veg",
+            label: "Non-Vegetarian",
+          },
+      ];
+
   const [flag, setFlag] = React.useState(true);
 
   const handleClick = () => {
