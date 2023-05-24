@@ -16,28 +16,20 @@ function UpdateRecipePage() {
 
   const categories = [
     {
-      value: "Vgn",
-      label: "Vegan",
+      value: "BKFST",
+      label: "Breakfast",
     },
     {
-      value: "Veg",
-      label: "Vegetarian",
+      value: "LUN",
+      label: "Lunch",
     },
     {
-      value: "Non-Veg",
-      label: "Non-Vegetarian",
+      value: "DIN",
+      label: "Dinner",
     },
     {
       value: "App",
       label: "Appetizers",
-    },
-    {
-      value: "Sou",
-      label: "Soups",
-    },
-    {
-      value: "Sal",
-      label: "Salads",
     },
     {
       value: "DST",
