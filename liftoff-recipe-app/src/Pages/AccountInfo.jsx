@@ -1,11 +1,7 @@
 import React from "react";
 
-//create functions to view edit and delete user info and account
+//create component to view edit and delete user info and account
 // this component displays user information 
-
-
-
-
 
 function AccountInfo({user, onEdit}) {
     const {name, email, phone, location}= user;
