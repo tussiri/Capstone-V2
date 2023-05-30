@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "../SignUp.css";
 import Logo from "../Assets/logo-removebg-preview 1.png";
 import TextField from "@mui/material/TextField";
@@ -7,52 +7,42 @@ import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import FavoriteTwoToneIcon from "@mui/icons-material/FavoriteTwoTone";
 
-function NewRecipePage() {
-    const DietaryPref=[
-        {
-          value: "Vgn",
-          label: "Vegan",
-        },
-        {
-          value: "Veg",
-          label: "Vegetarian",
-        },
-        {
-          value: "Non-Veg",
-          label: "Non-Vegetarian",
-        },
-    ];
-  const categories = [
+function UpdateRecipePage() {
+  const [file, setFile] = useState();
+  function handleChange(e) {
+    console.log(e.target.files);
+    setFile(URL.createObjectURL(e.target.files[0]));
+  }
 
+  const categories = [
+    {
+      value: "Vgn",
+      label: "Vegan",
+    },
+    {
+      value: "Veg",
+      label: "Vegetarian",
+    },
+    {
+      value: "Non-Veg",
+      label: "Non-Vegetarian",
+    },
     {
       value: "App",
       label: "Appetizers",
     },
     {
+      value: "Sou",
+      label: "Soups",
+    },
+    {
+      value: "Sal",
+      label: "Salads",
+    },
+    {
       value: "DST",
       label: "Dessert",
     },
-      {
-          value: "BKFST",
-          label: "Breakfast",
-      },
-      {
-          value: "DNR",
-          label: "Dinner",
-      },
-      {
-          value: "LUN",
-          label: "Lunch",
-      },
-    // {
-    //   value: "Sou",
-    //   label: "Soups",
-    // },
-    // {
-    //   value: "Sal",
-    //   label: "Salads",
-    // },
-
   ];
 
   const [flag, setFlag] = React.useState(true);
@@ -69,7 +59,7 @@ function NewRecipePage() {
           top: "20px",
         }}
       >
-        New Recipe
+        Update Recipe
       </h1>
 
       <img
@@ -133,33 +123,6 @@ function NewRecipePage() {
           </MenuItem>
         ))}
       </TextField>
-        <h3
-            style={{
-                position: "relative",
-                top: "-30px",
-                left: "-235px",
-            }}
-        >
-            Dietary Preferences
-        </h3>
-
-        <TextField
-            id="outlined-select-currency"
-            select
-            size="small"
-            style={{
-                width: "25ch",
-                position: "relative",
-                top: "-40px",
-                left: "-150px",
-            }}
-        >
-            {DietaryPref.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                </MenuItem>
-            ))}
-        </TextField>
 
       <h3
         style={{
@@ -250,7 +213,7 @@ function NewRecipePage() {
         style={{
           position: "relative",
           top: "-30px",
-          left: "-225px",
+          left: "-235px",
         }}
       >
         Allergens
@@ -272,7 +235,7 @@ function NewRecipePage() {
         style={{
           position: "relative",
           top: "-30px",
-          left: "-225px",
+          left: "-230px",
         }}
       >
         Directions
@@ -291,13 +254,41 @@ function NewRecipePage() {
         }}
       />
 
+      <div
+        className="App"
+        style={{
+          position: "relative",
+          top: "-30px",
+          left: "-210px",
+        }}
+      >
+        <h3>Upload Photos:</h3>
+        <input
+          style={{
+            position: "relative",
+            top: "-5px",
+            left: "60px",
+          }}
+          type="file"
+          onChange={handleChange}
+        />
+        <div
+          style={{
+            position: "relative",
+            top: "10px",
+            left: "100px",
+          }}
+        >
+          <img src={file} />
+        </div>
+      </div>
       <div style={{ position: "relative", top: "20px" }}>
         <Button variant="contained" color="success">
-          Submit
+          Update
         </Button>
       </div>
     </>
   );
 }
 
-export default NewRecipePage;
+export default UpdateRecipePage;
