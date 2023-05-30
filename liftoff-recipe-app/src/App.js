@@ -8,12 +8,19 @@ import UpdateRecipePage from "./Pages/UpdateRecipePage";
 function App() {
   return (
     <div className="App">
+
+
+
+
+      <AccountInfo/>
+
       <Routes>
         <Route path="/" element={ <HomePage/> } />
         <Route path="/signup" element={ <SignUp/> } />
         <Route path="/newrecipe" element={ <NewRecipePage/> } />
         <Route path="/updaterecipe" element={ <UpdateRecipePage /> } />
       </Routes>
+
     </div>
   );
 }
