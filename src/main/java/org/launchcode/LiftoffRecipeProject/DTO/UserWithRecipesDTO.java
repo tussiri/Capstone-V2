@@ -1,38 +1,41 @@
-package org.launchcode.LiftoffRecipeProject.models;
+package org.launchcode.LiftoffRecipeProject.DTO;
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import org.launchcode.LiftoffRecipeProject.models.Recipe;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "users")
-public class User extends AbstractEntity {
+public class UserWithRecipesDTO {
 
+    private Integer id;
+
+    @NotBlank(message="First name cannot be blank")
+    @Size(min=1, max=30, message="First name must be between 1 and 30 characters")
     private String firstName;
+
+    @NotBlank(message="Last name cannot be blank")
+    @Size(min=1, max=30, message="Last name must be between 1 and 30 characters")
     private String lastName;
+
+    @Email(message = "Invalid email address")
+    @NotBlank(message = "Email is required")
     private String email;
-    private String password;
+
+    @NotBlank(message="Birthdate is required")
     private LocalDate dateOfBirth;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Recipe> recipes;
 
-    public User(String email, String password, String firstName, String lastName, LocalDate dateOfBirth) {
-        this.email = email;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.dateOfBirth = LocalDate.from(dateOfBirth);
-        if(this.recipes==null) {
-            this.recipes = new ArrayList<>();
-        }
+    public Integer getId() {
+        return id;
     }
 
-    public User(){}
-
-    // Getters and setters
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -56,14 +59,6 @@ public class User extends AbstractEntity {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public LocalDate getDateOfBirth() {
