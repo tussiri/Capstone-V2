@@ -137,7 +137,7 @@ function NewRecipePage() {
             style={{
                 position: "relative",
                 top: "-30px",
-                left: "-235px",
+                left: "-187px",
             }}
         >
             Dietary Preferences

@@ -124,6 +124,34 @@ function UpdateRecipePage() {
         ))}
       </TextField>
 
+        <h3
+            style={{
+                position: "relative",
+                top: "-30px",
+                left: "-187px",
+            }}
+        >
+            Dietary Preferences
+        </h3>
+
+        <TextField
+            id="outlined-select-currency"
+            select
+            size="small"
+            style={{
+                width: "25ch",
+                position: "relative",
+                top: "-40px",
+                left: "-150px",
+            }}
+        >
+            {DietaryPref.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                </MenuItem>
+            ))}
+        </TextField>
+
       <h3
         style={{
           position: "relative",
