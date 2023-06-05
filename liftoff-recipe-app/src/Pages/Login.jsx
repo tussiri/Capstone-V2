@@ -16,8 +16,9 @@ function Login () {
             password
         }).then(response => {
             localStorage.setItem('token', response.data.data.token);
+            localStorage.setItem('userId', response.data.data.id)
             console.log("Stored token:", localStorage.getItem('token'));
-            console.log("Server response:", response.data.data)
+            console.log("Server response:", response.data)
 
             navigate("/dashboard");
         }).catch(error => {

@@ -9,21 +9,31 @@ import AccountInfo from "./Pages/AccountInfo"
 import Dashboard from "./Pages/Dashboard";
 import RecipePage from "./Components/RecipePage";
 import ReviewPage from "./Components/ReviewPage";
+import {UserProvider} from "./stores/UserStore";
+import SearchResults from "./Pages/SearchResults";
 
 function App() {
     return (
         <div className="App">
-            <Routes>
-                <Route path="/" element={<HomePage/>}/>
-                <Route path="/login" element={<Login/>}/>
-                {/*<Route path = "/account" element={<AccountInfo/>}/>*/}
-                <Route path="/dashboard" element={<Dashboard/>}/>
-                <Route path="/signup" element={<SignUp/>}/>
-                <Route path="/newrecipe" element={<NewRecipePage/>}/>
-                <Route path="/updaterecipe" element={<UpdateRecipePage/>}/>
-                <Route path="/recipes/:id" element={<RecipePage/>}/>
-                <Route path="/recipes/:id/review" element={<ReviewPage/>}/>
-            </Routes>
+            <UserProvider>
+                <Routes>
+                    <Route path="/" element={<HomePage/>}/>
+                    <Route path="/login" element={<Login/>}/>
+                    {/*<Route path = "/account" element={<AccountInfo/>}/>*/}
+                    <Route path="/dashboard" element={<Dashboard/>}/>
+                    <Route path="/signup" element={<SignUp/>}/>
+                    <Route path="/newrecipe" element={<NewRecipePage/>}/>
+                    <Route path="/updaterecipe" element={<UpdateRecipePage/>}/>
+                    <Route path="/recipes/:recipeId" element={<RecipePage/>}/>
+                    <Route path="/recipes/:recipeId/review" element={<ReviewPage/>}/>
+                    <Route path="/review/:recipeId" component={ReviewPage}/>
+                    <Route path = "/searchresults" element={<SearchResults/>}/>
+                    {/*<Route path="/users/:userId/recipes/:recipeId" component={RecipePage} />*/}
+
+                    <Route path="/users/:id/recipes/:recipeId" component={RecipePage}/>
+
+                </Routes>
+            </UserProvider>
         </div>
     );
 }

@@ -14,36 +14,52 @@ function UpdateRecipePage() {
     setFile(URL.createObjectURL(e.target.files[0]));
   }
 
-  const categories = [
-    {
-      value: "Vgn",
-      label: "Vegan",
-    },
-    {
-      value: "Veg",
-      label: "Vegetarian",
-    },
-    {
-      value: "Non-Veg",
-      label: "Non-Vegetarian",
-    },
-    {
-      value: "App",
-      label: "Appetizers",
-    },
-    {
-      value: "Sou",
-      label: "Soups",
-    },
-    {
-      value: "Sal",
-      label: "Salads",
-    },
-    {
-      value: "DST",
-      label: "Dessert",
-    },
-  ];
+    const DietaryPref = [
+        {
+            value: "Vgn",
+            label: "Vegan",
+        },
+        {
+            value: "Veg",
+            label: "Vegetarian",
+        },
+        {
+            value: "Non-Veg",
+            label: "Non-Vegetarian",
+        },
+    ];
+    const categories = [
+
+        {
+            value: "App",
+            label: "Appetizers",
+        },
+        {
+            value: "DST",
+            label: "Dessert",
+        },
+        {
+            value: "BKFST",
+            label: "Breakfast",
+        },
+        {
+            value: "DNR",
+            label: "Dinner",
+        },
+        {
+            value: "LUN",
+            label: "Lunch",
+        },
+        // {
+        //   value: "Sou",
+        //   label: "Soups",
+        // },
+        // {
+        //   value: "Sal",
+        //   label: "Salads",
+        // },
+
+    ]
 
   const [flag, setFlag] = React.useState(true);
 

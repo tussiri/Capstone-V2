@@ -4,10 +4,12 @@ import {useParams, useNavigate,} from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 import "../Styles/ReviewPage.css"
+import authAxios from "../utility/authAxios";
+import {config} from "@fortawesome/fontawesome-svg-core";
 
 function ReviewPage() {
     const navigate = useNavigate()
-    const {id} = useParams();
+    const {recipeId, userId, reviewId} = useParams();
     const [review, setReview] = useState({
         comment: '',
         rating: ''
@@ -26,7 +28,7 @@ function ReviewPage() {
                                 type="radio"
                                 name="rating"
                                 value={ratingValue}
-                                onChange={handleChange}
+                                onChange={() => handleChange(ratingValue, 'rating')}
                             />
                             <FontAwesomeIcon icon={faStar} />
                         </label>
@@ -36,19 +38,32 @@ function ReviewPage() {
         );
     };
 
+
+    const handleChange = (e, fieldName = null) => {
+        if (fieldName) {
+            setReview(prevState => ({ ...prevState, [fieldName]: e }));
+        } else {
+            const { name, value } = e.target;
+            setReview(prevState => ({ ...prevState, [name]: value }));
+        }
+    };
+
+
     useEffect(() => {
         fetchReviews();
     }, []);
 
     const fetchReviews = () => {
-        const userId = localStorage.getItem('userId')
-        const token = localStorage.getItem('token');
-        const config = {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }
-        axios.get(`http://localhost:8080/review/recipe/${id}`, config)
+        // const userId = localStorage.getItem('userId')
+        // const token = localStorage.getItem('token');
+        // const config = {
+        //     headers: {
+        //         Authorization: `Bearer ${token}`
+        //     }
+        // }
+        console.log(recipeId);
+        authAxios
+            .get(`http://localhost:8080/review/recipe/${recipeId}`)
             .then(response => {
                 setReviews(response.data);
             })
@@ -60,33 +75,43 @@ function ReviewPage() {
 
 
     const handleSubmit = (e) => {
-        const userId = localStorage.getItem('id');
-        const token = localStorage.getItem('token');
-        const config = {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
+        const userId = localStorage.getItem('userId');
+        // const token = localStorage.getItem('token');
+        // const config = {
+        //     headers: {
+        //         Authorization: `Bearer ${token}`
+        //     }
+        // }
+
+        if (!userId) {
+            alert("You must be logged in to post a review");
+            navigate("/login");  // navigate to login page
+            return;  // stop the function execution
         }
+
+        console.log(reviewId);
+        console.log(userId)
         e.preventDefault();
 
         // submit the review
-        axios.post(`http://localhost:8080/review/user/${id}/recipe/${id}`, review, config)
+        authAxios
+            .post(`http://localhost:8080/review/user/${userId}/recipe/${recipeId}`, review)
             .then(response => {
-                console.log(response.data.data);
+                // console.log(response.data.data.id);
                 fetchReviews();
-                navigate(`/recipe/${id}`)
+                navigate(`/recipes/${recipeId}`)
             })
             .catch(error => {
                 console.error("Error submitting review", error);
             });
     }
 
-    const handleChange = (e) => {
-        setReview({
-            ...review,
-            [e.target.name]: e.target.value
-        });
-    }
+    // const handleChange = (e) => {
+    //     setReview({
+    //         ...review,
+    //         [e.target.name]: e.target.value
+    //     });
+    // }
 
     return (
         <div>
