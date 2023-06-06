@@ -1,9 +1,14 @@
+<<<<<<< HEAD
 import {Routes, Route} from "react-router-dom";
+=======
+import { Routes, Route } from "react-router-dom";
+>>>>>>> main
 import "./App.css";
 import HomePage from "./Pages/HomePage";
 import SignUp from "./Pages/SignUp";
 import NewRecipePage from "./Pages/NewRecipePage";
 import UpdateRecipePage from "./Pages/UpdateRecipePage";
+<<<<<<< HEAD
 import Login from "./Pages/Login"
 import AccountInfo from "./Pages/AccountInfo"
 import Dashboard from "./Pages/Dashboard";
@@ -39,5 +44,30 @@ function App() {
 }
 
 export default App;
+=======
+
+function App() {
+  return (
+    <div className="App">
+
+
+
+
+      <AccountInfo/>
+
+      <Routes>
+        <Route path="/" element={ <HomePage/> } />
+        <Route path="/signup" element={ <SignUp/> } />
+        <Route path="/newrecipe" element={ <NewRecipePage/> } />
+        <Route path="/updaterecipe" element={ <UpdateRecipePage /> } />
+      </Routes>
+
+    </div>
+  );
+}
+
+export default App;
+//        <Route path="/login" element={ <Login/> } />
+>>>>>>> main
 //        <Route path="/create" element={ <CreatePage/> } />
 //        <Route path="/profile" element={ <UserProfile/> } />
