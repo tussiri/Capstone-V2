@@ -55,7 +55,7 @@ const NavBar = () => {
     return (
         <div>
         <img src={Logo} alt='Logo' maxHeight="50" maxWidth="50"></img>
-        <h1 style={{fontFamily:'Ink Free', fontSize: 45}}>Mealify</h1>
+        <h1>Mealify</h1>
 
         {/*<Search>*/}
         {/*    <SearchIconWrapper>*/}
