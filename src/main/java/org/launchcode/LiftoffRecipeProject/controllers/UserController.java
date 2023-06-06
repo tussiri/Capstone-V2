@@ -1,13 +1,18 @@
 package org.launchcode.LiftoffRecipeProject.controllers;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.launchcode.LiftoffRecipeProject.DTO.ResponseWrapper;
 import org.launchcode.LiftoffRecipeProject.DTO.UserDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.UserWithRecipesDTO;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
+import org.launchcode.LiftoffRecipeProject.exception.InvalidSessionException;
 import org.launchcode.LiftoffRecipeProject.exception.ResourceNotFoundException;
 import org.launchcode.LiftoffRecipeProject.models.User;
+import org.launchcode.LiftoffRecipeProject.security.SessionUtil;
+import org.launchcode.LiftoffRecipeProject.services.UserService;
+import org.launchcode.LiftoffRecipeProject.util.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,36 +29,54 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private SessionUtil sessionUtil;
+
+    @Autowired
+    private UserService userService;
+
+
     @GetMapping
     public ResponseEntity<ResponseWrapper<Page<UserDTO>>> getAllUsers(Pageable pageable) {
         Page<User> users = userRepository.findAll(pageable);
         Page<UserDTO> userDTOs = users.map(this::mapToUserDTO);
-
         return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "All users returned successfully", userDTOs), HttpStatus.OK);
     }
 
+
     @GetMapping("/{userId}")
-    public ResponseEntity<ResponseWrapper<UserDTO>> getUser(@PathVariable Integer userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
+    public ResponseEntity<ResponseWrapper<UserDTO>> getUser(@PathVariable Integer userId, HttpServletRequest request) {
+        try {
+            User user = validateSessionAndGetUser(request);
+            Optional<User> optionalUser = userRepository.findById(userId);
 
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            UserDTO userDTO = mapToUserDTO(user);
+            if (!user.getId().equals(userId)) {
+                return new ResponseEntity<>(
+                        new ResponseWrapper<>(HttpStatus.FORBIDDEN.value(), "Access denied", null),
+                        HttpStatus.FORBIDDEN);
+            }
 
-            return new ResponseEntity<>(new ResponseWrapper<>("User retrieved successfully", userDTO), HttpStatus.OK);
-        } else {
-            throw new ResourceNotFoundException("User not found");
+            if (optionalUser.isPresent()) {
+                user = optionalUser.get();
+                UserDTO userDTO = mapToUserDTO(user);
+
+                return new ResponseEntity<>(new ResponseWrapper<>("User retrieved successfully", userDTO), HttpStatus.OK);
+            } else {
+                throw new ResourceNotFoundException("User not found");
+            }
+        } catch (InvalidSessionException e) {
+            return new ResponseEntity<>(
+                    new ResponseWrapper<>(HttpStatus.FORBIDDEN.value(), e.getMessage(), null),
+                    HttpStatus.FORBIDDEN
+            );
         }
     }
 
     @GetMapping("/with-recipes")
     public ResponseEntity<ResponseWrapper<Page<UserWithRecipesDTO>>> getAllUsersWithRecipes(Pageable pageable) {
-        Page<User> users = userRepository.findAll(pageable);
-        Page<UserWithRecipesDTO> userWithRecipesDTOs = users.map(this::mapToUserWithRecipesDTO);
-
-        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "All users with recipes retrieved successfully", userWithRecipesDTOs), HttpStatus.OK);
+        Page<UserWithRecipesDTO> userWithRecipesDTOs = userService.getAllUsersWithRecipes(pageable);
+        return ResponseUtil.wrapResponse(userWithRecipesDTOs, HttpStatus.OK, "All users with recipes retrieved successfully");
     }
-
     @PutMapping("/{id}")
     public ResponseEntity<ResponseWrapper<UserDTO>> updateUser(@Valid @PathVariable Integer id, @RequestBody User updatedUser) {
         Optional<User> optionalUser = userRepository.findById(id);
@@ -82,6 +105,17 @@ public class UserController {
         } else {
             throw new ResourceNotFoundException("User not found");
         }
+    }
+
+
+    private User validateSessionAndGetUser(HttpServletRequest request) {
+        String sessionToken = request.getHeader("X-Session-Token");
+
+        if (!sessionUtil.isValidSession(sessionToken)) {
+            throw new InvalidSessionException("Invalid session or session expired");
+        }
+        return sessionUtil.getUserFromSession(sessionToken);
+
     }
 
     private UserDTO mapToUserDTO(User user) {
