@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-=======
-import React, { useState } from "react";
-import "../SignUp.css";
->>>>>>> main
 import Logo from "../Assets/logo-removebg-preview 1.png";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
@@ -15,7 +10,6 @@ import FavoriteTwoToneIcon from "@mui/icons-material/FavoriteTwoTone";
 import "../SignUp.css";
 
 function NewRecipePage() {
-<<<<<<< HEAD
     const DietaryPref = [
         {
             value: "Vgn",
@@ -60,54 +54,6 @@ function NewRecipePage() {
         //   value: "Sal",
         //   label: "Salads",
         // },
-=======
-  const [file, setFile] = useState();
-  function handleChange(e) {
-    console.log(e.target.files);
-    setFile(URL.createObjectURL(e.target.files[0]));
-  }
-
-  const categories = [
-    {
-      value: "BKFST",
-      label: "Breakfast",
-    },
-    {
-      value: "LUN",
-      label: "Lunch",
-    },
-    {
-      value: "DIN",
-      label: "Dinner",
-    },
-    {
-      value: "App",
-      label: "Appetizers",
-    },
-    {
-      value: "DST",
-      label: "Dessert",
-    },
-
-  ];
-
-  const DietaryPref=[
-          {
-            value: "Vgn",
-            label: "Vegan",
-          },
-          {
-            value: "Veg",
-            label: "Vegetarian",
-          },
-          {
-            value: "Non-Veg",
-            label: "Non-Vegetarian",
-          },
-      ];
-
-  const [flag, setFlag] = React.useState(true);
->>>>>>> main
 
     ];
 
@@ -231,7 +177,6 @@ function NewRecipePage() {
                 ))}
             </TextField>
 
-<<<<<<< HEAD
             <h3
                 style={{
                     position: "relative",
@@ -241,17 +186,6 @@ function NewRecipePage() {
             >
                 Description
             </h3>
-=======
-      <h3
-        style={{
-          position: "relative",
-          top: "-30px",
-          left: "-235px",
-        }}
-      >
-        Allergens
-      </h3>
->>>>>>> main
 
             <TextField
                 id="outlined-multiline-flexible"
@@ -266,7 +200,6 @@ function NewRecipePage() {
                 }}
             />
 
-<<<<<<< HEAD
             <div
                 style={{
                     position: "relative",
@@ -305,17 +238,6 @@ function NewRecipePage() {
                     }}
                 />
             </div>
-=======
-      <h3
-        style={{
-          position: "relative",
-          top: "-30px",
-          left: "-230px",
-        }}
-      >
-        Directions
-      </h3>
->>>>>>> main
 
             <h3
                 style={{
@@ -327,7 +249,6 @@ function NewRecipePage() {
                 Ingredients
             </h3>
 
-<<<<<<< HEAD
             <TextField
                 id="outlined-multiline-flexible"
                 size="small"
@@ -393,43 +314,6 @@ function NewRecipePage() {
             </div>
         </>
     );
-=======
-      <div
-        className="App"
-        style={{
-          position: "relative",
-          top: "-30px",
-          left: "-210px",
-        }}
-      >
-        <h3>Upload Photos:</h3>
-        <input
-          style={{
-            position: "relative",
-            top: "-5px",
-            left: "60px",
-          }}
-          type="file"
-          onChange={handleChange}
-        />
-        <div
-          style={{
-            position: "relative",
-            top: "10px",
-            left: "100px",
-          }}
-        >
-          <img src={file} />
-        </div>
-      </div>
-      <div style={{ position: "relative", top: "20px" }}>
-        <Button variant="contained" color="success">
-          Submit
-        </Button>
-      </div>
-    </>
-  );
->>>>>>> main
 }
 
 export default NewRecipePage;
