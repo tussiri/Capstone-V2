@@ -8,6 +8,7 @@ import org.launchcode.LiftoffRecipeProject.data.UserRepository;
 import org.launchcode.LiftoffRecipeProject.exception.ResourceNotFoundException;
 import org.launchcode.LiftoffRecipeProject.models.Ingredient;
 import org.launchcode.LiftoffRecipeProject.models.Recipe;
+import org.launchcode.LiftoffRecipeProject.models.RecipeData;
 import org.launchcode.LiftoffRecipeProject.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,12 +25,14 @@ public class RecipeService {
     private final RecipeRepository recipeRepository;
     private final IngredientRepository ingredientRepository;
     private final UserRepository userRepository;
+    private final RecipeData recipeData;
 
     @Autowired
-    public RecipeService(RecipeRepository recipeRepository, IngredientRepository ingredientRepository, UserRepository userRepository) {
+    public RecipeService(RecipeRepository recipeRepository, IngredientRepository ingredientRepository, UserRepository userRepository, RecipeData recipeData) {
         this.recipeRepository = recipeRepository;
         this.ingredientRepository = ingredientRepository;
         this.userRepository = userRepository;
+        this.recipeData=recipeData;
     }
 
     public RecipeDTO mapToDTO(Recipe recipe) {
@@ -78,12 +81,16 @@ public class RecipeService {
     }
 
     private Ingredient mapDTOToIngredient(String ingredientName) {
-        return ingredientRepository.findByName(ingredientName)
-                .orElseGet(() -> {
-                    Ingredient ingredient = new Ingredient();
-                    ingredient.setName(ingredientName);
-                    return ingredientRepository.save(ingredient);
-                });
+        Ingredient ingredient = new Ingredient();
+        ingredient.setName(ingredientName);
+        return ingredient;
+
+//        return ingredientRepository.findByName(ingredientName)
+//                .orElseGet(() -> {
+//                    Ingredient ingredient = new Ingredient();
+//                    ingredient.setName(ingredientName);
+//                    return ingredientRepository.save(ingredient);
+//                });
     }
 
     public RecipeDTO createRecipe(Integer userId, RecipeDTO recipeDTO) {
@@ -99,11 +106,7 @@ public class RecipeService {
 
     public Optional<RecipeDTO> findById(Integer id) {
         Optional<Recipe> recipe = recipeRepository.findById(id);
-        if (recipe.isPresent()) {
-            return Optional.of(mapToDTO(recipe.get()));
-        } else {
-            return Optional.empty();
-        }
+        return recipe.map(this::mapToDTO);
     }
 
     public Page<RecipeDTO> findAllRecipes(Pageable pageable){
@@ -141,5 +144,13 @@ public class RecipeService {
         } else {
             throw new ResourceNotFoundException("Recipe not found");
         }
+    }
+
+    public Page<RecipeDTO> searchRecipes(Specification<Recipe> spec, Pageable pageable){
+        return recipeRepository.findAll(spec, pageable).map(this::mapToDTO);
+    }
+
+    public Page<Recipe> getRecipesByIngredient(String ingredientName, Pageable pageable){
+        return recipeRepository.getRecipesByIngredient(ingredientName,pageable);
     }
 }

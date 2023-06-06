@@ -14,6 +14,54 @@ function UpdateRecipePage() {
     setFile(URL.createObjectURL(e.target.files[0]));
   }
 
+<<<<<<< HEAD
+    const DietaryPref = [
+        {
+            value: "Vgn",
+            label: "Vegan",
+        },
+        {
+            value: "Veg",
+            label: "Vegetarian",
+        },
+        {
+            value: "Non-Veg",
+            label: "Non-Vegetarian",
+        },
+    ];
+    const categories = [
+
+        {
+            value: "App",
+            label: "Appetizers",
+        },
+        {
+            value: "DST",
+            label: "Dessert",
+        },
+        {
+            value: "BKFST",
+            label: "Breakfast",
+        },
+        {
+            value: "DNR",
+            label: "Dinner",
+        },
+        {
+            value: "LUN",
+            label: "Lunch",
+        },
+        // {
+        //   value: "Sou",
+        //   label: "Soups",
+        // },
+        // {
+        //   value: "Sal",
+        //   label: "Salads",
+        // },
+
+    ]
+=======
   const categories = [
     {
       value: "BKFST",
@@ -51,6 +99,7 @@ function UpdateRecipePage() {
             label: "Non-Vegetarian",
           },
       ];
+>>>>>>> main
 
   const [flag, setFlag] = React.useState(true);
 
@@ -131,6 +180,37 @@ function UpdateRecipePage() {
         ))}
       </TextField>
 
+<<<<<<< HEAD
+        <h3
+            style={{
+                position: "relative",
+                top: "-30px",
+                left: "-187px",
+            }}
+        >
+            Dietary Preferences
+        </h3>
+
+        <TextField
+            id="outlined-select-currency"
+            select
+            size="small"
+            style={{
+                width: "25ch",
+                position: "relative",
+                top: "-40px",
+                left: "-150px",
+            }}
+        >
+            {DietaryPref.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                </MenuItem>
+            ))}
+        </TextField>
+
+=======
+>>>>>>> main
       <h3
         style={{
           position: "relative",
@@ -298,4 +378,8 @@ function UpdateRecipePage() {
   );
 }
 
+<<<<<<< HEAD
 export default UpdateRecipePage;
+=======
+export default UpdateRecipePage;
+>>>>>>> main

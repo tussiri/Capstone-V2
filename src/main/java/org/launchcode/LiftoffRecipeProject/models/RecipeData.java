@@ -1,10 +1,12 @@
 package org.launchcode.LiftoffRecipeProject.models;
 
 
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
-import java.util.Locale;
 
 
+@Service
 public class RecipeData {
 
     public static ArrayList<Recipe> findByColumnAndValue(String column, String value, Iterable<Recipe> allRecipes) {
