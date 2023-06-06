@@ -14,6 +14,7 @@ function UpdateRecipePage() {
     setFile(URL.createObjectURL(e.target.files[0]));
   }
 
+<<<<<<< HEAD
     const DietaryPref = [
         {
             value: "Vgn",
@@ -60,6 +61,45 @@ function UpdateRecipePage() {
         // },
 
     ]
+=======
+  const categories = [
+    {
+      value: "BKFST",
+      label: "Breakfast",
+    },
+    {
+      value: "LUN",
+      label: "Lunch",
+    },
+    {
+      value: "DIN",
+      label: "Dinner",
+    },
+    {
+      value: "App",
+      label: "Appetizers",
+    },
+    {
+      value: "DST",
+      label: "Dessert",
+    },
+  ];
+
+  const DietaryPref=[
+          {
+            value: "Vgn",
+            label: "Vegan",
+          },
+          {
+            value: "Veg",
+            label: "Vegetarian",
+          },
+          {
+            value: "Non-Veg",
+            label: "Non-Vegetarian",
+          },
+      ];
+>>>>>>> main
 
   const [flag, setFlag] = React.useState(true);
 
@@ -140,6 +180,7 @@ function UpdateRecipePage() {
         ))}
       </TextField>
 
+<<<<<<< HEAD
         <h3
             style={{
                 position: "relative",
@@ -168,6 +209,8 @@ function UpdateRecipePage() {
             ))}
         </TextField>
 
+=======
+>>>>>>> main
       <h3
         style={{
           position: "relative",
@@ -335,4 +378,8 @@ function UpdateRecipePage() {
   );
 }
 
+<<<<<<< HEAD
 export default UpdateRecipePage;
+=======
+export default UpdateRecipePage;
+>>>>>>> main
