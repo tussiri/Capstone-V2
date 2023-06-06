@@ -17,22 +17,20 @@ function SearchResults() {
         if (query.trim() === "http://localhost:8080/recipes/search?") {
             authAxios.get('http://localhost:8080/recipes/random')
                 .then(response => {
-                    console.log(response.data)
-                    setSearchResults(response.data )
+                    setSearchResults(response.data)
                 })
                 .catch(error => {
                     console.error(error);
-                    navigate('/')
+                    navigate('/login')
                 });
         } else {
             authAxios.get(query)
                 .then(response => {
-                    console.log(response.data.data)
                     setSearchResults(response.data.data);
                 })
                 .catch(error => {
                     console.error(error);
-                    navigate('/')
+                    navigate('/login')
                 });
         }
     }, [query, navigate]);
