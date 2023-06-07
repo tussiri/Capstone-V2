@@ -1,17 +1,23 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import {Link, useParams} from 'react-router-dom'
 import authAxios from "../utility/authAxios";
+import {UserContext} from "../stores/UserStore";
+import LoadingScreen from "../Pages/LoadingPage";
 
 function RecipePage({match}) {
     const [recipe, setRecipe] = useState(null);
     const [reviews, setReviews] = useState([]);
     const {recipeId, userId} = useParams();
+    const [isLoading, setIsLoading]=useState(false);
+
+    const {user} =useContext(UserContext);
 
     useEffect(() => {
         // const token = localStorage.getItem('token');
         // const userId = localStorage.getItem('userId')
         console.log(recipeId);
+        setIsLoading(true)
         authAxios
             .get(`http://localhost:8080/recipes/${recipeId}`)
             .then((response) => {
@@ -29,7 +35,7 @@ function RecipePage({match}) {
     }, [recipeId]);
 
     if (!recipe) {
-        return <div>Loading...</div>;
+        return <LoadingScreen/>;
     }
 
     return (
@@ -45,18 +51,23 @@ function RecipePage({match}) {
 
             <h3>Reviews:</h3>
             {reviews.length > 0 ? (
-                reviews.map((review) => (
-                    <div key={review.id}>
-                        <p>Rating: {review.rating}</p>
-                        <p>{review.comment}</p>
+                <>
+                    <div key={reviews[0].id}>
+                        <p>Rating: {reviews[0].rating}</p>
+                        <p>{reviews[0].comment}</p>
                     </div>
-                ))
+                    <Link to={`http://localhost:8080/review/recipes/${recipe.id}/reviews`}>
+                        View all reviews
+                    </Link>
+                </>
             ) : (
-                <p>No reviews yet. Be the first!</p>
+                user ? (
+                        <p><Link to={`/recipes/${recipe.id}/review`}>No reviews yet. Be the first!</Link></p>
+                    ):(
+                        <p>You must be <Link to="/login">logged in </Link> to leave a review.</p>
+                    )
             )}
-
-            <Link
-                to={`/recipes/${recipe.id}/review`}>{reviews.length > 0 ? "Leave your review" : "Be the first to review this recipe!"}</Link>
+            {user && <Link to={"/recipes/${recipe.id}/review"}>Leave your review</Link>}
         </div>
     );
 }

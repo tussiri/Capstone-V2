@@ -65,6 +65,7 @@ function ReviewPage() {
         authAxios
             .get(`http://localhost:8080/review/recipe/${recipeId}`)
             .then(response => {
+                console.log("Response Data: ", response.data)
                 setReviews(response.data);
             })
             .catch(error => {
