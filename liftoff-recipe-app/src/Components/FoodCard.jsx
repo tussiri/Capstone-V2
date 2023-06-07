@@ -4,6 +4,7 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
+import stockImage from '../Assets/logo-removebg-preview 1.png';
 
 function FoodCard({recipe, onClick}) {
     return (
@@ -12,7 +13,7 @@ function FoodCard({recipe, onClick}) {
                 <CardMedia
                     component="img"
                     height="150"
-                    image={recipe.picture}
+                    image={recipe.picture ? recipe.picture : stockImage}
                     alt={recipe.name}
                 />
                 <CardContent>
