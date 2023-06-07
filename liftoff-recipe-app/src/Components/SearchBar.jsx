@@ -13,7 +13,8 @@ import {useNavigate} from "react-router-dom"
 import axios from "axios";
 import authAxios from "../utility/authAxios";
 
-const SearchBar = () => {
+const SearchBar = ({onSearch}) => {
+    const [inputValue, setInputValue] = useState('')
     const [selectedOption, setSelectedOption] = useState('All');
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
@@ -24,29 +25,32 @@ const SearchBar = () => {
 
     const handleSearchTermChange = (event) => {
         setSearchTerm(event.target.value);
+        if (onSearch) {
+            onSearch(event.target.value)
+        }
     };
 
     const handleSearch = () => {
-            let url = "http://localhost:8080/recipes/search?";
-            switch (selectedOption) {
-                case 'All':
-                    url += `name=${searchTerm}`
-                    break;
-                case 'By Ingredient':
-                    url += `ingredients=${searchTerm}`
-                    break;
-                case 'By Time to Prepare':
-                    url += `time=<${searchTerm}`
-                    break;
-                default:
-                    break;
-            }
+        let url = "http://localhost:8080/recipes/search?";
+        switch (selectedOption) {
+            case 'All':
+                url += `name=${searchTerm}`
+                break;
+            case 'By Ingredient':
+                url += `ingredients=${searchTerm}`
+                break;
+            case 'By Time to Prepare':
+                url += `time=<${searchTerm}`
+                break;
+            default:
+                break;
+        }
 
-            // const token = localStorage.getItem('token')
-            // console.log("Retrieved token:", token);
+        // const token = localStorage.getItem('token')
+        // console.log("Retrieved token:", token);
 
-            navigate('/searchresults', { state: { query: url } });
-        };
+        navigate('/searchresults', {state: {query: url}});
+    };
 
     return (
         <div>
