@@ -1,5 +1,6 @@
 import {Routes, Route} from "react-router-dom";
 import "./App.css";
+// import "./Styles/global.css"
 import HomePage from "./Pages/HomePage";
 import SignUp from "./Pages/SignUp";
 import NewRecipePage from "./Pages/NewRecipePage";
@@ -21,13 +22,14 @@ function App() {
                     <Route path="/login" element={<Login/>}/>
                     {/*<Route path = "/account" element={<AccountInfo/>}/>*/}
                     <Route path="/dashboard" element={<Dashboard/>}/>
+                    <Route path="/dashboard/newrecipe" element={<NewRecipePage/>}/>
                     <Route path="/signup" element={<SignUp/>}/>
                     <Route path="/newrecipe" element={<NewRecipePage/>}/>
                     <Route path="/updaterecipe" element={<UpdateRecipePage/>}/>
                     <Route path="/recipes/:recipeId" element={<RecipePage/>}/>
                     <Route path="/recipes/:recipeId/review" element={<ReviewPage/>}/>
                     <Route path="/review/:recipeId" component={ReviewPage}/>
-                    <Route path = "/searchresults" component={<SearchResults/>}/>
+                    <Route path = "/searchresults" element={<SearchResults/>}/>
                     {/*<Route path="/users/:userId/recipes/:recipeId" component={RecipePage} />*/}
 
                     <Route path="/users/:id/recipes/:recipeId" component={RecipePage}/>

@@ -1,17 +1,42 @@
 import React from "react"
+import Card from '@mui/material/Card'
+import CardMedia from '@mui/material/CardMedia';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import CardActionArea from '@mui/material/CardActionArea';
 
-function FoodCard({recipe, onClick}){
-    return(
-        <div onClick={onClick}>
-            <img src={recipe.picture} alt={recipe.name}/>
-            <h2>{recipe.name}</h2>
-            <p>{recipe.description}</p>
-            <p>Category: {recipe.category}</p>
-            <p>Preparation Time: {recipe.time} minutes</p>
-            <p>Ingredients: {recipe.ingredients ? recipe.ingredients.join(", ") : ""}</p>
-            <p>Directions: {recipe.directions}</p>
-            <p>Rating: {recipe.rating}</p>
-        </div>
+function FoodCard({recipe, onClick}) {
+    return (
+        <Card onClick={onClick} className='recipe-card'>
+            <CardActionArea>
+                <CardMedia
+                    component="img"
+                    height="150"
+                    image={recipe.picture}
+                    alt={recipe.name}
+                />
+                <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                        {recipe.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        {recipe.description}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        Category: {recipe.category}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        Preparation Time: {recipe.time} minutes
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        Directions: {recipe.directions}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        Rating: {recipe.rating}
+                    </Typography>
+                </CardContent>
+            </CardActionArea>
+        </Card>
     );
 }
 
