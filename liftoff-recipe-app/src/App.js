@@ -5,6 +5,7 @@ import HomePage from "./Pages/HomePage";
 import SignUp from "./Pages/SignUp";
 import NewRecipePage from "./Pages/NewRecipePage";
 import UpdateRecipePage from "./Pages/UpdateRecipePage";
+import DeleteRecipePage from "./Pages/DeleteRecipePage";
 import Login from "./Pages/Login"
 import AccountInfo from "./Pages/AccountInfo"
 import Dashboard from "./Pages/Dashboard";
@@ -26,6 +27,7 @@ function App() {
                     <Route path="/signup" element={<SignUp/>}/>
                     <Route path="/newrecipe" element={<NewRecipePage/>}/>
                     <Route path="/updaterecipe" element={<UpdateRecipePage/>}/>
+                    <Route path="/deleterecipe" element={ <DeleteRecipePage/> } />
                     <Route path="/recipes/:recipeId" element={<RecipePage/>}/>
                     <Route path="/recipes/:recipeId/review" element={<ReviewPage/>}/>
                     <Route path="/review/:recipeId" component={ReviewPage}/>
