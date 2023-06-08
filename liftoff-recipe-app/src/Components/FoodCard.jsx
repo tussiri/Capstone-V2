@@ -4,7 +4,7 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
-import stockImage from '../Assets/logo-removebg-preview 1.png';
+import stockImage from '../Assets/MealifyNoImage.png';
 
 function FoodCard({recipe, onClick}) {
     return (

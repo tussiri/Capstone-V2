@@ -53,6 +53,7 @@ public class SecurityConfig {
                         new AntPathRequestMatcher("/recipes/random", "GET"),
                         new AntPathRequestMatcher("/review", "GET"),
                         new AntPathRequestMatcher("/review/recipe/{recipeId}", "GET"),
+                        new AntPathRequestMatcher("/recipes/{recipeId}", "PUT"),
                         new AntPathRequestMatcher("/review/{id}", "GET"))
                 .permitAll()
                 .anyRequest().authenticated()

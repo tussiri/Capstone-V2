@@ -11,6 +11,8 @@ public class RecipeDTO {
 
     private Integer id;
 
+    private Integer userId;
+
     @NotBlank(message = "Recipe name required")
     @Size(min=1, max=100, message = "Recipe name must be between 1 and 100 characters")
     private String name;
@@ -125,5 +127,13 @@ public class RecipeDTO {
 
     public void setRating(Double rating) {
         this.rating = rating;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 }
