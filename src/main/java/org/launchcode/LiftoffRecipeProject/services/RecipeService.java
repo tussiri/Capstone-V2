@@ -1,9 +1,11 @@
 package org.launchcode.LiftoffRecipeProject.services;
 
 
+import org.launchcode.LiftoffRecipeProject.DTO.IngredientDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.RecipeDTO;
 import org.launchcode.LiftoffRecipeProject.data.IngredientRepository;
 import org.launchcode.LiftoffRecipeProject.data.RecipeRepository;
+import org.launchcode.LiftoffRecipeProject.data.ReviewRepository;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
 import org.launchcode.LiftoffRecipeProject.exception.ResourceNotFoundException;
 import org.launchcode.LiftoffRecipeProject.models.Ingredient;
@@ -16,6 +18,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -24,16 +29,24 @@ public class RecipeService {
 
     private final RecipeRepository recipeRepository;
     private final IngredientRepository ingredientRepository;
+
+    private final ReviewRepository reviewRepository;
+
+    private final IngredientService ingredientService;
     private final UserRepository userRepository;
     private final RecipeData recipeData;
+    private Ingredient ingredient;
 
     @Autowired
-    public RecipeService(RecipeRepository recipeRepository, IngredientRepository ingredientRepository, UserRepository userRepository, RecipeData recipeData) {
+    public RecipeService(RecipeRepository recipeRepository, IngredientRepository ingredientRepository, UserRepository userRepository, RecipeData recipeData, IngredientService ingredientService, ReviewRepository reviewRepository) {
         this.recipeRepository = recipeRepository;
         this.ingredientRepository = ingredientRepository;
         this.userRepository = userRepository;
-        this.recipeData=recipeData;
+        this.recipeData = recipeData;
+        this.ingredientService = ingredientService;
+        this.reviewRepository = reviewRepository;
     }
+
 
     public RecipeDTO mapToDTO(Recipe recipe) {
         RecipeDTO recipeDTO = new RecipeDTO();
@@ -47,11 +60,15 @@ public class RecipeService {
         recipeDTO.setFavorite(recipe.getFavorite());
         recipeDTO.setPicture(recipe.getPicture());
         recipeDTO.setAllergens(recipe.getAllergens());
-        recipeDTO.setRating(recipe.getRating());
+//        recipeDTO.setRating(recipe.getRating());
+
+        Double averageRating = reviewRepository.findAverageRatingByRecipeId(recipe.getId());
+        recipeDTO.setRating(averageRating != null ? averageRating : 0);
 
         recipeDTO.setIngredients(
                 recipe.getIngredients().stream()
-                        .map(Ingredient::getName)
+                        .map(ingredient -> ingredient.getName())
+//                        .map(ingredient -> ingredient.getQuantity()+ ": " + ingredient.getName())
                         .collect(Collectors.toList())
         );
 
@@ -71,20 +88,38 @@ public class RecipeService {
         recipe.setAllergens(recipeDTO.getAllergens());
         recipe.setRating(recipeDTO.getRating());
 
-        recipe.setIngredients(
-                recipeDTO.getIngredients().stream()
-                        .map(this::mapDTOToIngredient)
-                        .collect(Collectors.toList())
+        List<Ingredient> ingredients = ingredientService.saveAll(
+                recipeDTO.getIngredients().stream().map(name -> {
+                    Ingredient ingredient = new Ingredient();
+                    ingredient.setName(name);
+                    return ingredient;
+                }).collect(Collectors.toList())
         );
 
+//        recipe.setIngredients(
+//                recipeDTO.getIngredients().stream()
+//                        .map(this::mapDTOToIngredient)
+//                        .collect(Collectors.toList())
+//        );
+        recipe.setIngredients(recipeDTO.getIngredients().stream()
+                .map(this::mapDTOToIngredient)
+                .collect(Collectors.toList()));
+
         return recipe;
+    }
+
+    public IngredientDTO mapToIngredientDTO(Ingredient ingredient) {
+        IngredientDTO ingredientDTO = new IngredientDTO();
+        ingredientDTO.setId(ingredient.getId());
+        ingredientDTO.setName(ingredientDTO.getName());
+        return ingredientDTO;
     }
 
     private Ingredient mapDTOToIngredient(String ingredientName) {
         Ingredient ingredient = new Ingredient();
         ingredient.setName(ingredientName);
         return ingredient;
-
+//
 //        return ingredientRepository.findByName(ingredientName)
 //                .orElseGet(() -> {
 //                    Ingredient ingredient = new Ingredient();
@@ -98,7 +133,26 @@ public class RecipeService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Recipe recipe = mapToEntity(recipeDTO);
+//        List<Ingredient> savedIngredients = new ArrayList<>();
+//        for (String ingredientName : recipeDTO.getIngredients()) {
+//            Ingredient ingredient = new Ingredient();
+//            ingredient.setName(ingredientName);
+//            savedIngredients.add(ingredientRepository.save(ingredient));
+//        }
+        List<Ingredient> savedIngredients = new ArrayList<>();
+        for (String ingredientName : recipeDTO.getIngredients()) {
+            Ingredient ingredient = ingredientRepository.findByName(ingredientName)
+                    .orElseGet(() -> {
+                        Ingredient newIngredient = new Ingredient();
+                        newIngredient.setName(ingredientName);
+                        return ingredientRepository.save(newIngredient);
+                    });
+            savedIngredients.add(ingredient);
+        }
+
+
         recipe.setUser(user);
+        recipe.setIngredients(savedIngredients);
         Recipe savedRecipe = recipeRepository.save(recipe);
 
         return mapToDTO(savedRecipe);
@@ -109,7 +163,7 @@ public class RecipeService {
         return recipe.map(this::mapToDTO);
     }
 
-    public Page<RecipeDTO> findAllRecipes(Pageable pageable){
+    public Page<RecipeDTO> findAllRecipes(Pageable pageable) {
         return recipeRepository.findAll(pageable)
                 .map(this::mapToDTO);
     }
@@ -127,6 +181,17 @@ public class RecipeService {
         recipe.setName(updatedRecipe.getName());
         recipe.setDescription(updatedRecipe.getDescription());
         recipe.setCategory(updatedRecipe.getCategory());
+
+        List<Ingredient> updatedIngredients = new ArrayList<>();
+        for (String ingredientName : recipeDTO.getIngredients()) {
+            Ingredient ingredient = ingredientRepository.findByName(ingredientName)
+                    .orElseGet(() -> {
+                        Ingredient newIngredient = new Ingredient();
+                        newIngredient.setName(ingredientName);
+                        return ingredientRepository.save(newIngredient);
+                    });
+            updatedIngredients.add(ingredient);
+        }
         recipe.setIngredients(updatedRecipe.getIngredients());
         recipe.setDirections(updatedRecipe.getDirections());
         recipe.setTime(updatedRecipe.getTime());
@@ -146,11 +211,39 @@ public class RecipeService {
         }
     }
 
-    public Page<RecipeDTO> searchRecipes(Specification<Recipe> spec, Pageable pageable){
+    public Page<RecipeDTO> searchRecipes(Specification<Recipe> spec, Pageable pageable) {
         return recipeRepository.findAll(spec, pageable).map(this::mapToDTO);
     }
 
-    public Page<Recipe> getRecipesByIngredient(String ingredientName, Pageable pageable){
-        return recipeRepository.getRecipesByIngredient(ingredientName,pageable);
+    public Page<RecipeDTO> getRecipesByName(String name, Pageable pageable) {
+        return recipeRepository.findByNameContaining(name, pageable).map(this::mapToDTO);
     }
+
+    public Page<RecipeDTO> getRecipesByIngredient(String ingredientName, Pageable pageable) {
+        Ingredient ingredient = ingredientRepository.findByName(ingredientName)
+                .orElseThrow(() -> new ResourceNotFoundException("Ingredient not found"));
+        return recipeRepository.findByIngredientsNameContaining(ingredient, pageable).map(this::mapToDTO);
+    }
+
+    public Page<RecipeDTO> getRecipesByUser(Integer userId, Pageable pageable) {
+        return recipeRepository.findByUserId(userId, pageable).map(this::mapToDTO);
+    }
+
+    public Double findAverageRatingByRecipeId(Integer recipeId) {
+        return reviewRepository.findAverageRatingByRecipeId(recipeId);
+    }
+
+    public List<Recipe> getRandomRecipes(int numRecipes) {
+        List<Recipe> allRecipes = recipeRepository.findAll();
+        Collections.shuffle(allRecipes);
+        return allRecipes.subList(0, Math.min(numRecipes, allRecipes.size()));
+    }
+
+
+//    public IngredientDTO mapToIngredientDTO(Ingredient ingredient){
+//        IngredientDTO ingredientDTO=new IngredientDTO();
+//        ingredientDTO.setId(ingredient.getId());
+//        ingredientDTO.setName(ingredientDTO.getName());
+//        return ingredientDTO;
+//    }
 }

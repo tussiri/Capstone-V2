@@ -4,10 +4,12 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.launchcode.LiftoffRecipeProject.models.User;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
-public class UserDTO {
+public class UserDTO extends User {
 
     private Integer id;
 
@@ -28,6 +30,7 @@ public class UserDTO {
     private String lastName;
 
     @NotNull(message="Birthdate is required")
+    @DateTimeFormat(pattern="MM/dd/yyyy")
     private LocalDate dateOfBirth;
 
     private String token;

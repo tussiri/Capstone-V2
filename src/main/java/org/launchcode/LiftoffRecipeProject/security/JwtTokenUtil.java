@@ -67,5 +67,5 @@
              }
              return claims;
          }
-     }
 
+ }
