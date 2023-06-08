@@ -71,6 +71,18 @@ function Dashboard() {
                     <Link to="newrecipe">
                         <Button variant="contained">New Recipe</Button>
                     </Link>
+                    <Button variant="contained" onClick={() => logout(navigate)}>Log Out</Button>
+                </>
+            )}
+            {!user && (
+                <>
+                    <Link to="login">
+                        <Button variant="contained">Log In</Button>
+                    </Link>
+                    <span>&nbsp;&nbsp;&nbsp;</span>
+                    <Link to="signup">
+                        <Button variant="contained">Sign Up</Button>
+                    </Link>
                 </>
             )}
             <div className={'container'}>
@@ -78,7 +90,7 @@ function Dashboard() {
                 <div className={"app-main"}>
                     {user ? (
                         <>
-                            <Button variant="contained" onClick={logout}>Log Out</Button>
+                            {/*<Button variant="contained" onClick={logout}>Log Out</Button>*/}
                             <h2>Your Recipes</h2>
                             {recipes && recipes.length > 0 && recipes.map((recipe) => (
                                 <FoodCard

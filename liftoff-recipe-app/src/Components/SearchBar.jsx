@@ -21,10 +21,12 @@ const SearchBar = ({onSearch}) => {
 
     const handleOptionChange = (event) => {
         setSelectedOption(event.target.value);
+        console.log(`selected option: `, event.target.value)
     };
 
     const handleSearchTermChange = (event) => {
         setSearchTerm(event.target.value);
+        console.log('search term: ', event.target.value)
         if (onSearch) {
             onSearch(event.target.value)
         }
@@ -42,9 +44,17 @@ const SearchBar = ({onSearch}) => {
             case 'By Time to Prepare':
                 url += `time=<${searchTerm}`
                 break;
+            case 'Category':
+                url += `category=${searchTerm}`
+                break;
+            // case 'By rating':
+            //     url += `rating=<${searchTerm}`
+            //     break;
             default:
                 break;
         }
+
+        console.log('Url: ', url)
 
         // const token = localStorage.getItem('token')
         // console.log("Retrieved token:", token);
@@ -73,6 +83,8 @@ const SearchBar = ({onSearch}) => {
                     <MenuItem value="All">All Recipes</MenuItem>
                     <MenuItem value="By Ingredient">Ingredients</MenuItem>
                     <MenuItem value="By Time to Prepare">Time To Prepare</MenuItem>
+                    <MenuItem value="Category">Category</MenuItem>
+                    {/*<MenuItem value="By rating">Rating</MenuItem>*/}
                 </Select>
             </FormControl>
             <Button sx={{m: 2}} variant="contained" onClick={handleSearch} startIcon={<SearchIcon/>}>Go</Button>
