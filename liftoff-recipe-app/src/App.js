@@ -1,6 +1,7 @@
 import {Routes, Route} from "react-router-dom";
 import "./App.css";
 // import "./Styles/global.css"
+import { createTheme, colors, ThemeProvider } from '@mui/material';
 import HomePage from "./Pages/HomePage";
 import SignUp from "./Pages/SignUp";
 import NewRecipePage from "./Pages/NewRecipePage";
@@ -14,8 +15,20 @@ import ReviewPage from "./Components/ReviewPage";
 import {UserProvider} from "./stores/UserStore";
 import SearchResults from "./Pages/SearchResults";
 
+const theme = createTheme({
+    palette: {
+        primary: {
+          main: colors.orange[400],
+        },
+        secondary: {
+          main: colors.deepOrange[900],
+        }
+    }
+})
+
 function App() {
     return (
+    <ThemeProvider theme={theme}>
         <div className="App">
             <UserProvider>
                 <Routes>
@@ -39,6 +52,7 @@ function App() {
                 </Routes>
             </UserProvider>
         </div>
+    </ThemeProvider>
     );
 }
 
