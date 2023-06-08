@@ -1,5 +1,7 @@
 package org.launchcode.LiftoffRecipeProject.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -15,10 +17,12 @@ public class Review extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "recipe_id")
+    @JsonIgnore
     private Recipe recipe;
 
     public Review() {}

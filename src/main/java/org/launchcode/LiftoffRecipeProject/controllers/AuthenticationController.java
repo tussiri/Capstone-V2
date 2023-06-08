@@ -4,10 +4,8 @@ import jakarta.validation.Valid;
 import org.launchcode.LiftoffRecipeProject.DTO.LoginDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.ResponseWrapper;
 import org.launchcode.LiftoffRecipeProject.DTO.UserDTO;
-import org.launchcode.LiftoffRecipeProject.data.SessionRepository;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
 import org.launchcode.LiftoffRecipeProject.security.JwtTokenUtil;
-import org.launchcode.LiftoffRecipeProject.security.SessionUtil;
 import org.launchcode.LiftoffRecipeProject.services.CustomUserDetailsService;
 import org.launchcode.LiftoffRecipeProject.services.UserService;
 import org.launchcode.LiftoffRecipeProject.util.ResponseUtil;
@@ -27,44 +25,35 @@ public class AuthenticationController {
 
 
     private JwtTokenUtil jwtTokenUtil;
-    private CustomUserDetailsService userDetailsService;
+
     public AuthenticationManager authenticationManager;
-    private SessionRepository sessionRepository;
-    private final UserRepository userRepository;
-    private SessionUtil sessionUtil;
     private UserService userService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+//    private final UserRepository userRepository;
+    //    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    //    private CustomUserDetailsService userDetailsService;
+
 
     @Autowired
-    public AuthenticationController(JwtTokenUtil jwtTokenUtil, CustomUserDetailsService userDetailsService, AuthenticationManager authenticationManager, SessionRepository sessionRepository, UserRepository userRepository, SessionUtil sessionUtil, UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.userDetailsService = userDetailsService;
+    public AuthenticationController(JwtTokenUtil jwtTokenUtil, CustomUserDetailsService userDetailsService, AuthenticationManager authenticationManager, UserRepository userRepository, UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.authenticationManager = authenticationManager;
-        this.sessionRepository = sessionRepository;
-        this.userRepository = userRepository;
-        this.sessionUtil = sessionUtil;
         this.userService = userService;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+//        this.jwtTokenUtil = jwtTokenUtil;
+//        this.userDetailsService = userDetailsService;
+//        this.userRepository = userRepository;
+//        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @PostMapping("/register")
     public ResponseEntity<ResponseWrapper<UserDTO>> register(@Valid @RequestBody UserDTO userDTO) {
         UserDTO registeredUserDTO = userService.registerUser(userDTO);
-        return ResponseUtil.wrapResponse(registeredUserDTO, HttpStatus.CREATED, "User created successfully");
+        return ResponseUtil.wrapResponse(registeredUserDTO, HttpStatus.CREATED, "User created successfully. JWT is: " + registeredUserDTO.getToken());
     }
 
     @PostMapping("/login")
     public ResponseEntity<ResponseWrapper<UserDTO>> loginUser(@RequestBody LoginDTO loginDTO) throws Exception {
         UserDTO userDTO = userService.loginUser(loginDTO);
-        return ResponseUtil.wrapResponse(userDTO, HttpStatus.OK, "Login successful");
+        return ResponseUtil.wrapResponse(userDTO, HttpStatus.OK, "Login successful. JWT is: " + userDTO.getToken());
     }
-
-    @GetMapping("/validate-session")
-    public ResponseEntity<Boolean> validateSession(@RequestHeader("X-Session-Token") String sessionToken) {
-        boolean isValidSession = sessionUtil.isValidSession(sessionToken);
-        return ResponseEntity.ok(isValidSession);
-    }
-
 
     private void authenticate(String username, String password) throws Exception {
         try {
@@ -76,4 +65,20 @@ public class AuthenticationController {
         }
     }
 
+//    @GetMapping("/validate-session")
+//    public ResponseEntity<Boolean> validateSession(@RequestHeader(value = "Authorization") String token) {
+//        String jwtToken = token.replace("Bearer ", "");
+//
+//        if (jwtTokenUtil.validateToken(jwtToken)) {
+//            return ResponseEntity.ok(true);
+//        } else {
+//            return ResponseEntity.ok(false);
+//        }
+//    }
+
+//    @PostMapping("/login")
+//    public ResponseEntity<ResponseWrapper<UserDTO>> loginUser(@RequestBody LoginDTO loginDTO) throws Exception {
+//        UserDTO userDTO = userService.loginUser(loginDTO);
+//        return ResponseUtil.wrapResponse(userDTO, HttpStatus.OK, "Login successful");
+//    }
 }

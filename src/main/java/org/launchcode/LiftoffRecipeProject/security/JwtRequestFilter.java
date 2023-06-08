@@ -36,14 +36,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String username = null;
         String jwtToken = null;
 
-        if (request.getRequestURI().equals("/auth/register")) {
-            chain.doFilter(request, response);
-            return;
-        }
-        if (request.getRequestURI().equals("/auth/login")) {
-            chain.doFilter(request, response);
-            return;
-        }
+//        if (request.getRequestURI().equals("/auth/register") ||(request.getRequestURI().equals("/auth/login")) ||request.getRequestURI().equals("/")) {
+//            chain.doFilter(request, response);
+//            return;
+//        }
+//        if (request.getRequestURI().equals("/auth/login")) {
+//            chain.doFilter(request, response);
+//            return;
+//        }
 
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
@@ -52,12 +52,20 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             } catch (IllegalArgumentException e) {
                 System.out.println("Unable to get JWT Token");
             } catch (ExpiredJwtException e) {
-                System.out.println("JWT Token has expired");
+//                System.out.println("JWT Token has expired");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Your session has expired. Please log in again.");
+                return;
             }
         } else {
-            logger.warn("JWT Token does not begin with Bearer String");
+            if (!request.getRequestURI().equals("/") &&
+                    !request.getRequestURI().startsWith("/auth") &&
+                    !request.getRequestURI().startsWith("/recipes") &&
+                    !request.getRequestURI().startsWith("/recipes/search") &&
+                    !request.getRequestURI().startsWith("/review/recipes/{recipeId}/reviews")) {
+                logger.warn("JWT Token does not begin with Bearer String");
+            }
         }
-
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
