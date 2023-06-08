@@ -51,6 +51,9 @@ public class RecipeService {
     public RecipeDTO mapToDTO(Recipe recipe) {
         RecipeDTO recipeDTO = new RecipeDTO();
         recipeDTO.setId(recipe.getId());
+        if (recipe.getUser() != null) {
+            recipeDTO.setUserId(recipe.getUser().getId());
+        }
         recipeDTO.setName(recipe.getName());
         recipeDTO.setDescription(recipe.getDescription());
         recipeDTO.setCategory(recipe.getCategory());

@@ -82,7 +82,7 @@ public class RecipeController {
 
     //PUT /recipes/{id} updates the recipe with the matching {id}
     @Transactional
-    @PutMapping("/{recipeId}")
+    @PutMapping("/update/{recipeId}")
     public ResponseEntity<ResponseWrapper<RecipeDTO>> updateRecipe(@Valid @PathVariable Integer recipeId, @RequestBody RecipeDTO recipeDTO) {
         RecipeDTO updatedRecipeDTO = recipeService.updateRecipe(recipeId, recipeDTO);
 
@@ -90,7 +90,7 @@ public class RecipeController {
     }
 
     //DELETE /recipes/{id}  deletes an existing recipe.
-    @DeleteMapping("/{recipeId}")
+    @DeleteMapping("/delete/{recipeId}")
     public ResponseEntity<ResponseWrapper<Void>> deleteRecipe(@PathVariable Integer recipeId) {
         recipeService.deleteRecipe(recipeId);
 

@@ -32,6 +32,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         System.out.println("Executing JwtRequestFilter");
 
         final String requestTokenHeader = request.getHeader("Authorization");
+        System.out.println("Request token header: "+ requestTokenHeader);
 
         String username = null;
         String jwtToken = null;
@@ -60,7 +61,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         } else {
             if (!request.getRequestURI().equals("/") &&
                     !request.getRequestURI().startsWith("/auth") &&
-                    !request.getRequestURI().startsWith("/recipes") &&
+//                    !request.getRequestURI().startsWith("/recipes") &&
                     !request.getRequestURI().startsWith("/recipes/search") &&
                     !request.getRequestURI().startsWith("/review/recipes/{recipeId}/reviews")) {
                 logger.warn("JWT Token does not begin with Bearer String");
@@ -77,6 +78,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
+        System.out.println("Authentication: " + SecurityContextHolder.getContext().getAuthentication());
         chain.doFilter(request, response);
     }
 }
+
+//eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHltYWlsLmNvbSIsImlhdCI6MTY4NjI0NDAyNSwiZXhwIjoxNjg2MjYyMDI1fQ.oKNJrc-VFxaT-WF2v1Zp3ZyP1tgFT7DTmoVpW5YygmA
+//eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHltYWlsLmNvbSIsImlhdCI6MTY4NjI0NDAyNSwiZXhwIjoxNjg2MjYyMDI1fQ.oKNJrc-VFxaT-WF2v1Zp3ZyP1tgFT7DTmoVpW5YygmA

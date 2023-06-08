@@ -22,7 +22,7 @@ function Dashboard() {
     const [hasSearched, setHasSearched] = useState(false);
     const [searchQuery, setSearchQuery] = useState('')
     const [isLoading, setIsLoading] = useState(true);
-    const {user, logout} = useContext(UserContext);
+    const {user, logout, login} = useContext(UserContext);
     const [likedRecipes, setLikedRecipes] = useState([]);
 
 
@@ -77,7 +77,7 @@ function Dashboard() {
             {!user && (
                 <>
                     <Link to="login">
-                        <Button variant="contained">Log In</Button>
+                        <Button variant="contained" onClick={()=> login(navigate)}>Log In</Button>
                     </Link>
                     <span>&nbsp;&nbsp;&nbsp;</span>
                     <Link to="signup">

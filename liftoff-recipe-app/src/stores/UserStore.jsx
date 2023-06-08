@@ -16,6 +16,7 @@ export function UserProvider({children}) {
     }
 
     async function login(email, password) {
+        navigate('/login')
         try {
             const response = await axios.post('http://localhost:8080/auth/login', {
                 email,
