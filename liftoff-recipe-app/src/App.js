@@ -16,11 +16,8 @@ import {UserProvider} from "./stores/UserStore";
 import SearchResults from "./Pages/SearchResults";
 import AllRecipes from "./Pages/AllRecipes";
 import RandomRecipe from "./Pages/RandomRecipe";
-//import NavBar from "./Components/NavBar";
-//import SearchBar from "./Components/SearchBar"
-//import {UserContext} from "./stores/UserStore";
-//import axios from 'axios';
-//import authAxios from "./utility/authAxios.js";
+import NavBar from "./Components/NavBar";
+
 
 const theme = createTheme({
     palette: {
@@ -38,6 +35,7 @@ function App() {
     <ThemeProvider theme={theme}>
         <div className="App">
             <UserProvider>
+            <NavBar/>
                 <Routes>
                     <Route path="/" element={<HomePage/>}/>
                     <Route path="/homepage" element={<HomePage/>}/>
@@ -60,6 +58,7 @@ function App() {
                     <Route path="/users/:id/recipes/:recipeId" component={RecipePage}/>
 
                 </Routes>
+
             </UserProvider>
         </div>
     </ThemeProvider>
