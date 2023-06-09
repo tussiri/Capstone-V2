@@ -54,7 +54,7 @@ const SearchBar = ({onSearch}) => {
 
     return (
         <div>
-            <TextField sx={{m: 1}} id="searchfield" label="Search for..."
+            <TextField sx={{maxHeight: 30, m: 1}} id="searchfield" label="Search for..."
                        type="text"
                        value={searchTerm}
                        onChange={handleSearchTermChange}
