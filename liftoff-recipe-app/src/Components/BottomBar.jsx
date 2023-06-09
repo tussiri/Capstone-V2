@@ -22,6 +22,19 @@ import {UserContext} from "../stores/UserStore";
 import axios from 'axios';
 import authAxios from "../utility/authAxios";
 
+import { createTheme, colors, ThemeProvider } from '@mui/material';
+
+const theme2 = createTheme({
+   palette: {
+       primary: {
+         main: colors.grey[50],
+       },
+       secondary: {
+         main: colors.orange[400]
+         }
+       }
+});
+
 function BottomBar(){
 
   const [isSearching, setIsSearching] = useState(false);
@@ -85,19 +98,21 @@ return(
 
     <AppBar position='fixed' sx={{ top:'auto', bottom: 0}}>
         <Container>
-            <Toolbar disableGutters>
-                <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+            <ThemeProvider theme={theme2}>
+                <Toolbar disableGutters>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
 {/*                 Left Box */}
-                </Box>
-                <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                    </Box>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
 {/*                 Middle box */}
-                </Box>
-                <Box sx={{ flexGrow: 0 }}>
+                    </Box>
+                    <Box sx={{ flexGrow: 0, color:'white' }}>
 {/*                 Right Box */}
-                    <SearchBar onSearch={handleSearch}/>
-                </Box>
-            </Toolbar>
-        </Container>
+                        <SearchBar onSearch={handleSearch}/>
+                    </Box>
+                    </Toolbar>
+                </ThemeProvider>
+            </Container>
     </AppBar>
 
 )

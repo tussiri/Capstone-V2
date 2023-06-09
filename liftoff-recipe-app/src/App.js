@@ -25,10 +25,20 @@ const theme = createTheme({
           main: colors.orange[400],
         },
         secondary: {
-          main: colors.deepOrange[900],
+          main: colors.grey[50]
         }
     }
-})
+});
+//const theme2 = createTheme({
+//    palette: {
+//        primary: {
+//          main: colors.grey[50],
+//        },
+//        secondary: {
+//          main: colors.orange[400]
+//          }
+//        }
+//});
 
 function App() {
     return (

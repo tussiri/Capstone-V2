@@ -11,6 +11,19 @@ import {useNavigate} from "react-router-dom"
 import axios from "axios";
 import authAxios from "../utility/authAxios";
 
+import { createTheme, colors, ThemeProvider } from '@mui/material';
+
+const theme2 = createTheme({
+   palette: {
+       primary: {
+         main: colors.grey[50],
+       },
+       secondary: {
+         main: colors.orange[400]
+         }
+       }
+});
+const whiteColor = colors.grey[50]
 
 
 const SearchBar = ({onSearch}) => {
@@ -54,7 +67,8 @@ const SearchBar = ({onSearch}) => {
 
     return (
         <div>
-            <TextField sx={{ m: 1, color:'black'}}
+            <ThemeProvider theme={theme2}>
+            <TextField sx={{ m: 1, color:'white'}}
                        size="small"
                        id="searchfield"
                        label="Search"
@@ -64,7 +78,7 @@ const SearchBar = ({onSearch}) => {
                        placeholder="Search"
 
             />
-            <FormControl sx={{ m: 1, minWidth: 150, color:'white'}} size="small">
+            <FormControl sx={{ m: 1, minWidth: 150 }} size="small">
                 <InputLabel id="searchtype">Search by...</InputLabel>
                 <Select
                     labelId="searchtype-label"
@@ -80,6 +94,7 @@ const SearchBar = ({onSearch}) => {
             </FormControl>
 {/*             <Button sx={{m: 1, color:'white'}} variant="contained" onClick={handleSearch} startIcon={<SearchIcon/>}>Search</Button> */}
                 <IconButton sx={{m:1, color:'white'}} variant="contained" onClick={handleSearch}><SearchIcon fontSize="inherit"/></IconButton>
+        </ThemeProvider>
         </div>
     );
 };
