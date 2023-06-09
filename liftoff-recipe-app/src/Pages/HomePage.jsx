@@ -97,7 +97,7 @@ function HomePage() {
 
     return (
         <>
-            <NavBar/>
+{/*             <NavBar/> */}
                 <span>&nbsp;&nbsp;&nbsp;</span>
                 <span>&nbsp;&nbsp;&nbsp;</span>
             {/* New Recipe button only visible to logged-in users */}
@@ -112,6 +112,7 @@ function HomePage() {
 
             <span>&nbsp;&nbsp;&nbsp;</span>
             <span>&nbsp;&nbsp;&nbsp;</span>
+            <h1>HomePage</h1>
 {/*             <Link to="login"> */}
 {/*                 <Button variant="contained">Log In</Button> */}
 {/*             </Link> */}

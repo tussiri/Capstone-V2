@@ -244,6 +244,12 @@ function NavBar() {
         </Toolbar>
       </Container>
     </AppBar>
+//     <AppBar position='fixed' sx={{ top:'auto', bottom: 0}}>
+//         <Container>
+//             <Toolbar>
+//             </ToolBar>
+//         </Container>
+//     </AppBar>
   );
 }
 
