@@ -14,6 +14,13 @@ import RecipePage from "./Components/RecipePage";
 import ReviewPage from "./Components/ReviewPage";
 import {UserProvider} from "./stores/UserStore";
 import SearchResults from "./Pages/SearchResults";
+import AllRecipes from "./Pages/AllRecipes";
+import RandomRecipe from "./Pages/RandomRecipe";
+//import NavBar from "./Components/NavBar";
+//import SearchBar from "./Components/SearchBar"
+//import {UserContext} from "./stores/UserStore";
+//import axios from 'axios';
+//import authAxios from "./utility/authAxios.js";
 
 const theme = createTheme({
     palette: {
@@ -33,6 +40,7 @@ function App() {
             <UserProvider>
                 <Routes>
                     <Route path="/" element={<HomePage/>}/>
+                    <Route path="/homepage" element={<HomePage/>}/>
                     <Route path="/login" element={<Login/>}/>
                     {/*<Route path = "/account" element={<AccountInfo/>}/>*/}
                     <Route path="/dashboard" element={<Dashboard/>}/>
@@ -45,6 +53,8 @@ function App() {
                     <Route path="/recipes/:recipeId/review" element={<ReviewPage/>}/>
                     <Route path="/review/:recipeId" component={ReviewPage}/>
                     <Route path = "/searchresults" element={<SearchResults/>}/>
+                    <Route path="/allrecipes" element={<AllRecipes/>}/>
+                    <Route path="/randomrecipe" element={<RandomRecipe/>}/>
                     {/*<Route path="/users/:userId/recipes/:recipeId" component={RecipePage} />*/}
 
                     <Route path="/users/:id/recipes/:recipeId" component={RecipePage}/>

@@ -1,0 +1,1 @@
+//this page seems redundant with AccountInfo and Dashboard both available to use. Might need to delete it.

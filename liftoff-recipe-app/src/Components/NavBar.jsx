@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useContext, useEffect, useState} from "react";
+import {Link, useNavigate} from "react-router-dom";
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -15,14 +16,47 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import BarLogo from "../Assets/MealifyLogoNavBar.png";
+import SearchBar from "../Components/SearchBar"
+import {UserContext} from "../stores/UserStore";
+import axios from 'axios';
+import authAxios from "../utility/authAxios";
 
 
-const pages = ['Recipes', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const pages = ['Home', 'All Recipes', 'Random Recipe', 'Search'];
+const settings = ['Account', 'My Recipes', 'Logout'];
 
 function NavBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('')
+  const {user, logout} = useContext(UserContext);
+  const [isLoading, setIsLoading] = useState(true);
+  const userId = localStorage.getItem("userId")
+  const [recipes, setRecipes] = useState([]);
+
+  const navigate = useNavigate();
+
+  const handleSearch = (query) => {
+          setIsSearching(true);
+          setSearchQuery(query);
+  }
+
+  const handleSearchComplete = () => {
+          setIsSearching(false);
+          setHasSearched(true)
+  }
+
+  const handleCardClick = (recipeId) => {
+          navigate(`/recipes/${recipeId}`);
+  };
+
+  const handleLogout = () => {
+          localStorage.removeItem("token");
+          navigate("/")
+  }
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -39,11 +73,49 @@ function NavBar() {
     setAnchorElUser(null);
   };
 
+   useEffect(() => {
+          setIsLoading(true)
+          const fetchRecipes = async () => {
+              if (user) {
+                  console.log(user)
+                  try {
+                      const response = await authAxios.get(`http://localhost:8080/recipes/user/${userId}`);
+                      setRecipes(response.data.data.content);
+                      console.log(response.data.data.content)
+                      // setIsLoading(false);
+                  } catch (error) {
+                      console.error(error);
+                  }
+              } else {
+                  try {
+                      const response = await axios.get(
+                          "http://localhost:8080/recipes?page=0&size=8"
+                      );
+                      // const data = response.data.data;
+                      console.log(response.data.data);
+                      setRecipes(response.data.data.content);
+                  } catch (error) {
+                      console.error(error);
+                  }
+              }
+              setIsLoading(false);
+
+          };
+
+          fetchRecipes();
+      }, [user]);
+
+  useEffect(() => {
+          if (isSearching && hasSearched) {
+              setIsLoading(true);
+          }
+      }, [isSearching, hasSearched]);
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <img src={BarLogo} sx={{ maxHeight:30 }}/>
           <Typography
             variant="h6"
             noWrap
@@ -59,7 +131,6 @@ function NavBar() {
               textDecoration: 'none',
             }}
           >
-            LOGO
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -98,7 +169,6 @@ function NavBar() {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
@@ -115,24 +185,37 @@ function NavBar() {
               textDecoration: 'none',
             }}
           >
-            LOGO
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page}
-              </Button>
-            ))}
+          <Link to="/homepage">
+            <Button sx={{ color: 'white' }} onClick={handleCloseNavMenu}>Home</Button>
+          </Link>
+          <Link to="/allrecipes">
+            <Button sx={{ color: 'white' }} onClick={handleCloseNavMenu}>All Recipes</Button>
+          </Link>
+          <Link to="/randomrecipe">
+            <Button sx={{ color: 'white' }} onClick={handleCloseNavMenu}>Random Recipe</Button>
+          </Link>
+{/*           <Link to="/search"> */}
+{/*             <Button sx={{ color: 'white' }} onClick={handleCloseNavMenu}>Search</Button> */}
+{/*           </Link> */}
+
+{/*             {pages.map((page) => ( */}
+{/*               <Button */}
+{/*                 key={page} */}
+{/*                 onClick={handleCloseNavMenu} */}
+{/*                 sx={{ my: 2, color: 'white', display: 'block' }} */}
+{/*               > */}
+{/*                 {page} */}
+{/*               </Button> */}
+{/*             ))} */}
+{/*             <SearchBar onSearch={handleSearch}/> */}{/* search bar in nav bar option*/}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt="Test Account" src="/static/images/avatar/2.jpg" />
               </IconButton>
             </Tooltip>
             <Menu
