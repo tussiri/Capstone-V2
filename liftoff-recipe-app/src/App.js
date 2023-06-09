@@ -17,7 +17,7 @@ import SearchResults from "./Pages/SearchResults";
 import AllRecipes from "./Pages/AllRecipes";
 import RandomRecipe from "./Pages/RandomRecipe";
 import NavBar from "./Components/NavBar";
-
+import BottomBar from "./Components/BottomBar"
 
 const theme = createTheme({
     palette: {
@@ -36,6 +36,7 @@ function App() {
         <div className="App">
             <UserProvider>
             <NavBar/>
+            <BottomBar/>
                 <Routes>
                     <Route path="/" element={<HomePage/>}/>
                     <Route path="/homepage" element={<HomePage/>}/>

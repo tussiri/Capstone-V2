@@ -17,7 +17,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import BarLogo from "../Assets/MealifyLogoNavBar.png";
-import SearchBar from "../Components/SearchBar"
+// import SearchBar from "../Components/SearchBar"
 import {UserContext} from "../stores/UserStore";
 import axios from 'axios';
 import authAxios from "../utility/authAxios";
@@ -39,15 +39,15 @@ function NavBar() {
 
   const navigate = useNavigate();
 
-  const handleSearch = (query) => {
-          setIsSearching(true);
-          setSearchQuery(query);
-  }
-
-  const handleSearchComplete = () => {
-          setIsSearching(false);
-          setHasSearched(true)
-  }
+//   const handleSearch = (query) => {
+//           setIsSearching(true);
+//           setSearchQuery(query);
+//   }
+//
+//   const handleSearchComplete = () => {
+//           setIsSearching(false);
+//           setHasSearched(true)
+//   }
 
   const handleCardClick = (recipeId) => {
           navigate(`/recipes/${recipeId}`);
@@ -105,11 +105,11 @@ function NavBar() {
           fetchRecipes();
       }, [user]);
 
-  useEffect(() => {
-          if (isSearching && hasSearched) {
-              setIsLoading(true);
-          }
-      }, [isSearching, hasSearched]);
+//   useEffect(() => {
+//           if (isSearching && hasSearched) {
+//               setIsLoading(true);
+//           }
+//       }, [isSearching, hasSearched]);
 
   return (
     <AppBar position="static">
@@ -196,20 +196,6 @@ function NavBar() {
           <Link to="/randomrecipe">
             <Button sx={{ color: 'white' }} onClick={handleCloseNavMenu}>Random Recipe</Button>
           </Link>
-{/*           <Link to="/search"> */}
-{/*             <Button sx={{ color: 'white' }} onClick={handleCloseNavMenu}>Search</Button> */}
-{/*           </Link> */}
-
-{/*             {pages.map((page) => ( */}
-{/*               <Button */}
-{/*                 key={page} */}
-{/*                 onClick={handleCloseNavMenu} */}
-{/*                 sx={{ my: 2, color: 'white', display: 'block' }} */}
-{/*               > */}
-{/*                 {page} */}
-{/*               </Button> */}
-{/*             ))} */}
-{/*             <SearchBar onSearch={handleSearch}/> */}{/* search bar in nav bar option*/}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
@@ -244,12 +230,7 @@ function NavBar() {
         </Toolbar>
       </Container>
     </AppBar>
-//     <AppBar position='fixed' sx={{ top:'auto', bottom: 0}}>
-//         <Container>
-//             <Toolbar>
-//             </ToolBar>
-//         </Container>
-//     </AppBar>
+
   );
 }
 

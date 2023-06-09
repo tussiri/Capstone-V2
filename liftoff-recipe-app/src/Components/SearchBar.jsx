@@ -2,16 +2,16 @@ import React, {useState} from 'react';
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
+import FormControl, { useFormControl } from "@mui/material/FormControl";
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import SearchIcon from '@mui/icons-material/Search';
 import IconButton from '@mui/material/IconButton';
-
 import {useNavigate} from "react-router-dom"
-
 import axios from "axios";
 import authAxios from "../utility/authAxios";
+
+
 
 const SearchBar = ({onSearch}) => {
     const [inputValue, setInputValue] = useState('')
@@ -54,20 +54,23 @@ const SearchBar = ({onSearch}) => {
 
     return (
         <div>
-            <TextField sx={{maxHeight: 30, m: 1}} id="searchfield" label="Search for..."
+            <TextField sx={{ m: 1, color:'black'}}
+                       size="small"
+                       id="searchfield"
+                       label="Search"
                        type="text"
                        value={searchTerm}
                        onChange={handleSearchTermChange}
                        placeholder="Search"
 
             />
-            <FormControl sx={{m: 1, minWidth: 150}}>
+            <FormControl sx={{ m: 1, minWidth: 150, color:'white'}} size="small">
                 <InputLabel id="searchtype">Search by...</InputLabel>
                 <Select
                     labelId="searchtype-label"
                     id="search-type"
                     //value={selectedOption}
-                    onChange={handleOptionChange}
+                    //onChange={handleOptionChange}
                     label="Search By"
                 >
                     <MenuItem value="All">All Recipes</MenuItem>
@@ -75,9 +78,8 @@ const SearchBar = ({onSearch}) => {
                     <MenuItem value="By Time to Prepare">Time To Prepare</MenuItem>
                 </Select>
             </FormControl>
-            <Button sx={{m: 2}} variant="contained" onClick={handleSearch} startIcon={<SearchIcon/>}>Go</Button>
-
-            {/* another button option: <IconButton sx={{m:1}} size="large" variant="contained" onClick={handleSearch}><SearchIcon fontSize="inherit"/></IconButton> */}
+{/*             <Button sx={{m: 1, color:'white'}} variant="contained" onClick={handleSearch} startIcon={<SearchIcon/>}>Search</Button> */}
+                <IconButton sx={{m:1, color:'white'}} variant="contained" onClick={handleSearch}><SearchIcon fontSize="inherit"/></IconButton>
         </div>
     );
 };
