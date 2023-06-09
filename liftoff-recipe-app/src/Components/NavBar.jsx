@@ -17,10 +17,10 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import BarLogo from "../Assets/MealifyLogoNavBar.png";
-// import SearchBar from "../Components/SearchBar"
 import {UserContext} from "../stores/UserStore";
 import axios from 'axios';
 import authAxios from "../utility/authAxios";
+
 
 
 const pages = ['Home', 'All Recipes', 'Random Recipe', 'Search'];
@@ -38,16 +38,6 @@ function NavBar() {
   const [recipes, setRecipes] = useState([]);
 
   const navigate = useNavigate();
-
-//   const handleSearch = (query) => {
-//           setIsSearching(true);
-//           setSearchQuery(query);
-//   }
-//
-//   const handleSearchComplete = () => {
-//           setIsSearching(false);
-//           setHasSearched(true)
-//   }
 
   const handleCardClick = (recipeId) => {
           navigate(`/recipes/${recipeId}`);
@@ -105,11 +95,6 @@ function NavBar() {
           fetchRecipes();
       }, [user]);
 
-//   useEffect(() => {
-//           if (isSearching && hasSearched) {
-//               setIsLoading(true);
-//           }
-//       }, [isSearching, hasSearched]);
 
   return (
     <AppBar position="static">
