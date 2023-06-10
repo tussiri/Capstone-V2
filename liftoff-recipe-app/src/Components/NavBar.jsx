@@ -63,6 +63,37 @@ function NavBar() {
     setAnchorElUser(null);
   };
 
+  const handlePageClick = (page) => {
+     switch (page) {
+        case 'Home':
+           navigate('/');
+           break;
+        case 'All Recipes':
+           navigate('/allrecipes');
+           break;
+        case 'Random Recipe':
+           navigate('/randomrecipe');
+           break;
+     }
+  };
+
+  const handleSettingClick = (setting) => {
+    switch (setting) {
+       case 'Logout':
+           logout();
+           handleLogout();
+           break;
+       case 'Account':
+           navigate('/account');
+           break;
+       case 'My Recipes':
+           navigate('/dashboard');
+           break;
+    }
+  }
+
+
+
    useEffect(() => {
           setIsLoading(true)
           const fetchRecipes = async () => {
@@ -148,7 +179,7 @@ function NavBar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                <MenuItem key={page} onClick={() => handlePageClick(page)}>
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
@@ -184,14 +215,13 @@ function NavBar() {
           </Box>
             {user ? (
               <Box sx={{ fontWeight: 500, color: 'white' }} >
-
                 <Tooltip title='Account Settings'>
                   <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
                     <Avatar alt={user.firstName} src='/static/images/avatar/2.jpg'/>
                   </IconButton>
                 </Tooltip>
                 <Menu
-                        sx={{mt: 5, ml: 5}}
+                        sx={{mt: 5}}
                         id='menu-appbar'
                         anchorEl={anchorElUser}
                         anchorOrigin={{
@@ -207,9 +237,7 @@ function NavBar() {
                         onClose={handleCloseUserMenu}
                     >
                         {settings.map((setting) => (
-                            <MenuItem key={setting} //'Account', 'My Recipes'
-                                      onClick={setting === 'Logout' ? logout : handleCloseUserMenu}>
-
+                            <MenuItem key={setting} onClick={() => handleSettingClick(setting)}>
                                 <Typography textAlign='center'>{setting}</Typography>
                             </MenuItem>
                         ))}

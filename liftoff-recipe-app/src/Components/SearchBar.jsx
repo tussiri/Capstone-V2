@@ -12,7 +12,6 @@ import axios from "axios";
 import authAxios from "../utility/authAxios";
 
 import { createTheme, colors, ThemeProvider } from '@mui/material';
-
 const theme2 = createTheme({
    palette: {
        primary: {
@@ -21,72 +20,13 @@ const theme2 = createTheme({
        secondary: {
          main: colors.orange[400]
          }
-       },
-   components: {
-       MuiTextField:{
-          styleOverrides:{
-              root:{
-                    '& label': {
-                    color: '#FFFFFF',
-                    },
-                    '& label.Mui-focused': {
-                    color: '#FFFFFF',
-                    },
-                    '& .MuiInput-underline:after': {
-                    borderBottomColor: '#FFFFFF',
-                    },
-                    '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                      borderColor: '#FFFFFF',
-                      },
-                      '&:hover fieldset': {
-                         borderColor: '#FFFFFF',
-                         borderWidth: '0.15rem',
-                      },
-                      '&.Mui-focused fieldset': {
-                         borderColor: '#FFFFFF',
-                      },
-                    }
-              }
-          },
-       },
-
-       MuiSelect:{
-          styleOverrides:{
-             root:{
-                '& label': {
-                   color: '#FFFFFF',
-                },
-                '& label.Mui-focused': {
-                   color: '#FFFFFF',
-                },
-                '& .MuiInput-underline:after': {
-                   borderBottomColor: '#FFFFFF',
-                },
-                '& .MuiSelect-root': {
-                      borderColor: '#FFFFFF',
-                   'hover': {
-                      borderColor: '#FFFFFF',
-                      borderWidth: '0.15rem',
-                   },
-                   'Mui-focused': {
-                      borderColor: '#FFFFFF',
-                   },
-                }
-             }
-          },
-       },
-
-   },
-
-
-
+       }
 });
 
 
 const SearchBar = ({onSearch}) => {
     const [inputValue, setInputValue] = useState('')
-    const [selectedOption, setSelectedOption] = useState('All');
+    const [selectedOption, setSelectedOption] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
 
@@ -117,8 +57,8 @@ const SearchBar = ({onSearch}) => {
                 break;
         }
 
-        // const token = localStorage.getItem('token')
-        // console.log("Retrieved token:", token);
+//         const token = localStorage.getItem('token')
+//         console.log("Retrieved token:", token);
 
         navigate('/searchresults', {state: {query: url}});
     };
@@ -126,8 +66,27 @@ const SearchBar = ({onSearch}) => {
     return (
         <div>
             <ThemeProvider theme={theme2}>
-
-            <TextField sx={{ m: 1, color: 'white', input: {color: 'white'} }}
+            <TextField sx={{ m: 1,
+                            color: 'white',
+                            input: {color: 'white'},
+                            maxWidth: 150,
+                            '& label': {
+                               color: 'white'},
+                            '& label.Mui-focused': {
+                               color: 'white'},
+                            '& .MuiInput-underline:after': {
+                               borderBottomColor: 'white'},
+                            '& .MuiOutlinedInput-root': {
+                               '& fieldset': {
+                                  borderColor: 'white'},
+                               '&:hover fieldset': {
+                                  borderColor: 'white',
+                                  borderWidth: '0.15rem'},
+                               '&.Mui-focused fieldset': {
+                                  borderColor: 'white'},
+                            }
+                         }}
+                       autoComplete='off'
                        size="small"
                        id="searchfield"
                        label="Search for..."
@@ -141,21 +100,39 @@ const SearchBar = ({onSearch}) => {
                 <InputLabel id="searchtype" sx={{color: 'white'}}>Search by...</InputLabel>
                 <Select
 
-                    sx={{color: 'white', borderColor: 'white'}}
+                    sx={{color: 'white',
+                      borderColor: 'white',
+                      '& .MuiOutlinedInput-notchedOutline': {
+                         borderColor: 'white'},
+                      '& .MuiSvgIcon-root': {
+                         color: 'white'},
+                      '& .Mui-focused .MuiOutlinedInput-notchedOutline':{
+                         borderColor: 'white'},
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                         borderColor: 'white', borderWidth: '0.15rem'},
+                         '&:after': {
+                                     borderColor: 'white',
+                                 },
+                      }}
                     labelId="searchtype-label"
                     id="search-type"
-                    //value={selectedOption}
-                    onChange={handleOptionChange}
                     label="Search By"
+                    value={selectedOption}
+                    onChange={handleOptionChange}
+
                 >
                     <MenuItem value="All">All Recipes</MenuItem>
                     <MenuItem value="By Ingredient">Ingredients</MenuItem>
                     <MenuItem value="By Time to Prepare">Time To Prepare</MenuItem>
                 </Select>
             </FormControl>
-{/*             <Button sx={{m: 1, color:'white'}} variant="contained" onClick={handleSearch} startIcon={<SearchIcon/>}>Search</Button> */}
-                <IconButton sx={{m:1, color:'white'}} variant="contained" onClick={handleSearch}><SearchIcon fontSize="inherit"/></IconButton>
-        </ThemeProvider>
+                <IconButton
+                    sx={{m:1, color:'white'}}
+                    variant="contained"
+                    onClick={handleSearch}
+                >
+                    <SearchIcon fontSize="inherit"/></IconButton>
+            </ThemeProvider>
         </div>
     );
 };

@@ -27,18 +27,24 @@ const theme = createTheme({
         secondary: {
           main: colors.grey[50]
         }
+    },
+    components:{
+        select: {
+            '&:before': {
+                borderColor: 'white',
+            },
+            '&:after': {
+                borderColor: 'white',
+            },
+            '&:not(.Mui-disabled):hover::before': {
+                borderColor: 'white',
+            },
+        },
+        root: {
+            color: 'white',
+        },
     }
 });
-//const theme2 = createTheme({
-//    palette: {
-//        primary: {
-//          main: colors.grey[50],
-//        },
-//        secondary: {
-//          main: colors.orange[400]
-//          }
-//        }
-//});
 
 function App() {
     return (
