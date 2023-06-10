@@ -20,6 +20,7 @@ function ReviewPage() {
         rating: ''
     });
 
+    const loggedUserId=localStorage.getItem('userId')
     const {user} = useContext(UserContext)
     console.log("Current user: ", user)
 
@@ -110,22 +111,24 @@ function ReviewPage() {
     return (
         <div>
             <Button variant="contained" onClick={() => navigate(`/recipes/${recipeId}`)}>Back to Recipe</Button>
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Comment:
-                    <input type='text' name="comment" value={review.comment} onChange={handleChange}/>
-                </label>
-                <label>
-                    Rating:
-                    <StarRating rating={review.rating}/>
-                </label>
-                {recipe && recipe.userId.toString() !== userId && <input type="submit" value="Submit"/>}
-            </form>
+            {recipe && recipe.userId.toString() !== loggedUserId && (
+                <form onSubmit={handleSubmit}>
+                    <label>
+                        Comment:
+                        <input type='text' name="comment" value={review.comment} onChange={handleChange}/>
+                    </label>
+                    <label>
+                        Rating:
+                        <StarRating rating={review.rating}/>
+                    </label>
+                    <input type="submit" value="Submit"/>
+                </form>
+            )}
             <h2>Reviews:</h2>
             {reviews.map(review => (
                 <Card key={review.id}>
                     <CardContent>
-                        <p>Reviewer: {review.user.firstName}</p>
+                        {/*<p>Reviewer: {review.username}</p>*/}
                         <StarRating rating={review.rating}/>
                         <p>{review.comment}</p>
                     </CardContent>

@@ -19,10 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -251,17 +248,16 @@ public class RecipeService {
         return reviewRepository.findAverageRatingByRecipeId(recipeId);
     }
 
-    public List<Recipe> getRandomRecipes(int numRecipes) {
-        List<Recipe> allRecipes = recipeRepository.findAll();
-        Collections.shuffle(allRecipes);
-        return allRecipes.subList(0, Math.min(numRecipes, allRecipes.size()));
+    public List<RecipeDTO> getRandomRecipes() {
+        List<Recipe> recipes = recipeRepository.findAll();
+        Collections.shuffle(recipes);
+
+        Random rand = new Random();
+        int limit = rand.nextInt(recipes.size()) + 1;
+
+        return recipes.stream()
+                .map(this::mapToDTO)
+                .limit(limit)
+                .collect(Collectors.toList());
     }
-
-
-//    public IngredientDTO mapToIngredientDTO(Ingredient ingredient){
-//        IngredientDTO ingredientDTO=new IngredientDTO();
-//        ingredientDTO.setId(ingredient.getId());
-//        ingredientDTO.setName(ingredientDTO.getName());
-//        return ingredientDTO;
-//    }
 }

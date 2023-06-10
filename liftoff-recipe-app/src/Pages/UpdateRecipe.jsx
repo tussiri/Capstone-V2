@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import axios from "axios"
 import authAxios from "../utility/authAxios";
 import {useNavigate, useParams} from "react-router-dom";
+import NavBar from "../Components/NavBar";
 
 function UpdateRecipe() {
     const navigate = useNavigate()
@@ -68,30 +69,33 @@ function UpdateRecipe() {
         }
     };
     return (
-        <Box>
-            <h1>Update Recipe</h1>
-            <Box
-                sx={{
-                    minHeight: 330,
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                }}
-                component="form"
-                onSubmit={updateRecipe}
-            >
-                {/*<TextField name="id" label="Recipe id" variant="outlined" onChange={handleChange}/>*/}
-                <TextField name="name" label="Recipe Name" variant="outlined" onChange={handleChange}/>
-                <TextField name="description" label="description" variant="outlined" onChange={handleChange}/>
-                <TextField name="category" label="category" variant="outlined" onChange={handleChange}/>
-                <TextField name="time" label="Time" variant="outlined" onChange={handleChange}/>
-                <TextField name="ingredients" label="Ingredients" variant="outlined" onChange={handleChange}/>
-                <TextField name="directions" label="Directions" variant="outlined" onChange={handleChange}/>
-                <Button type="submit" variant="contained">
-                    Update
-                </Button>
+        <div>
+            <NavBar/>
+            <Box>
+                <h1>Update Recipe</h1>
+                <Box
+                    sx={{
+                        minHeight: 330,
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                    }}
+                    component="form"
+                    onSubmit={updateRecipe}
+                >
+                    {/*<TextField name="id" label="Recipe id" variant="outlined" onChange={handleChange}/>*/}
+                    <TextField name="name" label="Recipe Name" variant="outlined" onChange={handleChange}/>
+                    <TextField name="description" label="description" variant="outlined" onChange={handleChange}/>
+                    <TextField name="category" label="category" variant="outlined" onChange={handleChange}/>
+                    <TextField name="time" label="Time" variant="outlined" onChange={handleChange}/>
+                    <TextField name="ingredients" label="Ingredients" variant="outlined" onChange={handleChange}/>
+                    <TextField name="directions" label="Directions" variant="outlined" onChange={handleChange}/>
+                    <Button type="submit" variant="contained">
+                        Update
+                    </Button>
+                </Box>
             </Box>
-        </Box>
+        </div>
     );
 }
 

@@ -15,6 +15,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import {useNavigate} from "react-router-dom";
+import NavBar from "../Components/NavBar";
 
 function SignUp() {
     let navigate = useNavigate();
@@ -71,6 +72,7 @@ function SignUp() {
 
 return (
     <>
+        <NavBar/>
         <img src={Logo} alt="Logo" maxHeight="50" maxWidth="50"></img>
         <h1>Mealify</h1>
         <div className="App">

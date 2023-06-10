@@ -7,14 +7,6 @@ export const UserContext = createContext(null);
 export function UserProvider({children}) {
     const [user, setUser] = useState(null);
     const navigate = useNavigate()
-    // function parseJwt(token){
-    //     try{
-    //         return JSON.parse(atob(token.split('.')[1]));
-    //     }catch(e){
-    //         return null
-    //     }
-    // }
-
 
     useEffect(()=>{
         const token = localStorage.getItem('token');
