@@ -8,6 +8,7 @@ import org.launchcode.LiftoffRecipeProject.data.RecipeRepository;
 import org.launchcode.LiftoffRecipeProject.data.ReviewRepository;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
 import org.launchcode.LiftoffRecipeProject.exception.ResourceNotFoundException;
+import org.launchcode.LiftoffRecipeProject.exception.UnauthorizedException;
 import org.launchcode.LiftoffRecipeProject.models.Ingredient;
 import org.launchcode.LiftoffRecipeProject.models.Recipe;
 import org.launchcode.LiftoffRecipeProject.models.RecipeData;
@@ -68,6 +69,13 @@ public class RecipeService {
         Double averageRating = reviewRepository.findAverageRatingByRecipeId(recipe.getId());
         recipeDTO.setRating(averageRating != null ? averageRating : 0);
 
+//        recipeDTO.setIngredients(
+//                recipe.getIngredients().stream()
+//                        .map(ingredient -> ingredient.getName())
+////                        .map(ingredient -> ingredient.getQuantity()+ ": " + ingredient.getName())
+//                        .collect(Collectors.toList())
+//        );
+
         recipeDTO.setIngredients(
                 recipe.getIngredients().stream()
                         .map(ingredient -> ingredient.getName())
@@ -114,7 +122,7 @@ public class RecipeService {
     public IngredientDTO mapToIngredientDTO(Ingredient ingredient) {
         IngredientDTO ingredientDTO = new IngredientDTO();
         ingredientDTO.setId(ingredient.getId());
-        ingredientDTO.setName(ingredientDTO.getName());
+        ingredientDTO.setName(ingredient.getName());
         return ingredientDTO;
     }
 
@@ -176,9 +184,13 @@ public class RecipeService {
                 .map(this::mapToDTO);
     }
 
-    public RecipeDTO updateRecipe(Integer id, RecipeDTO recipeDTO) {
+    public RecipeDTO updateRecipe(Integer id, RecipeDTO recipeDTO, Integer userId) {
         Recipe recipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
+
+        if (!recipe.getUser().getId().equals(userId)) {
+            throw new UnauthorizedException("You are not allowed to update this recipe");
+        }
 
         Recipe updatedRecipe = mapToEntity(recipeDTO);
         recipe.setName(updatedRecipe.getName());
@@ -206,12 +218,15 @@ public class RecipeService {
         return mapToDTO(recipeRepository.save(recipe));
     }
 
-    public void deleteRecipe(Integer id) {
-        if (recipeRepository.existsById(id)) {
-            recipeRepository.deleteById(id);
-        } else {
-            throw new ResourceNotFoundException("Recipe not found");
+    public void deleteRecipe(Integer id, Integer userId) {
+        Recipe recipe = recipeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
+
+        if (!recipe.getUser().getId().equals(userId)) {
+            throw new UnauthorizedException("You are not allowed to delete this recipe");
         }
+
+        recipeRepository.deleteById(id);
     }
 
     public Page<RecipeDTO> searchRecipes(Specification<Recipe> spec, Pageable pageable) {

@@ -32,15 +32,23 @@ function UpdateRecipe() {
         fetchRecipe();
     }, [recipeId]);
     const handleChange = (e) => {
-        if (e.target.name === 'ingredients') {
-            setRecipe({
-                ...recipe,
-                [e.target.name]: e.target.value.split(',').map(item => item.trim()),
-            });
+        const {name, value} = e.target;
+        if (name === 'ingredients') {
+            if (value.trim() === '') {
+                setRecipe({
+                    ...recipe,
+                    [name]: [],
+                });
+            } else {
+                setRecipe({
+                    ...recipe,
+                    [name]: value.split(',').map(item => item.trim()),
+                });
+            }
         } else {
             setRecipe({
                 ...recipe,
-                [e.target.name]: e.target.value,
+                [name]: value,
             });
         }
     }

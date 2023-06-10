@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
 import stockImage from '../Assets/MealifyNoImage.png';
 
-function FoodCard({recipe, onClick}) {
+function FoodCard({recipe, userId, onClick}) {
     return (
         <Card onClick={onClick} className='recipe-card'>
             <CardActionArea>

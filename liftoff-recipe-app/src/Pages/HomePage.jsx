@@ -55,30 +55,18 @@ function HomePage() {
     useEffect(() => {
         setIsLoading(true)
         const fetchRecipes = async () => {
-            if (user) {
-                console.log(user)
-                try {
-                    const response = await authAxios.get(`http://localhost:8080/recipes/user/${userId}`);
-                    setRecipes(response.data.data.content);
-                    console.log(response.data.data.content)
-                    // setIsLoading(false);
-                } catch (error) {
-                    console.error(error);
+            try {
+                const generalResponse = await axios.get("http://localhost:8080/recipes?page=0&size=8");
+                setRecipes(generalResponse.data.data.content);
+
+                if (user) {
+                    const userResponse = await authAxios.get(`http://localhost:8080/recipes/user/${userId}`);
+                    setLikedRecipes(userResponse.data.data.content); // set another state for user's recipes
                 }
-            } else {
-                try {
-                    const response = await axios.get(
-                        "http://localhost:8080/recipes?page=0&size=8"
-                    );
-                    // const data = response.data.data;
-                    console.log(response.data.data);
-                    setRecipes(response.data.data.content);
-                } catch (error) {
-                    console.error(error);
-                }
+            } catch (error) {
+                console.error(error);
             }
             setIsLoading(false);
-
         };
 
         fetchRecipes();
@@ -99,78 +87,27 @@ function HomePage() {
         <>
             <NavBar/>
             <SearchBar onSearch={handleSearch}/>
-            {/* New Recipe button only visible to logged-in users */}
-            {user && (
-                <>
-                    <span>&nbsp;&nbsp;&nbsp;</span>
-                    <Link to="newrecipe">
-                        <Button variant="contained">New Recipe</Button>
-                    </Link>
-                    <Button variant="contained" onClick={() => logout(navigate)}>Log Out</Button>
-                </>
-            )}
-            {!user && (
-                <>
-                    <Link to="login">
-                        <Button variant="contained">Log In</Button>
-                    </Link>
-                    <span>&nbsp;&nbsp;&nbsp;</span>
-                    <Link to="signup">
-                        <Button variant="contained">Sign Up</Button>
-                    </Link>
-                </>
-            )}
-            <span>&nbsp;&nbsp;&nbsp;</span>
-            <span>&nbsp;&nbsp;&nbsp;</span>
-
-            <div className='container'>
-                {user && <Sidebar user={user} className="sidebar"/>}
+            <div className="container">
+                <Sidebar user={user} className="sidebar"/>
                 <div className="app-main">
-                    {user ? (
-                        <>
-                            <h2>Your Recipes</h2>
-                            {recipes && recipes.length > 0 && recipes.map((recipe) => (
-                                <FoodCard
-                                    key={recipe.id}
-                                    recipe={recipe}
-                                    onClick={() => handleCardClick(recipe.id)}
-                                />
-                            ))}
-                            <h2>Liked Recipes</h2>
-                            {likedRecipes.map((recipe) => (
-                                <FoodCard
-                                    key={recipe.id}
-                                    recipe={recipe}
-                                    onClick={() => handleCardClick(recipe.id)}
-                                />
-                            ))}
-                        </>
-                    ) : (
-                        <>
-
-                            <div className="recipe-section">
-                                {!user && recipes.map((recipe) => (
-                                    <FoodCard
-                                        key={recipe.id}
-                                        recipe={recipe}
-                                        onClick={() => handleCardClick(recipe.id)}
-                                    />
-                                ))}
-                            </div>
-
-                            {
-                                isSearching && hasSearched ? (
-                                    <LoadingScreen/>
-                                ) : (
-                                    <SearchResults query={searchQuery} onSearchComplete={handleSearchComplete}/>
-                                )
-                            }
-                        </>
-                    )}
+                    <h2>All Recipes</h2>
+                    {recipes.map((recipe) => (
+                        <FoodCard
+                            key={recipe.id}
+                            recipe={recipe}
+                            onClick={() => handleCardClick(recipe.id)}
+                        />
+                    ))}
                 </div>
+                {isSearching && hasSearched ? (
+                    <LoadingScreen/>
+                ) : (
+                    <SearchResults query={searchQuery} onSearchComplete={handleSearchComplete}/>
+                )}
             </div>
         </>
-    );
+    )
+        ;
 }
 
 export default HomePage;

@@ -22,7 +22,7 @@ public class JwtTokenUtil {
     @Value("${app.jwtExpirationInMs}")
     private Long jwtExpirationInMs;
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, Integer userId) {
         // Get the current date and calculate the expiration date
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
@@ -30,6 +30,7 @@ public class JwtTokenUtil {
         // Generate the token
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
+                .claim("userId", userId)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS256, jwtSecret)
@@ -51,10 +52,16 @@ public class JwtTokenUtil {
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
+    public Integer getUserIdFromToken(String token){
+        Claims claims = getClaimsFromToken(token);
+        return claims.get("userId", Integer.class);
+    }
+
     private boolean isTokenExpired(String token) {
         Date expirationDate = getExpirationDateFromToken(token);
         return expirationDate.before(new Date());
     }
+
 
     private Claims getClaimsFromToken(String token) {
         Claims claims = null;

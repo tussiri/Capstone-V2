@@ -11,7 +11,7 @@ public class Ingredient extends AbstractEntity{
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
 
-    @Column(unique = true)
+    @Column(unique = false)
     private String name;
 
     private String quantity;

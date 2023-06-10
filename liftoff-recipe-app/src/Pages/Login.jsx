@@ -1,37 +1,26 @@
-import React, {useState, useContext } from "react";
+import React, {useState, useContext, useEffect} from "react";
 import axios from "axios"
 import {Link, useNavigate} from 'react-router-dom'
 import {UserContext} from '../stores/UserStore'
 import Button from "@mui/material/Button";
 
 
-
-function Login () {
-    const {login} = useContext(UserContext);
+function Login() {
+    const {user, login} = useContext(UserContext);
     const navigate = useNavigate()
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    // const handleLogin = () => {
-    //     axios.post('http://localhost:8080/auth/login', {
-    //         email,
-    //         password
-    //     }).then(response => {
-    //         localStorage.setItem('token', response.data.data.token);
-    //         localStorage.setItem('userId', response.data.data.id)
-    //         console.log("Stored token:", localStorage.getItem('token'));
-    //         console.log("Server response:", response.data)
-    //
-    //         navigate("/");
-    //     }).catch(error => {
-    //         console.log("Error:", error);
-    //     });
-    // };
+    useEffect(() => {
+        if (localStorage.getItem('token') && user) {
+            navigate('/dashboard');
+        }
+    }, [user, navigate]);
 
     const handleLogin = () => {
         login(email, password)
-            .then(() => navigate("/dashboard"))
+            .then(() => navigate("/"))
             .catch((error) => console.log("Error:", error));
     };
 

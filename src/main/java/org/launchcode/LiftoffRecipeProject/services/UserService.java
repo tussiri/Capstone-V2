@@ -86,12 +86,14 @@ public class UserService {
 
     public UserDTO loginUser(LoginDTO loginDTO) throws Exception {
         authenticate(loginDTO.getEmail(), loginDTO.getPassword());
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.getEmail());
-        final String jwt = jwtTokenUtil.generateToken(userDetails);
+//        final UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.getEmail());
+//        final String jwt = jwtTokenUtil.generateToken(userDetails);
         User user = userRepository.findByEmail(loginDTO.getEmail());
 
         if (user != null) {
             UserDTO userDTO = mapUserToUserDTO(user);
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.getEmail());
+            final String jwt = jwtTokenUtil.generateToken(userDetails,user.getId());
             userDTO.setToken(jwt);
             return userDTO;
         } else {
@@ -126,7 +128,7 @@ public class UserService {
 
         User registeredUser = userRepository.save(newUser);
         UserDetails userDetails = userDetailsService.loadUserByUsername(newUser.getEmail());
-        String token = jwtTokenUtil.generateToken(userDetails);
+        String token = jwtTokenUtil.generateToken(userDetails, registeredUser.getId());
 
 //        UserDetails userDetails = userDetailsService.loadUserByUsername(newUser.getEmail());
 //        String token = jwtTokenUtil.generateToken(userDetails);
