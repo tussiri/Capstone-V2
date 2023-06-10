@@ -77,13 +77,13 @@ function NavBar() {
     const handlePageClick = (page) => {
         switch (page) {
             case 'Home':
-                navigate('/dashboard');
+                navigate(user ? '/dashboard' : '/');
                 break;
             case 'All Recipes':
                 navigate('/');
                 break;
             case 'Random Recipe':
-                navigate('/randomrecipe');
+                navigate('/recipes/random');
                 break;
         }
     };
@@ -103,37 +103,37 @@ function NavBar() {
         }
     };
 
-    useEffect(() => {
-        setIsLoading(true)
-        const fetchRecipes = async () => {
-            if (user) {
-                console.log(user)
-                try {
-                    const response = await authAxios.get(`http://localhost:8080/recipes/user/${userId}`);
-                    setRecipes(response.data.data.content);
-                    console.log(response.data.data.content)
-                    // setIsLoading(false);
-                } catch (error) {
-                    console.error(error);
-                }
-            } else {
-                try {
-                    const response = await axios.get(
-                        "http://localhost:8080/recipes?page=0&size=8"
-                    );
-                    // const data = response.data.data;
-                    console.log(response.data.data);
-                    setRecipes(response.data.data.content);
-                } catch (error) {
-                    console.error(error);
-                }
-            }
-            setIsLoading(false);
-
-        };
-
-        fetchRecipes();
-    }, [user]);
+    // useEffect(() => {
+    //     setIsLoading(true)
+    //     const fetchRecipes = async () => {
+    //         if (user) {
+    //             console.log(user)
+    //             try {
+    //                 const response = await authAxios.get(`http://localhost:8080/recipes/user/${userId}`);
+    //                 setRecipes(response.data.data.content);
+    //                 // console.log(response.data.data.content)
+    //                 // setIsLoading(false);
+    //             } catch (error) {
+    //                 console.error(error);
+    //             }
+    //         } else {
+    //             try {
+    //                 const response = await axios.get(
+    //                     "http://localhost:8080/recipes?page=0&size=8"
+    //                 );
+    //                 // const data = response.data.data;
+    //                 console.log(response.data.data);
+    //                 setRecipes(response.data.data.content);
+    //             } catch (error) {
+    //                 console.error(error);
+    //             }
+    //         }
+    //         setIsLoading(false);
+    //
+    //     };
+    //
+    //     fetchRecipes();
+    // }, [user]);
 
 //   useEffect(() => {
 //           if (isSearching && hasSearched) {
@@ -145,24 +145,25 @@ function NavBar() {
         <AppBar position="static">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <img src={BarLogo} sx={{maxHeight: 30}}/>
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="a"
-                        href="/"
-                        sx={{
-                            mr: 2,
-                            display: {xs: 'none', md: 'flex'},
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                    >
-                    </Typography>
-
+                    <Link to='/' style={{display: 'flex', alignItems: 'center', textDecoration: 'none'}}>
+                        <img src={BarLogo} sx={{maxHeight: 30}}/>
+                        <Typography
+                            variant="h6"
+                            noWrap
+                            component="a"
+                            href="/"
+                            sx={{
+                                mr: 2,
+                                display: {xs: 'none', md: 'flex'},
+                                fontFamily: 'monospace',
+                                fontWeight: 700,
+                                letterSpacing: '.3rem',
+                                color: 'inherit',
+                                textDecoration: 'none',
+                            }}
+                        >
+                        </Typography>
+                    </Link>
                     <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none'}}}>
                         <IconButton
                             size="large"
@@ -239,13 +240,13 @@ function NavBar() {
                     >
                     </Typography>
                     <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
-                        <Link to="/dashboard">
+                        <Link to={user ? "/dashboard" : "/"}>
                             <Button sx={{color: 'white'}} onClick={handleCloseNavMenu}>Home</Button>
                         </Link>
                         <Link to="/">
                             <Button sx={{color: 'white'}} onClick={handleCloseNavMenu}>All Recipes</Button>
                         </Link>
-                        <Link to="/randomrecipe">
+                        <Link to="/recipes/random">
                             <Button sx={{color: 'white'}} onClick={handleCloseNavMenu}>Random Recipe</Button>
                         </Link>
                     </Box>

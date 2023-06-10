@@ -56,64 +56,12 @@ public class UserController {
         userService.deleteUser(userId);
         return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.NO_CONTENT.value(), "User deleted successfully"), HttpStatus.NO_CONTENT);
     }
-
-//
-//    private User validateSessionAndGetUser(HttpServletRequest request) {
-//        String sessionToken = request.getHeader("X-Session-Token");
-//
-//        if (!sessionUtil.isValidSession(sessionToken)) {
-//            throw new InvalidSessionException("Invalid session or session expired");
-//        }
-//        return sessionUtil.getUserFromSession(sessionToken);
-//
-//    }
-//
-//    private UserDTO mapToUserDTO(User user) {
-//        UserDTO userDTO = new UserDTO();
-//        userDTO.setId(user.getId());
-//        userDTO.setFirstName(user.getFirstName());
-//        userDTO.setLastName(user.getLastName());
-//        userDTO.setEmail(user.getEmail());
-//        userDTO.setPassword(user.getPassword());
-//        userDTO.setDateOfBirth(user.getDateOfBirth());
-//        return userDTO;
-//    }
-//
-//    private UserWithRecipesDTO mapToUserWithRecipesDTO(User user) {
-//        UserWithRecipesDTO dto = new UserWithRecipesDTO();
-//        dto.setId(user.getId());
-//        dto.setFirstName(user.getFirstName());
-//        dto.setLastName(user.getLastName());
-//        dto.setEmail(user.getEmail());
-//        dto.setDateOfBirth(user.getDateOfBirth());
-//        dto.setRecipes(user.getRecipes());
-//        return dto;
-//    }
-//    @GetMapping("/{userId}")
-//    public ResponseEntity<ResponseWrapper<UserDTO>> getUser(@PathVariable Integer userId, HttpServletRequest request) {
-//        try {
-//            User user = validateSessionAndGetUser(request);
-//            Optional<User> optionalUser = userRepository.findById(userId);
-//
-//            if (!user.getId().equals(userId)) {
-//                return new ResponseEntity<>(
-//                        new ResponseWrapper<>(HttpStatus.FORBIDDEN.value(), "Access denied", null),
-//                        HttpStatus.FORBIDDEN);
-//            }
-//
-//            if (optionalUser.isPresent()) {
-//                user = optionalUser.get();
-//                UserDTO userDTO = mapToUserDTO(user);
-//
-//                return new ResponseEntity<>(new ResponseWrapper<>("User retrieved successfully", userDTO), HttpStatus.OK);
-//            } else {
-//                throw new ResourceNotFoundException("User not found");
-//            }
-//        } catch (InvalidSessionException e) {
-//            return new ResponseEntity<>(
-//                    new ResponseWrapper<>(HttpStatus.FORBIDDEN.value(), e.getMessage(), null),
-//                    HttpStatus.FORBIDDEN
-//            );
-//        }
-//    }
+    @PutMapping("/{userId}/account")
+    public ResponseEntity<ResponseWrapper<UserDTO>> updateAccountInfo(
+            @PathVariable Integer userId,
+            @Valid @RequestBody UserDTO updatedUser
+    ) {
+        UserDTO userDTO = userService.updateUser(userId, updatedUser);
+        return ResponseUtil.wrapResponse(userDTO, HttpStatus.OK, "Account information updated successfully");
+    }
 }

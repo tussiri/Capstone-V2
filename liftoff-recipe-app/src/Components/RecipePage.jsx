@@ -6,6 +6,7 @@ import authAxios from "../utility/authAxios";
 import {UserContext} from "../stores/UserStore";
 import LoadingScreen from "../Pages/LoadingPage";
 import stockImage from '../Assets/MealifyNoImage.png'
+import NavBar from "./NavBar";
 
 function RecipePage({match}) {
     const [recipe, setRecipe] = useState(null);
@@ -25,7 +26,7 @@ function RecipePage({match}) {
         console.log(recipeId);
         console.log(loggedUserId);
         setIsLoading(true)
-        authAxios
+        axios
             .get(`http://localhost:8080/recipes/${recipeId}`)
             .then((response) => {
                 setRecipe(response.data.data);
@@ -33,7 +34,7 @@ function RecipePage({match}) {
             })
             .catch((error) => console.error(error));
 
-        axios
+        authAxios
             .get(`http://localhost:8080/review/recipe/${recipeId}`)
             .then((response) => {
                 setReviews(response.data.slice(0, 5));
@@ -64,6 +65,7 @@ function RecipePage({match}) {
 
     return (
         <div>
+            <NavBar/>
             <h2>{recipe.name}</h2>
             <img src={recipe.picture ? recipe.picture : stockImage} alt={recipe.name}/>
             <p>{recipe.description}</p>
@@ -81,7 +83,6 @@ function RecipePage({match}) {
                         Recipe</Button>
                 </div>
             )}
-
             <h3>Reviews:</h3>
             {reviews.length > 0 ? (
                 <>
@@ -89,24 +90,32 @@ function RecipePage({match}) {
                         <p>Rating: {reviews[0].rating}</p>
                         <p>{reviews[0].comment}</p>
                     </div>
-                    {!isUserRecipeOwner && (
+                    {!isUserRecipeOwner && user ? (
+                        <>
+                            <Button variant="contained"
+                                    onClick={() => navigate(`/review/recipes/${recipe.id}/reviews`)}>
+                                View all reviews
+                            </Button>
+                            <Button variant="contained" onClick={() => navigate(`/recipes/${recipe.id}/review`)}>Leave
+                                your review</Button>
+                        </>
+                    ) : user ? (
                         <Button variant="contained"
-                                onClick={() => navigate(`http://localhost:8080/review/recipes/${recipe.id}/reviews`)}>
+                                onClick={() => navigate(`/review/recipes/${recipe.id}/reviews`)}>
                             View all reviews
-                        </Button>)}
+                        </Button>
+                    ) : (
+                        <p>You must be <Link to="/login">logged in </Link> to leave a review.</p>
+                    )}
                 </>
             ) : (
                 user ? (
-                    <p><Button variant="contained" onClick={() => navigate(`/recipes/${recipe.id}/review`)}>No reviews
-                        yet. Be the
-                        first!</Button></p>
+                    <p><Button variant="contained" onClick={() => navigate(`/recipes/${recipe.id}/review`)}>Be the first
+                        to review</Button></p>
                 ) : (
                     <p>You must be <Link to="/login">logged in </Link> to leave a review.</p>
                 )
             )}
-            {user && !isUserRecipeOwner &&
-                <Button variant="contained" onClick={() => navigate(`/recipes/${recipe.id}/review`)}>Leave your
-                    review</Button>}
         </div>
     );
 }

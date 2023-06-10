@@ -45,6 +45,7 @@ public class SecurityConfig {
                         new AntPathRequestMatcher("/auth/login"),
                         new AntPathRequestMatcher("/"),
                         new AntPathRequestMatcher("/recipes", "GET"),
+                        new AntPathRequestMatcher("/recipes/{recipeId}", "GET"),
                         new AntPathRequestMatcher("/recipes/user/{userId}", "GET"),
                         new AntPathRequestMatcher("/recipes/ingredient/{ingredientName}", "GET"),
                         new AntPathRequestMatcher("/recipes/{recipeId}", "GET"),

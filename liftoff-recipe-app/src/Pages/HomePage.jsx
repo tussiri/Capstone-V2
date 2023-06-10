@@ -1,15 +1,8 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import Button from "@mui/material/Button";
 import axios from 'axios';
 
 import FoodCard from "../Components/FoodCard"
-import ChickenPic from "../Assets/Rectangle 65.png"
-import PastaPic from "../Assets/Rectangle 66.png"
-import TacoPic from "../Assets/Rectangle 67.png"
-import ChocoPic from "../Assets/Rectangle 68.png"
-import TortaPic from "../Assets/Rectangle 69.png"
-import TirraPic from "../Assets/Rectangle 70.png"
 import NavBar from "../Components/NavBar"
 import SearchBar from "../Components/SearchBar"
 import SearchResults from "./SearchResults";
@@ -43,8 +36,13 @@ function HomePage() {
         setHasSearched(true)
     }
 
-    const handleCardClick = (recipeId) => {
-        navigate(`/recipes/${recipeId}`);
+    const handleCardClick = async (recipeId) => {
+        try {
+            const recipeResponse = await axios.get(`http://localhost:8080/recipes/${recipeId}`);
+            navigate(`/recipes/${recipeId}`);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const handleLogout = () => {

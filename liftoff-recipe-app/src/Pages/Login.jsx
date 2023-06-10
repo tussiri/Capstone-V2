@@ -3,6 +3,7 @@ import axios from "axios"
 import {Link, useNavigate} from 'react-router-dom'
 import {UserContext} from '../stores/UserStore'
 import Button from "@mui/material/Button";
+import NavBar from "../Components/NavBar";
 
 
 function Login() {
@@ -27,6 +28,7 @@ function Login() {
 
     return (
         <div>
+            <NavBar/>
             <input type="email" value={email} onChange={e => setEmail(e.target.value)}/>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)}/>
             <Button variant="contained" onClick={handleLogin}>Login</Button>

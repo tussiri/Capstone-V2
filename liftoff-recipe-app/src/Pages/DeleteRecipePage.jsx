@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 
 import {UserContext} from "../stores/UserStore";
 import authAxios from "../utility/authAxios";
+import NavBar from "../Components/NavBar";
 
 
 function DeleteRecipe() {
@@ -47,33 +48,36 @@ function DeleteRecipe() {
 
     const handleDelete = (e) => {
         e.preventDefault();
-        if(window.confirm(`You are about to delete the recipe ${recipeName}. This action cannot be reversed. If you would like to proceed, please click OK.`)){
+        if (window.confirm(`You are about to delete the recipe ${recipeName}. This action cannot be reversed. If you would like to proceed, please click OK.`)) {
             deleteRecipe();
-        }else{
+        } else {
             navigate('/dashboard');
         }
     }
 
     return (
-        <Box>
-            <h1>Delete Recipe</h1>
-            <Box
-                sx={{
-                    minHeight: 330,
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                }}
-                component="form"
-                onSubmit={handleDelete}
-            >
-                {/*<TextField id="id" label="Recipe id" variant="outlined" value={recipeId}*/}
-                {/*           onChange={(e) => setRecipeId(e.target.value)}/>*/}
-                <Button type="submit" variant="contained">
-                    Delete
-                </Button>
-            </ Box>
-        </ Box>
+        <div>
+            <NavBar/>
+            <Box>
+                <h1>Delete Recipe</h1>
+                <Box
+                    sx={{
+                        minHeight: 330,
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                    }}
+                    component="form"
+                    onSubmit={handleDelete}
+                >
+                    {/*<TextField id="id" label="Recipe id" variant="outlined" value={recipeId}*/}
+                    {/*           onChange={(e) => setRecipeId(e.target.value)}/>*/}
+                    <Button type="submit" variant="contained">
+                        Delete
+                    </Button>
+                </Box>
+            </Box>
+        </div>
     );
 }
 
