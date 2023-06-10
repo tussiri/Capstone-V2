@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
-import axios from "axios";
 import {Link, useNavigate, useParams} from 'react-router-dom'
+import axios from "axios";
+import Button from "@mui/material/Button";
 import authAxios from "../utility/authAxios";
 import {UserContext} from "../stores/UserStore";
 import LoadingScreen from "../Pages/LoadingPage";
@@ -13,7 +14,7 @@ function RecipePage({match}) {
     const [isLoading, setIsLoading] = useState(false);
     // const userId = localStorage.getItem('userId');
     const {user} = useContext(UserContext);
-    const loggedUserId=localStorage.getItem('userId');
+    const loggedUserId = localStorage.getItem('userId');
     const isUserRecipeOwner = user && recipe && recipe.userId.toString() === loggedUserId;
     const navigate = useNavigate()
 
@@ -40,14 +41,14 @@ function RecipePage({match}) {
             .catch((error) => console.error(error));
     }, [recipeId]);
 
-    const handleUpdate=()=>{
-        navigate(`http:localhost:8080/recipes/update/${recipeId}`)
+    const handleUpdate = () => {
+        navigate(`/recipes/update/${recipeId}`)
         console.log(recipeId)
 
     }
     const handleDelete = () => {
         authAxios
-            .delete(`http://localhost:8080/recipes/delete/${recipeId}`)
+            .delete(`/recipes/delete/${recipeId}`)
             .then(() => {
                 navigate('/dashboard');
             })
@@ -74,8 +75,10 @@ function RecipePage({match}) {
 
             {isUserRecipeOwner && (
                 <div>
-                    <Link to={`/recipes/update/${recipeId}`}>Update Recipe</Link>
-                    <Link to={`/recipes/delete/${recipe.id}`}>Delete Recipe</Link>
+                    <Button variant="contained" onClick={() => navigate(`/recipes/update/${recipe.id}`)}>Update
+                        Recipe</Button>
+                    <Button variant="contained" onClick={() => navigate(`/recipes/delete/${recipeId}`)}>Delete
+                        Recipe</Button>
                 </div>
             )}
 
@@ -86,18 +89,24 @@ function RecipePage({match}) {
                         <p>Rating: {reviews[0].rating}</p>
                         <p>{reviews[0].comment}</p>
                     </div>
-                    <Link to={`http://localhost:8080/review/recipes/${recipe.id}/reviews`}>
-                        View all reviews
-                    </Link>
+                    {!isUserRecipeOwner && (
+                        <Button variant="contained"
+                                onClick={() => navigate(`http://localhost:8080/review/recipes/${recipe.id}/reviews`)}>
+                            View all reviews
+                        </Button>)}
                 </>
             ) : (
                 user ? (
-                    <p><Link to={`/recipes/${recipe.id}/review`}>No reviews yet. Be the first!</Link></p>
+                    <p><Button variant="contained" onClick={() => navigate(`/recipes/${recipe.id}/review`)}>No reviews
+                        yet. Be the
+                        first!</Button></p>
                 ) : (
                     <p>You must be <Link to="/login">logged in </Link> to leave a review.</p>
                 )
             )}
-            {user && <Link to={"/recipes/${recipe.id}/review"}>Leave your review</Link>}
+            {user && !isUserRecipeOwner &&
+                <Button variant="contained" onClick={() => navigate(`/recipes/${recipe.id}/review`)}>Leave your
+                    review</Button>}
         </div>
     );
 }

@@ -21,7 +21,6 @@ function SearchResults() {
             unAuthAxios.get(query)
                 .then(response => {
                     console.log('Search query response:', response.data.data);
-                    // If the response contains data, update the search results
                     if(response.data.data && response.data.data.content) {
                         setSearchResults(response.data.data.content);
                     }

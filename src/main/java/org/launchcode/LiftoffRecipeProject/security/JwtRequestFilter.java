@@ -50,6 +50,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             jwtToken = requestTokenHeader.substring(7);
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+                Integer userId = jwtTokenUtil.getUserIdFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
                 System.out.println("Unable to get JWT Token");
             } catch (ExpiredJwtException e) {
@@ -71,6 +72,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
             if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
+                
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken
@@ -82,6 +84,3 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 }
-
-//eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHltYWlsLmNvbSIsImlhdCI6MTY4NjI0NDAyNSwiZXhwIjoxNjg2MjYyMDI1fQ.oKNJrc-VFxaT-WF2v1Zp3ZyP1tgFT7DTmoVpW5YygmA
-//eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHltYWlsLmNvbSIsImlhdCI6MTY4NjI0NDAyNSwiZXhwIjoxNjg2MjYyMDI1fQ.oKNJrc-VFxaT-WF2v1Zp3ZyP1tgFT7DTmoVpW5YygmA

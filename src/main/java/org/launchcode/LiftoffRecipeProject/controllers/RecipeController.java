@@ -83,17 +83,16 @@ public class RecipeController {
     //PUT /recipes/{id} updates the recipe with the matching {id}
     @Transactional
     @PutMapping("/update/{recipeId}")
-    public ResponseEntity<ResponseWrapper<RecipeDTO>> updateRecipe(@Valid @PathVariable Integer recipeId, @RequestBody RecipeDTO recipeDTO) {
-        RecipeDTO updatedRecipeDTO = recipeService.updateRecipe(recipeId, recipeDTO);
-
+    public ResponseEntity<ResponseWrapper<RecipeDTO>> updateRecipe(@Valid @PathVariable Integer recipeId, @RequestBody RecipeDTO recipeDTO, @RequestHeader("userId") Integer userId) {
+        RecipeDTO updatedRecipeDTO = recipeService.updateRecipe(recipeId, recipeDTO, userId);
         return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Recipe updated successfully", updatedRecipeDTO), HttpStatus.OK);
     }
 
     //DELETE /recipes/{id}  deletes an existing recipe.
     @DeleteMapping("/delete/{recipeId}")
-    public ResponseEntity<ResponseWrapper<Void>> deleteRecipe(@PathVariable Integer recipeId) {
-        recipeService.deleteRecipe(recipeId);
-
+    public ResponseEntity<ResponseWrapper<Void>> deleteRecipe(@PathVariable Integer recipeId, @RequestHeader("userId") Integer userId) {
+        logger.info("Received delete request for recipeId: {} from userId: {}", recipeId, userId);
+        recipeService.deleteRecipe(recipeId, userId);
         return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.NO_CONTENT.value(), "Recipe deleted successfully", null), HttpStatus.NO_CONTENT);
     }
 

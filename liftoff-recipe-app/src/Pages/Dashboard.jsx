@@ -14,7 +14,7 @@ import {UserContext} from "../stores/UserStore";
 
 function Dashboard() {
     const [recipes, setRecipes] = useState([]);
-    const [recommended, setRecommended] = useState([]);
+    const [allRecipes, setAllRecipes] = useState([]);
     const navigate = useNavigate();
     // const [user, setUser] = useState(null);
     const userId = localStorage.getItem("userId")
@@ -52,9 +52,23 @@ function Dashboard() {
                 console.error("Error fetching recipes:", error);
             }
         };
-
         fetchRecipes();
     }, [userId]);
+
+    useEffect(() => {
+        const fetchAllRecipes = async () => {
+            try {
+                console.log("Fetching all recipes...");
+                const response = await authAxios.get('http://localhost:8080/recipes');
+                const data = response.data.data;
+                console.log("Fetched all recipes", data);
+                setAllRecipes(data.content);
+            } catch (error) {
+                console.error("Error fetching all recipes: ", error);
+            }
+        };
+        fetchAllRecipes();
+    }, [])
 
 
     const handleCardClick = (recipeId) => {
@@ -64,27 +78,6 @@ function Dashboard() {
         <>
             <NavBar/>
             <SearchBar onSearch={handleSearch}/>
-            {/* New Recipe button only visible to logged-in users */}
-            {user && (
-                <>
-                    <span>&nbsp;&nbsp;&nbsp;</span>
-                    <Link to="newrecipe">
-                        <Button variant="contained">New Recipe</Button>
-                    </Link>
-                    <Button variant="contained" onClick={() => logout(navigate)}>Log Out</Button>
-                </>
-            )}
-            {!user && (
-                <>
-                    <Link to="login">
-                        <Button variant="contained" onClick={()=> login(navigate)}>Log In</Button>
-                    </Link>
-                    <span>&nbsp;&nbsp;&nbsp;</span>
-                    <Link to="signup">
-                        <Button variant="contained">Sign Up</Button>
-                    </Link>
-                </>
-            )}
             <div className={'container'}>
                 {user && <Sidebar user={user} className="sidebar"/>}
                 <div className={"app-main"}>
@@ -107,20 +100,27 @@ function Dashboard() {
                                     onClick={() => handleCardClick(recipe.id)}
                                 />
                             ))}
+                            <h2>All Recipes</h2>
+                            {allRecipes && allRecipes.length > 0 && allRecipes.map((recipe) => (
+                                <FoodCard
+                                    key={recipe.id}
+                                    recipe={recipe}
+                                    userId={userId}
+                                    onClick={() => handleCardClick(recipe.id)}
+                                />
+                            ))}
                         </>
                     ) : (
                         <>
-
-                            <div className="recipe-section">
-                                {!user && recipes.map((recipe) => (
-                                    <FoodCard
-                                        key={recipe.id}
-                                        recipe={recipe}
-                                        onClick={() => handleCardClick(recipe.id)}
-                                    />
-                                ))}
-                            </div>
-
+                            <h2>All Recipes</h2>
+                            {!user && allRecipes.map((recipe) => (
+                                <FoodCard
+                                    key={recipe.id}
+                                    recipe={recipe}
+                                    userId={null}
+                                    onClick={() => handleCardClick(recipe.id)}
+                                />
+                            ))}
                             {
                                 isSearching && hasSearched ? (
                                     <LoadingScreen/>
@@ -129,11 +129,13 @@ function Dashboard() {
                                 )
                             }
                         </>
-                    )}
+                    )
+                    }
                 </div>
             </div>
         </>
-    );
+    )
+        ;
 }
 
 export default Dashboard;
