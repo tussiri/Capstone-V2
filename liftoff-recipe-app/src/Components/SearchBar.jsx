@@ -21,9 +21,67 @@ const theme2 = createTheme({
        secondary: {
          main: colors.orange[400]
          }
-       }
+       },
+   components: {
+       MuiTextField:{
+          styleOverrides:{
+              root:{
+                    '& label': {
+                    color: '#FFFFFF',
+                    },
+                    '& label.Mui-focused': {
+                    color: '#FFFFFF',
+                    },
+                    '& .MuiInput-underline:after': {
+                    borderBottomColor: '#FFFFFF',
+                    },
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                      borderColor: '#FFFFFF',
+                      },
+                      '&:hover fieldset': {
+                         borderColor: '#FFFFFF',
+                         borderWidth: '0.15rem',
+                      },
+                      '&.Mui-focused fieldset': {
+                         borderColor: '#FFFFFF',
+                      },
+                    }
+              }
+          },
+       },
+
+       MuiSelect:{
+          styleOverrides:{
+             root:{
+                '& label': {
+                   color: '#FFFFFF',
+                },
+                '& label.Mui-focused': {
+                   color: '#FFFFFF',
+                },
+                '& .MuiInput-underline:after': {
+                   borderBottomColor: '#FFFFFF',
+                },
+                '& .MuiSelect-root': {
+                      borderColor: '#FFFFFF',
+                   'hover': {
+                      borderColor: '#FFFFFF',
+                      borderWidth: '0.15rem',
+                   },
+                   'Mui-focused': {
+                      borderColor: '#FFFFFF',
+                   },
+                }
+             }
+          },
+       },
+
+   },
+
+
+
 });
-const whiteColor = colors.grey[50]
 
 
 const SearchBar = ({onSearch}) => {
@@ -68,23 +126,26 @@ const SearchBar = ({onSearch}) => {
     return (
         <div>
             <ThemeProvider theme={theme2}>
-            <TextField sx={{ m: 1, color:'white'}}
+
+            <TextField sx={{ m: 1, color: 'white', input: {color: 'white'} }}
                        size="small"
                        id="searchfield"
-                       label="Search"
+                       label="Search for..."
                        type="text"
                        value={searchTerm}
                        onChange={handleSearchTermChange}
                        placeholder="Search"
 
             />
-            <FormControl sx={{ m: 1, minWidth: 150 }} size="small">
-                <InputLabel id="searchtype">Search by...</InputLabel>
+            <FormControl sx={{ m: 1, minWidth: 150, input: {color: 'white'} }} size="small">
+                <InputLabel id="searchtype" sx={{color: 'white'}}>Search by...</InputLabel>
                 <Select
+
+                    sx={{color: 'white', borderColor: 'white'}}
                     labelId="searchtype-label"
                     id="search-type"
                     //value={selectedOption}
-                    //onChange={handleOptionChange}
+                    onChange={handleOptionChange}
                     label="Search By"
                 >
                     <MenuItem value="All">All Recipes</MenuItem>

@@ -62,12 +62,10 @@ function Dashboard() {
     };
     return (
         <>
-            <NavBar/>
-            <SearchBar onSearch={handleSearch}/>
+
             {/* New Recipe button only visible to logged-in users */}
             {user && (
                 <>
-                    <span>&nbsp;&nbsp;&nbsp;</span>
                     <Link to="newrecipe">
                         <Button variant="contained">New Recipe</Button>
                     </Link>
@@ -78,7 +76,6 @@ function Dashboard() {
                 <div className={"app-main"}>
                     {user ? (
                         <>
-                            <Button variant="contained" onClick={logout}>Log Out</Button>
                             <h2>Your Recipes</h2>
                             {recipes && recipes.length > 0 && recipes.map((recipe) => (
                                 <FoodCard
