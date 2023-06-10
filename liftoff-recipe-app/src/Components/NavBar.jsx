@@ -23,7 +23,7 @@ import authAxios from "../utility/authAxios";
 
 
 
-const pages = ['Home', 'All Recipes', 'Random Recipe', 'Search'];
+const pages = ['Home', 'All Recipes', 'Random Recipe'];
 const settings = ['Account', 'My Recipes', 'Logout'];
 
 function NavBar() {
@@ -182,36 +182,50 @@ function NavBar() {
             <Button sx={{ color: 'white' }} onClick={handleCloseNavMenu}>Random Recipe</Button>
           </Link>
           </Box>
+            {user ? (
+              <Box sx={{ fontWeight: 500, color: 'white' }} >
 
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Test Account" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
+                <Tooltip title='Account Settings'>
+                  <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
+                    <Avatar alt={user.firstName} src='/static/images/avatar/2.jpg'/>
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                        sx={{mt: 5, ml: 5}}
+                        id='menu-appbar'
+                        anchorEl={anchorElUser}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        open={Boolean(anchorElUser)}
+                        onClose={handleCloseUserMenu}
+                    >
+                        {settings.map((setting) => (
+                            <MenuItem key={setting} //'Account', 'My Recipes'
+                                      onClick={setting === 'Logout' ? logout : handleCloseUserMenu}>
+
+                                <Typography textAlign='center'>{setting}</Typography>
+                            </MenuItem>
+                        ))}
+                </Menu>
+              </Box>
+            ) : (
+                <Box sx={{flexGrow: 0}}>
+                    <Link to='/login'>
+                        <Button sx={{color: 'white'}}>Login</Button>
+                    </Link>
+                    <Link to='/signup'>
+                        <Button sx={{color: 'white'}}>Sign Up</Button>
+                    </Link>
+                </Box>
+            )}
+
         </Toolbar>
       </Container>
     </AppBar>

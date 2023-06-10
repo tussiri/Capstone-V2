@@ -115,41 +115,41 @@ function HomePage() {
             <Button variant="contained">test button</Button>
             <p></p>
 
-            <div className='container'>
-                {user && <Sidebar user={user} className="sidebar"/>}
+{/*             <div className='container'> */}
+{/*                 {user && <Sidebar user={user} className="sidebar"/>} */}
                 <div className="app-main">
-                    {user ? (
-                        <>
-                            <Button variant="contained" onClick={logout}>Log Out</Button>
-                            <h2>Your Recipes</h2>
-                            {recipes && recipes.length > 0 && recipes.map((recipe) => (
-                                <FoodCard
-                                    key={recipe.id}
-                                    recipe={recipe}
-                                    onClick={() => handleCardClick(recipe.id)}
-                                />
-                            ))}
-                            <h2>Liked Recipes</h2>
-                            {likedRecipes.map((recipe) => (
-                                <FoodCard
-                                    key={recipe.id}
-                                    recipe={recipe}
-                                    onClick={() => handleCardClick(recipe.id)}
-                                />
-                            ))}
-                        </>
-                    ) : (
+{/*                     {user ? ( */}
+{/*                         <> */}
+
+{/*                             <h2>Your Recipes</h2> */}
+{/*                             {recipes && recipes.length > 0 && recipes.map((recipe) => ( */}
+{/*                                 <FoodCard */}
+{/*                                     key={recipe.id} */}
+{/*                                     recipe={recipe} */}
+{/*                                     onClick={() => handleCardClick(recipe.id)} */}
+{/*                                 /> */}
+{/*                             ))} */}
+{/*                             <h2>Liked Recipes</h2> */}
+{/*                             {likedRecipes.map((recipe) => ( */}
+{/*                                 <FoodCard */}
+{/*                                     key={recipe.id} */}
+{/*                                     recipe={recipe} */}
+{/*                                     onClick={() => handleCardClick(recipe.id)} */}
+{/*                                 /> */}
+{/*                             ))} */}
+{/*                         </> */}
+{/*                     ) : ( */}
                         <>
 
-                            <div className="recipe-section">
-                                {!user && recipes.map((recipe) => (
-                                    <FoodCard
-                                        key={recipe.id}
-                                        recipe={recipe}
-                                        onClick={() => handleCardClick(recipe.id)}
-                                    />
-                                ))}
-                            </div>
+{/*                             <div className="recipe-section"> */}
+{/*                                 {!user && recipes.map((recipe) => ( */}
+{/*                                     <FoodCard */}
+{/*                                         key={recipe.id} */}
+{/*                                         recipe={recipe} */}
+{/*                                         onClick={() => handleCardClick(recipe.id)} */}
+{/*                                     /> */}
+{/*                                 ))} */}
+{/*                             </div> */}
 
                             {
                                 isSearching && hasSearched ? (
@@ -159,9 +159,8 @@ function HomePage() {
                                 )
                             }
                         </>
-                    )}
                 </div>
-            </div>
+{/*             </div> */}
         </>
     );
 }
