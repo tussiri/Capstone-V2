@@ -99,27 +99,9 @@ function Dashboard() {
                                     onClick={() => handleCardClick(recipe.id)}
                                 />
                             ))}
-                            <h2>All Recipes</h2>
-                            {allRecipes && allRecipes.length > 0 && allRecipes.map((recipe) => (
-                                <FoodCard
-                                    key={recipe.id}
-                                    recipe={recipe}
-                                    userId={userId}
-                                    onClick={() => handleCardClick(recipe.id)}
-                                />
-                            ))}
                         </>
                     ) : (
                         <>
-                            <h2>All Recipes</h2>
-                            {!user && allRecipes.map((recipe) => (
-                                <FoodCard
-                                    key={recipe.id}
-                                    recipe={recipe}
-                                    userId={null}
-                                    onClick={() => handleCardClick(recipe.id)}
-                                />
-                            ))}
                             {
                                 isSearching && hasSearched ? (
                                     <LoadingScreen/>
