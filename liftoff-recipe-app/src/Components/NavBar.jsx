@@ -128,7 +128,7 @@ function NavBar() {
 
 
   return (
-    <AppBar position="static">
+    <AppBar position="fixed">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <img src={BarLogo} sx={{ maxHeight:30 }}/>
