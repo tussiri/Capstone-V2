@@ -15,6 +15,8 @@ import DeleteRecipe from "./Pages/DeleteRecipePage";
 import RandomRecipes from "./Pages/RandomRecipes";
 import NavBar from "./Components/NavBar";
 import BottomBar from "./Components/BottomBar"
+import AccountInfo from "./Pages/AccountInfo";
+
 
 const theme = createTheme({
     palette: {
@@ -66,7 +68,7 @@ function App() {
                         <Route path="/searchresults" element={<SearchResults/>}/>
                         <Route path="/users/:id/recipes/:recipeId" element={<RecipePage/>}/>
                         <Route path="/recipes/random" element={<RandomRecipes/>}/>
-                        {/*<Route path="/account" element={<AccountInfo/>}/>*/}
+                        <Route path="/account" element={<AccountInfo/>}/>
 
                         <Route path="/users/:id/recipes/:recipeId" component={RecipePage}/>
 

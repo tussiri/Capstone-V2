@@ -33,7 +33,7 @@ function SignUp() {
         confirmPassword: "",
         dateOfBirth: "",
     });
-    const [errors, setErrors] = useState({});
+    const [{firstName}, setErrors] = useState({});
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -65,96 +65,151 @@ function SignUp() {
 
             localStorage.setItem("token", token);
             navigate("/");
-        }catch (error) {
-        if (error.response && error.response.data) {
-            setErrors(error.response.data.errors);
-        } else {
-            console.error("Registration failed:", error);
+        } catch (error) {
+            if (error.response && error.response.data) {
+                setErrors(error.response.data.errors);
+            } else {
+                console.error("Registration failed:", error);
+            }
         }
-    }
-};
+    };
 
-return (
-<div>
-     <Container component="main" maxWidth="xs">
-            <CssBaseline />
-            <Box
-              sx={{
-                marginTop: 8,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-              }}
-            >
-            <img src={Logo}/>
-              <Typography component="h1" variant="h5">
-                Sign up
-              </Typography>
-              <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      autoComplete="given-name"
-                      name="firstName"
-                      required
-                      fullWidth
-                      id="firstName"
-                      label="First Name"
-                      autoFocus
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      required
-                      fullWidth
-                      id="lastName"
-                      label="Last Name"
-                      name="lastName"
-                      autoComplete="family-name"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      required
-                      fullWidth
-                      id="email"
-                      label="Email Address"
-                      name="email"
-                      autoComplete="email"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      required
-                      fullWidth
-                      name="password"
-                      label="Password"
-                      type="password"
-                      id="password"
-                      autoComplete="new-password"
-                    />
-                  </Grid>
-                </Grid>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{ mt: 3, mb: 2, color: 'white' }}
-                >
-                  Sign Up
-                </Button>
-                <Grid container justifyContent="center">
-                  <Grid item>
-                    <Link to='/login' variant="body2">
-                      <Button>Already have an account? Sign in</Button>
-                    </Link>
-                  </Grid>
-                </Grid>
-              </Box>
+    return (
+        <Container component="main" maxWidth="xs">
+            <CssBaseline/>
+            <Box sx={{marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center',}}>
+                <img src={Logo}/>
+                <Typography component="h1" variant="h5">
+                    Sign up
+                </Typography>
+                <Box component="form" noValidate onSubmit={handleSubmit} sx={{mt: 3}}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                autoComplete="given-name"
+                                name="firstName"
+                                required
+                                fullWidth
+                                id="firstName"
+                                label="First Name"
+                                autoFocus
+                                value={formData.firstName}
+                                onChange={handleChange}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                required
+                                fullWidth
+                                id="lastName"
+                                label="Last Name"
+                                name="lastName"
+                                autoComplete="last-name"
+                                value={formData.lastName}
+                                onChange={handleChange}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                required
+                                fullWidth
+                                id="email"
+                                label="Email Address"
+                                name="email"
+                                autoComplete="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                required
+                                fullWidth
+                                id="dateOfBirth"
+                                label="Date of Birth"
+                                name="dateOfBirth"
+                                type="date"
+                                onChange={handleChange}
+                                InputProps={{
+                                    inputProps: {placeholder: ' '},
+                                }}
+                                sx={{color: 'action.active', mr: 1, my: 0.2}}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                required
+                                fullWidth
+                                name="password"
+                                label="Password"
+                                type={showPassword ? "text" : "password"}
+                                id="password"
+                                autoComplete="new-password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                aria-label="toggle password visibility"
+                                                onClick={handleClickShowPassword}
+                                                onMouseDown={handleMouseDownPassword}
+                                                edge="end"
+                                            >
+                                                {showPassword ? <VisibilityOff/> : <Visibility/>}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                required
+                                fullWidth
+                                name="password"
+                                label="Password"
+                                type={showPassword ? "text" : "password"}
+                                id="password"
+                                autoComplete="new-password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                aria-label="toggle password visibility"
+                                                onClick={handleClickShowPassword}
+                                                onMouseDown={handleMouseDownPassword}
+                                                edge="end"
+                                            >
+                                                {showPassword ? <VisibilityOff/> : <Visibility/>}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )
+                                }}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{mt: 3, mb: 2, color: 'white'}}
+                    >
+                        Sign Up
+                    </Button>
+                    <Grid container justifyContent="center">
+                        <Grid item>
+                            <Link to='/login' variant="body2">
+                                <Button>Already have an account? Sign in</Button>
+                            </Link>
+                        </Grid>
+                    </Grid>
+                </Box>
             </Box>
-          </Container>
-</div>
-);
+        </Container>
+    );
 }
 
 export default SignUp;

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import authAxios from "../utility/authAxios";
 
 function AccountEdit({ user }) {
     const [firstName, setFirstName] = useState(user.firstName);
@@ -11,11 +12,11 @@ function AccountEdit({ user }) {
     const handleSave = async () => {
         try {
             const updatedUser = {
-                firstName,
-                lastName,
-                email,
-                password,
-                dateOfBirth,
+                firstName:'',
+                lastName:'',
+                email:'',
+                password:'',
+                dateOfBirth:'',
             };
 
             await authAxios.put(`http://localhost:8080/users/${user.id}`, updatedUser);
