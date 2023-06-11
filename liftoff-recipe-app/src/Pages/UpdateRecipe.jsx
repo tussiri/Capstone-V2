@@ -70,7 +70,6 @@ function UpdateRecipe() {
     };
     return (
         <div>
-            <NavBar/>
             <Box>
                 <h1>Update Recipe</h1>
                 <Box

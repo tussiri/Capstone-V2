@@ -10,6 +10,7 @@ import LoadingScreen from "./LoadingPage";
 import authAxios from "../utility/authAxios";
 import {UserContext} from "../stores/UserStore";
 import Sidebar from "../Components/SideBar";
+import Grid from "@mui/material/Grid";
 
 
 function HomePage() {
@@ -83,20 +84,21 @@ function HomePage() {
 
     return (
         <>
-            <NavBar/>
             <SearchBar onSearch={handleSearch}/>
+            <h2>All Recipes</h2>
             <div className="container">
                 <Sidebar user={user} className="sidebar"/>
-                <div className="app-main">
-                    <h2>All Recipes</h2>
+                <Grid container spacing={3}>
                     {recipes.map((recipe) => (
-                        <FoodCard
-                            key={recipe.id}
-                            recipe={recipe}
-                            onClick={() => handleCardClick(recipe.id)}
-                        />
+                        <Grid item xs={12} sm={6} md={4} lg={3}>
+                            <FoodCard
+                                key={recipe.id}
+                                recipe={recipe}
+                                onClick={() => handleCardClick(recipe.id)}
+                            />
+                        </Grid>
                     ))}
-                </div>
+                </Grid>
                 {isSearching && hasSearched ? (
                     <LoadingScreen/>
                 ) : (

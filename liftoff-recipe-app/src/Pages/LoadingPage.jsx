@@ -1,5 +1,6 @@
 import React from 'react';
 import "../Styles/LoadingScreen.css"
+import Logo from "../Assets/MealifyLogoNoBG100x100.png";
 
 function LoadingScreen() {
     return (

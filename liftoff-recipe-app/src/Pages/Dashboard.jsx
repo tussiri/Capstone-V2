@@ -76,7 +76,6 @@ function Dashboard() {
     };
     return (
         <>
-            <NavBar/>
             <SearchBar onSearch={handleSearch}/>
             <div className={'container'}>
                 {user && <Sidebar user={user} className="sidebar"/>}
