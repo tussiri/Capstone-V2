@@ -9,10 +9,10 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Logo from "../Assets/MealifyLogoNoBG100x100.png";
+import FormControl from "@mui/material/FormControl";
 
 
 function Login () {
@@ -21,6 +21,11 @@ function Login () {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const [formData, setFormData] = useState({
+            email: "",
+            password: "",
+        });
 
     // const handleLogin = () => {
     //     axios.post('http://localhost:8080/auth/login', {
@@ -38,7 +43,7 @@ function Login () {
     //     });
     // };
 
-    const handleLogin = () => {
+    const handleLogin = (event) => {
         login(email, password)
             .then(() => navigate("/dashboard"))
             .catch((error) => console.log("Error:", error));
@@ -61,7 +66,7 @@ function Login () {
                   <Typography component="h1" variant="h5">
                     Sign in
                   </Typography>
-                  <Box component="form" onSubmit={handleLogin} noValidate sx={{ mt: 1 }}>
+                  <Box component="form" onSubmit={handleLogin} sx={{ mt: 1 }}>
                     <TextField
                       margin="normal"
                       required
@@ -81,6 +86,7 @@ function Login () {
                       type="password"
                       id="password"
                       autoComplete="current-password"
+
                     />
 {/*                     <FormControlLabel */}
 {/*                       control={<Checkbox value="remember" color="primary" />} */}

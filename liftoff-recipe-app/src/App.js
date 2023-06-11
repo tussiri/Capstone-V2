@@ -49,7 +49,7 @@ const theme = createTheme({
 function App() {
     return (
     <ThemeProvider theme={theme}>
-        <div className="App">
+        <div className="App" style={{paddingBottom: '60px', paddingTop: '60px'}}>
             <UserProvider>
             <NavBar/>
             <BottomBar/>
