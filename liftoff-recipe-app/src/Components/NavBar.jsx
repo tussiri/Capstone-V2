@@ -246,7 +246,7 @@ function NavBar() {
             ) : (
                 <Box sx={{flexGrow: 0}}>
                     <Link to='/login'>
-                        <Button sx={{color: 'white'}}>Login</Button>
+                        <Button sx={{color: 'white'}}>Sign In</Button>
                     </Link>
                     <Link to='/signup'>
                         <Button sx={{color: 'white'}}>Sign Up</Button>
