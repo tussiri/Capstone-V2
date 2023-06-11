@@ -13,24 +13,43 @@ import SearchResults from "./Pages/SearchResults";
 import UpdateRecipe from "./Pages/UpdateRecipe";
 import DeleteRecipe from "./Pages/DeleteRecipePage";
 import RandomRecipes from "./Pages/RandomRecipes";
-import AccountInfo from "./Pages/AccountInfo";
+import NavBar from "./Components/NavBar";
+import BottomBar from "./Components/BottomBar"
 
 const theme = createTheme({
     palette: {
         primary: {
-            main: colors.orange[400],
+          main: colors.orange[400],
         },
         secondary: {
-            main: colors.deepOrange[900],
+          main: colors.grey[50]
         }
+    },
+    components:{
+        select: {
+            '&:before': {
+                borderColor: 'white',
+            },
+            '&:after': {
+                borderColor: 'white',
+            },
+            '&:not(.Mui-disabled):hover::before': {
+                borderColor: 'white',
+            },
+        },
+        root: {
+            color: 'white',
+        },
     }
-})
+});
 
 function App() {
     return (
         <ThemeProvider theme={theme}>
-            <div className="App">
+            <div className="App" style={{paddingBottom:'100px', paddingTop:'100px'}}>
                 <UserProvider>
+                    <NavBar/>
+                    <BottomBar/>
                     <Routes>
                         <Route path="/" element={<HomePage/>}/>
                         <Route path="/login" element={<Login/>}/>
@@ -48,6 +67,8 @@ function App() {
                         <Route path="/users/:id/recipes/:recipeId" element={<RecipePage/>}/>
                         <Route path="/recipes/random" element={<RandomRecipes/>}/>
                         {/*<Route path="/account" element={<AccountInfo/>}/>*/}
+
+                        <Route path="/users/:id/recipes/:recipeId" component={RecipePage}/>
 
                     </Routes>
                 </UserProvider>

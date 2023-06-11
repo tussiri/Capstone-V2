@@ -57,7 +57,6 @@ function DeleteRecipe() {
 
     return (
         <div>
-            <NavBar/>
             <Box>
                 <h1>Delete Recipe</h1>
                 <Box

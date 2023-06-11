@@ -45,7 +45,6 @@ function SearchResults() {
 
         return (
             <div>
-                <NavBar/>
                 {searchResults.map(recipe => (
                     <FoodCard recipe={recipe} key={recipe.id} onClick={() => navigate(`/recipes/${recipe.id}`)}/>
                 ))}

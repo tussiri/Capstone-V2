@@ -65,7 +65,6 @@ function RecipePage({match}) {
 
     return (
         <div>
-            <NavBar/>
             <h2>{recipe.name}</h2>
             <img src={recipe.picture ? recipe.picture : stockImage} alt={recipe.name}/>
             <p>{recipe.description}</p>
