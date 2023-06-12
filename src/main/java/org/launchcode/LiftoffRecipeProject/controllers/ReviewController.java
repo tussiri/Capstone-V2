@@ -22,7 +22,7 @@ public class ReviewController {
     @Autowired
     private ReviewRepository reviewRepository;
 
-
+@Autowired
     private RecipeRepository recipeRepository;
 
     @Autowired
@@ -54,8 +54,8 @@ public class ReviewController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<List<Review>> getAllReviews() {
+    @GetMapping("/recipes/{recipeId}/reviews")
+    public ResponseEntity<List<Review>> getAllReviews(@PathVariable String recipeId) {
         List<Review> reviews = (List<Review>) reviewRepository.findAll();
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
@@ -81,15 +81,28 @@ public class ReviewController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Review> deleteReview(@PathVariable int id){
+    public ResponseEntity<Review> deleteReview(@PathVariable int id) {
         Optional<Review> selectedReview = reviewRepository.findById(id);
-        if(selectedReview.isPresent()){
+        if (selectedReview.isPresent()) {
             reviewRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }else{
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+
+
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<?> deleteReviewsByUserId(@PathVariable Integer userId) {
+        try {
+            reviewRepository.deleteByUserId(userId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Review> updateReview(@PathVariable int id, @RequestBody Review review){

@@ -1,318 +1,191 @@
-import React, {useEffect, useState} from "react";
+import React, {useState, useContext} from 'react'
+import {Button, TextField, Box} from '@mui/material';
+import {UserContext} from "../stores/UserStore";
+import authAxios from "../utility/authAxios";
+import CssBaseline from "@mui/material/CssBaseline";
+import Container from "@mui/material/Container";
+
+import Logo from "../Assets/MealifyLogoNoBG100x100.png";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
 import {useNavigate} from "react-router-dom";
-import Logo from "../Assets/logo-removebg-preview 1.png";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import MenuItem from "@mui/material/MenuItem";
-import Button from "@mui/material/Button";
-import FavoriteTwoToneIcon from "@mui/icons-material/FavoriteTwoTone";
 
-import "../SignUp.css";
 
-function NewRecipePage() {
-    const DietaryPref = [
-        {
-            value: "Vgn",
-            label: "Vegan",
-        },
-        {
-            value: "Veg",
-            label: "Vegetarian",
-        },
-        {
-            value: "Non-Veg",
-            label: "Non-Vegetarian",
-        },
-    ];
-    const categories = [
+const NewRecipePage = () => {
 
-        {
-            value: "App",
-            label: "Appetizers",
-        },
-        {
-            value: "DST",
-            label: "Dessert",
-        },
-        {
-            value: "BKFST",
-            label: "Breakfast",
-        },
-        {
-            value: "DNR",
-            label: "Dinner",
-        },
-        {
-            value: "LUN",
-            label: "Lunch",
-        },
-        // {
-        //   value: "Sou",
-        //   label: "Soups",
-        // },
-        // {
-        //   value: "Sal",
-        //   label: "Salads",
-        // },
 
-    ];
-
-    const [user, setUser] = useState();
+    const navigate = useNavigate();
+    const userId = localStorage.getItem('userId');
     const [recipe, setRecipe] = useState({
+        // id: '',
         name: '',
         category: '',
         description: '',
-        prepTime: '',
-        cookTime: '',
+        time: '',
         servings: '',
         ingredients: [],
         directions: '',
-    });
-
-    const [flag, setFlag] = React.useState(true);
-    const navigate = useNavigate();
+        image: ''
+    })
 
 
-    const handleClick = () => {
-        setFlag(!flag);
-    };
+
+    const {user} = useContext(UserContext);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        // const formattedIngredients = ingredients.split(',').filter(ingredient => ingredient.trim() !== '');
+
+        try {
+            const response = await authAxios.post(`http://localhost:8080/recipes/${userId}`, {
+                ...recipe
+            });
+            console.log("recipe sent: ", response)
+
+            if (response.status === 201) {
+                console.log("Recipe created successfully");
+                navigate('/');
+            } else {
+                console.error("Error creating recipe: ", response);
+            }
+
+        } catch (error) {
+            console.error("Error creating recipe: ", error);
+        }
+    }
+    const handleChange = (e) => {
+        const {name, value} = e.target;
+        if (name === 'ingredients') {
+            if (value.trim() === '') {
+                setRecipe({
+                    ...recipe,
+                    [name]: [],
+                });
+            } else {
+                setRecipe({
+                    ...recipe,
+                    [name]: value.split(',').map(item => item.trim()),
+                });
+            }
+        } else {
+            setRecipe({
+                ...recipe,
+                [name]: value,
+            });
+        }
+    }
 
     return (
-        <>
-            <h1
-                style={{
-                    position: "relative",
-                    top: "20px",
-                }}
-            >
-                New Recipe
-            </h1>
-
-            <img
-                src={Logo}
-                alt="Logo"
-                maxHeight="30"
-                maxWidth="30"
-                style={{position: "relative", top: "-60px", left: "650px"}}
-            ></img>
-            <FavoriteTwoToneIcon
-                onClick={handleClick}
-                style={flag ? {color: "black"} : {color: "crimson"}}
-                fontSize="large"
-            />
-            <h3
-                style={{
-                    position: "relative",
-                    top: "-30px",
-                    left: "-250px",
-                }}
-            >
-                Name
-            </h3>
-
-            <TextField
-                id="outlined-basic"
-                variant="outlined"
-                size="small"
-                style={{
-                    width: "54ch",
-                    position: "relative",
-                    top: "-40px",
-                    left: "-5px",
-                }}
-            />
-
-            <h3
-                style={{
-                    position: "relative",
-                    top: "-30px",
-                    left: "-235px",
-                }}
-            >
-                Category
-            </h3>
-
-            <TextField
-                id="outlined-select-currency"
-                select
-                size="small"
-                style={{
-                    width: "25ch",
-                    position: "relative",
-                    top: "-40px",
-                    left: "-150px",
-                }}
-            >
-                {categories.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                    </MenuItem>
-                ))}
-            </TextField>
-            <h3
-                style={{
-                    position: "relative",
-                    top: "-30px",
-                    left: "-187px",
-                }}
-            >
-                Dietary Preferences
-            </h3>
-
-            <TextField
-                id="outlined-select-currency"
-                select
-                size="small"
-                style={{
-                    width: "25ch",
-                    position: "relative",
-                    top: "-40px",
-                    left: "-150px",
-                }}
-            >
-                {DietaryPref.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                    </MenuItem>
-                ))}
-            </TextField>
-
-            <h3
-                style={{
-                    position: "relative",
-                    top: "-30px",
-                    left: "-225px",
-                }}
-            >
-                Description
-            </h3>
-
-            <TextField
-                id="outlined-multiline-flexible"
-                size="small"
-                multiline
-                maxRows={5}
-                style={{
-                    width: "54ch",
-                    position: "relative",
-                    top: "-40px",
-                    left: "-5px",
-                }}
-            />
-
-            <div
-                style={{
-                    position: "relative",
-                    top: "-20px",
-                    left: "-5px",
-                }}
-            >
-                <TextField
-                    id="filled-basic"
-                    label="Prep-time"
-                    variant="filled"
-                    size="small"
-                    style={{
-                        width: "16ch",
-                        padding: "1%",
+        <div>
+            <Box sx={{mt: 3}}>
+                <img src={Logo}/>
+                <Typography component="h1" variant="h5">New Recipe</Typography>
+                <Box
+                    sx={{
+                        maxWidth: '100%',
+                        marginTop: 1,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
                     }}
-                />
-                <TextField
-                    id="filled-basic"
-                    label="Cook-time"
-                    variant="filled"
-                    size="small"
-                    style={{
-                        width: "16ch",
-                        padding: "1%",
-                    }}
-                />
-                <TextField
-                    id="filled-basic"
-                    label="Servings"
-                    variant="filled"
-                    size="small"
-                    style={{
-                        width: "16ch",
-                        padding: "1%",
-                    }}
-                />
-            </div>
+                >
+                    <Box component="form" noValidate sx={{mt: 3, maxWidth: '60%'}} onSubmit={handleSubmit}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <TextField
+                                    name="name"
+                                    label="Recipe Name"
+                                    required
+                                    id="recipeName"
+                                    fullWidth
+                                    onChange={handleChange}
+                                />
+                            </Grid>
 
-            <h3
-                style={{
-                    position: "relative",
-                    top: "-30px",
-                    left: "-225px",
-                }}
-            >
-                Ingredients
-            </h3>
+                            <Grid item xs={12}>
+                                <TextField
+                                    name="description"
+                                    label="Description"
+                                    required
+                                    id="description"
+                                    fullWidth
+                                    onChange={handleChange}
+                                />
+                            </Grid>
 
-            <TextField
-                id="outlined-multiline-flexible"
-                size="small"
-                multiline
-                maxRows={5}
-                style={{
-                    width: "54ch",
-                    position: "relative",
-                    top: "-40px",
-                    left: "-5px",
-                }}
-            />
+                            <Grid item xs={12}>
+                                <TextField
+                                    name="category"
+                                    label="Category"
+                                    required
+                                    id="category"
+                                    fullWidth
+                                    onChange={handleChange}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    name="time"
+                                    label="Time to Cook"
+                                    required
+                                    id="time"
+                                    fullWidth
+                                    onChange={handleChange}
+                                />
+                            </Grid>
 
-            <h3
-                style={{
-                    position: "relative",
-                    top: "-30px",
-                    left: "-225px",
-                }}
-            >
-                Allergens
-            </h3>
+                            <Grid item xs={12}>
+                                <TextField
+                                    name="ingredients"
+                                    label="Ingredients List"
+                                    required
+                                    id="ingredients"
+                                    onChange={handleChange}
+                                    fullWidth
+                                    multiline
+                                    rows={3}
+                                />
+                            </Grid>
 
-            <TextField
-                id="outlined-basic"
-                variant="outlined"
-                size="small"
-                style={{
-                    width: "54ch",
-                    position: "relative",
-                    top: "-40px",
-                    left: "-5px",
-                }}
-            />
+                            <Grid item xs={12}>
+                                <TextField
+                                    name="directions"
+                                    label="Directions"
+                                    required
+                                    id="directions"
+                                    onChange={handleChange}
+                                    fullWidth
+                                    multiline
+                                    rows={4}
+                                />
+                            </Grid>
 
-            <h3
-                style={{
-                    position: "relative",
-                    top: "-30px",
-                    left: "-225px",
-                }}
-            >
-                Directions
-            </h3>
-
-            <TextField
-                id="outlined-multiline-flexible"
-                size="small"
-                multiline
-                maxRows={5}
-                style={{
-                    width: "54ch",
-                    position: "relative",
-                    top: "-40px",
-                    left: "-5px",
-                }}
-            />
-
-            <div style={{position: "relative", top: "20px"}}>
-                <Button variant="contained" color="success">
-                    Submit
-                </Button>
-            </div>
-        </>
+                            <Grid item xs={12}>
+                                <TextField
+                                    name="picture"
+                                    label="Picture URL"
+                                    required
+                                    id="picture"
+                                    fullWidth
+                                    onChange={handleChange}
+                                />
+                            </Grid>
+                            {recipe.picture && (
+                                <img src={recipe.picture} alt={`Picture of ${recipe.name}`} style={{maxWidth:'100%'}}/>
+                            )}
+                        </Grid>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            sx={{mt: 3, mb: 2, color: 'white'}}
+                        >
+                            Submit Recipe
+                        </Button>
+                    </Box>
+                </Box>
+            </Box>
+        </div>
     );
 }
 

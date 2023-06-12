@@ -40,7 +40,7 @@ const Sidebar = () => {
 
     return (
         <Box className={classes.root}>
-            <Avatar className={classes.avatar}>{user.firstName.charAt(0)}</Avatar>
+            {/*<Avatar className={classes.avatar}>{user.firstName.charAt(0)}</Avatar>*/}
             <Typography variant="h5" className={classes.email}>{user.firstName} {user.lastName}</Typography>
             <Typography className={classes.email}>{user.email}</Typography>
             {/* Other profile information */}

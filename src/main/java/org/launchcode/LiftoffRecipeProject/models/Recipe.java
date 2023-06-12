@@ -3,7 +3,9 @@ package org.launchcode.LiftoffRecipeProject.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "recipes")
@@ -16,14 +18,20 @@ public class Recipe extends AbstractEntity {
     inverseJoinColumns =@JoinColumn(name="ingredient_id"))
     private List<Ingredient> ingredients;
 
+//    @ElementCollection
+//    private List<String>ingredients;
+
     @Column(name="directions", columnDefinition="MEDIUMTEXT")
     private String directions;
 
     @Column(nullable = false)
     private int time;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Boolean favorite;
+
+    @ManyToMany(mappedBy = "favoriteRecipes")
+    private Set<User> favoritedByUsers = new HashSet<>();
 
     @Column(columnDefinition="MEDIUMTEXT")
     private String description;
@@ -37,6 +45,10 @@ public class Recipe extends AbstractEntity {
     private List<String> allergens;
 
     private Double rating;
+
+    @JsonIgnore
+    @OneToMany(mappedBy="recipe", cascade = CascadeType.REMOVE)
+    private List<Review> reviews;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -59,6 +71,14 @@ public class Recipe extends AbstractEntity {
     }
 
     // Getters and setters
+
+    public Set<User> getFavoritedByUsers() {
+        return favoritedByUsers;
+    }
+
+    public void setFavoritedByUsers(Set<User> favoritedByUsers) {
+        this.favoritedByUsers = favoritedByUsers;
+    }
 
     public String getName() {
         return name;
@@ -92,7 +112,7 @@ public class Recipe extends AbstractEntity {
         this.time = time;
     }
 
-    public Boolean getFavorite() {
+    public Boolean isFavorite() {
         return favorite;
     }
 
@@ -147,5 +167,12 @@ public class Recipe extends AbstractEntity {
     public void setRating(Double rating) {
         this.rating = rating;
     }
-}
 
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+}
