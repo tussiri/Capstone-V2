@@ -1,8 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {UserContext} from '../stores/UserStore';
 import {useNavigate} from 'react-router-dom';
-import Button from '@mui/material/Button';
+import {Button, TextField, Box} from '@mui/material';
 import authAxios from '../utility/authAxios';
+import Logo from "../Assets/MealifyLogoNoBG100x100.png";
 
 function AccountInfo({onEdit}) {
     const navigate = useNavigate();
@@ -55,17 +56,20 @@ function AccountInfo({onEdit}) {
     return (
         !loading && user && (
             <div>
-                <h2>{user.firstName}</h2>
-                <h2>{user.lastName}</h2>
-                <p>{user.email}</p>
-                <img src={user.avatar} alt={user.name}/>
-                <input type="file" accept="image/*" onChange={handleUpload}/>
-                <Button variant="contained" onClick={()=>navigate('/account/edit')}>
-                    Edit
+            <Box sx={{mt: 3}}>
+                <img src={Logo} alt={user.name} />
+                <h2>Hello, {user.firstName}</h2>
+                <h2>Account Info:</h2>
+                <p>Email: {user.email}</p>
+                <p>Name: {user.firstName} {user.lastName}</p>
+
+                <Button sx={{ color: 'white', m:1 }} variant="contained" onClick={()=>navigate('/account/edit')}>
+                    Edit Info
                 </Button>
-                <Button variant="contained" onClick={handleDelete}>
+                <Button sx={{ color: 'white', m:1 }} variant="contained" onClick={handleDelete}>
                     Delete Account
                 </Button>
+            </Box>
             </div>
         )
     );

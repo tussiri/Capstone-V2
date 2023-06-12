@@ -99,7 +99,7 @@ function NavBar() {
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Link to='/' style={{display: 'flex', alignItems: 'center', textDecoration: 'none'}}>
-                        <img src={BarLogo} sx={{maxHeight: 30}}/>
+                        <img src={BarLogo} sx={{maxHeight: 30}} alt='MealifyLogo'/>
                         <Typography
                             variant="h6"
                             noWrap
