@@ -110,7 +110,7 @@ function ReviewPage() {
 
     return (
         <div>
-            <Button variant="contained" onClick={() => navigate(`/recipes/${recipeId}`)}>Back to Recipe</Button>
+            <Button sx={{ color: 'white', mt:3 }} variant="contained" onClick={() => navigate(`/recipes/${recipeId}`)}>Back to Recipe</Button>
             <h2>Reviews:</h2>
             {reviews.map(review => (
                 <Card key={review.id}>
