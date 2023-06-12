@@ -29,6 +29,6 @@ To get setup with Mealify click the link to clone this git repo to your local ma
 
 Running purposes: Visual studio code or IntelliJ IDEA is highly recommended as editor for this app.
 
-For Backend: Run Bootrun at localhost:8080 server
+For Backend: Run Bootrun at localhost:8080
 
 Frontend: In terminal **cd** into liftoff-app folder and run **npm i**, following that run **npm start** 
