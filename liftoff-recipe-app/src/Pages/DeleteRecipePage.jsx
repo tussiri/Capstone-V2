@@ -72,7 +72,7 @@ function DeleteRecipe() {
                 >
                     {/*<TextField id="id" label="Recipe id" variant="outlined" value={recipeId}*/}
                     {/*           onChange={(e) => setRecipeId(e.target.value)}/>*/}
-                    <Button type="submit" variant="contained">
+                    <Button sx={{ color: 'white', m:1 }} type="submit" variant="contained">
                         Delete
                     </Button>
                 </Box>
