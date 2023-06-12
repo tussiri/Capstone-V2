@@ -175,7 +175,7 @@ function NavBar() {
                         <Link to={user ? "/dashboard" : "/"}>
                             <Button sx={{color: 'white'}} onClick={handleCloseNavMenu}>Home</Button>
                         </Link>
-                        <Link to="/">
+                        <Link to="/allrecipes">
                             <Button sx={{color: 'white'}} onClick={handleCloseNavMenu}>All Recipes</Button>
                         </Link>
                         <Link to="/recipes/random">
