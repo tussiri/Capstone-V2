@@ -1,0 +1,59 @@
+.recipe-name {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.recipe-image {
+    max-width: 80%;
+    height: auto;
+}
+
+.recipe-description {
+    font-size: 16px;
+}
+
+.recipe-category {
+    font-size: 14px;
+}
+
+.recipe-time {
+    font-size: 14px;
+}
+
+.recipe-ingredients {
+    font-size: 14px;
+    margin-bottom: 8px;
+    list-style-type: none;
+    padding-left: 0;
+
+}
+
+.recipe-ingredients li {
+    margin-bottom: 4px;
+}
+
+.recipe-directions {
+    font-size: 14px;
+    margin-bottom: 8px;
+    padding-left: 20px;
+}
+
+.recipe-directions ol {
+    counter-reset: recipe-direction-counter;
+    padding-left: 0;
+}
+
+.recipe-directions li {
+    counter-increment: recipe-direction-counter;
+    margin-bottom: 4px;
+}
+
+.recipe-directions li::before {
+    content: counter(recipe-direction-counter) '.';
+    position: absolute;
+    margin-left: -20px;
+}
+
+.recipe-allergens {
+    font-size: 14px;
+}

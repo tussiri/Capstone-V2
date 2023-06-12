@@ -21,6 +21,7 @@ export function UserProvider({children}) {
             return{
                 userId:decoded.userId,
                 username:decoded.sub,
+                favoriteRecipes:[],
             };
         }catch(error){
             console.error("Error parsing JWT token: ", error)
@@ -56,12 +57,12 @@ export function UserProvider({children}) {
     }
 
     function logout() {
-        setUser(null)
         localStorage.removeItem("token");
+        setUser(null)
         navigate('/')
     }
 
-    return (<UserContext.Provider value={{user, login, logout, parseJwt}}>
+    return (<UserContext.Provider value={{user, setUser, login, logout, parseJwt}}>
             {children}
         </UserContext.Provider>
     );

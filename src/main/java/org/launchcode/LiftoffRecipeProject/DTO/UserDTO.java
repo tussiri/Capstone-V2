@@ -34,7 +34,7 @@ public class UserDTO extends User {
     private LocalDate dateOfBirth;
 
     private String token;
-    private String sessionToken;
+//    private String sessionToken;
 
     public Integer getId() {
         return id;
@@ -92,11 +92,11 @@ public class UserDTO extends User {
         this.token = token;
     }
 
-    public String getSessionToken() {
-        return sessionToken;
-    }
-
-    public void setSessionToken(String sessionToken) {
-        this.sessionToken = sessionToken;
-    }
+//    public String getSessionToken() {
+//        return sessionToken;
+//    }
+//
+//    public void setSessionToken(String sessionToken) {
+//        this.sessionToken = sessionToken;
+//    }
 }

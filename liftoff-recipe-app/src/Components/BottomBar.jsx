@@ -46,38 +46,6 @@ function BottomBar(){
   }
 
   useEffect(() => {
-    setIsLoading(true)
-      const fetchRecipes = async () => {
-        if (user) {
-          console.log(user)
-            try {
-              const response = await authAxios.get(`http://localhost:8080/recipes/user/${userId}`);
-                setRecipes(response.data.data.content);
-                  console.log(response.data.data.content)
-                    // setIsLoading(false);
-            } catch (error) {
-              console.error(error);
-            }
-        } else {
-          try {
-            const response = await axios.get(
-              "http://localhost:8080/recipes?page=0&size=8"
-            );
-              // const data = response.data.data;
-            console.log(response.data.data);
-            setRecipes(response.data.data.content);
-          } catch (error) {
-            console.error(error);
-          }
-        }
-         setIsLoading(false);
-
-        };
-
-         fetchRecipes();
-        }, [user]);
-
-  useEffect(() => {
     if (isSearching && hasSearched) {
       setIsLoading(true);
     }

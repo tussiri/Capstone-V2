@@ -16,8 +16,8 @@ import RandomRecipes from "./Pages/RandomRecipes";
 import NavBar from "./Components/NavBar";
 import BottomBar from "./Components/BottomBar"
 import AccountInfo from "./Pages/AccountInfo";
+import AccountEdit from "./Pages/AccountEdit";
 import AllRecipes from "./Pages/AllRecipes";
-
 
 const theme = createTheme({
     palette: {
@@ -59,7 +59,7 @@ function App() {
                         <Route path="/dashboard" element={<Dashboard/>}/>
                         <Route path="/dashboard/newrecipe" element={<NewRecipePage/>}/>
                         <Route path="/signup" element={<SignUp/>}/>
-                        <Route path="/newrecipe" element={<NewRecipePage/>}/>
+                        <Route path="/recipes/newrecipe" element={<NewRecipePage/>}/>
                         <Route path="/recipes/update/:recipeId" element={<UpdateRecipe/>}/>
                         <Route path="/recipes/delete/:recipeId" element={<DeleteRecipe/>}/>
                         <Route path="/recipes/:recipeId" element={<RecipePage/>}/>
@@ -70,6 +70,7 @@ function App() {
                         <Route path="/users/:id/recipes/:recipeId" element={<RecipePage/>}/>
                         <Route path="/recipes/random" element={<RandomRecipes/>}/>
                         <Route path="/account" element={<AccountInfo/>}/>
+                        <Route path="/account/edit" element={<AccountEdit/>}/>
                         <Route path="/homepage" element={<HomePage/>}/>
                         <Route path="/allrecipes" element={<AllRecipes/>}/>
                         <Route path="/randomrecipe" element={<RandomRecipes/>}/>

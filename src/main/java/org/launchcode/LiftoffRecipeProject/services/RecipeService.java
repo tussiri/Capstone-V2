@@ -1,6 +1,7 @@
 package org.launchcode.LiftoffRecipeProject.services;
 
 
+import jakarta.transaction.Transactional;
 import org.launchcode.LiftoffRecipeProject.DTO.IngredientDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.RecipeDTO;
 import org.launchcode.LiftoffRecipeProject.data.IngredientRepository;
@@ -58,7 +59,7 @@ public class RecipeService {
 //        recipeDTO.setIngredients(recipe.getIngredients());
         recipeDTO.setDirections(recipe.getDirections());
         recipeDTO.setTime(recipe.getTime());
-        recipeDTO.setFavorite(recipe.getFavorite());
+        recipeDTO.setFavorite(recipe.isFavorite());
         recipeDTO.setPicture(recipe.getPicture());
         recipeDTO.setAllergens(recipe.getAllergens());
 //        recipeDTO.setRating(recipe.getRating());
@@ -96,13 +97,22 @@ public class RecipeService {
         recipe.setAllergens(recipeDTO.getAllergens());
         recipe.setRating(recipeDTO.getRating());
 
-        List<Ingredient> ingredients = ingredientService.saveAll(
-                recipeDTO.getIngredients().stream().map(name -> {
-                    Ingredient ingredient = new Ingredient();
-                    ingredient.setName(name);
-                    return ingredient;
-                }).collect(Collectors.toList())
-        );
+//        List<Ingredient> ingredients = ingredientService.saveAll(
+//                recipeDTO.getIngredients().stream().map(name -> {
+//                    Ingredient ingredient = new Ingredient();
+//                    ingredient.setName(name);
+//                    return ingredient;
+//                }).collect(Collectors.toList())
+//        );
+
+        List<IngredientDTO> ingredientDTOs = recipeDTO.getIngredients().stream().map(name -> {
+            IngredientDTO ingredientDTO = new IngredientDTO();
+            ingredientDTO.setName(name);
+            return ingredientDTO;
+        }).collect(Collectors.toList());
+
+        List<Ingredient> ingredients = ingredientService.saveAll(ingredientDTOs);
+
 
 //        recipe.setIngredients(
 //                recipeDTO.getIngredients().stream()
@@ -207,7 +217,7 @@ public class RecipeService {
         recipe.setIngredients(updatedRecipe.getIngredients());
         recipe.setDirections(updatedRecipe.getDirections());
         recipe.setTime(updatedRecipe.getTime());
-        recipe.setFavorite(updatedRecipe.getFavorite());
+        recipe.setFavorite(updatedRecipe.isFavorite());
         recipe.setPicture(updatedRecipe.getPicture());
         recipe.setAllergens(updatedRecipe.getAllergens());
         recipe.setRating(updatedRecipe.getRating());
@@ -215,7 +225,18 @@ public class RecipeService {
         return mapToDTO(recipeRepository.save(recipe));
     }
 
-    public void deleteRecipe(Integer id, Integer userId) {
+//    public void deleteRecipe(Integer id, Integer userId) {
+//        Recipe recipe = recipeRepository.findById(id)
+//                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
+//
+//        if (!recipe.getUser().getId().equals(userId)) {
+//            throw new UnauthorizedException("You are not allowed to delete this recipe");
+//        }
+//
+//        recipeRepository.deleteById(id);
+//    }
+
+    public void deleteRecipe(Integer id, Integer userId, Boolean deleteAssociatedRecipes) {
         Recipe recipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
 
@@ -223,8 +244,38 @@ public class RecipeService {
             throw new UnauthorizedException("You are not allowed to delete this recipe");
         }
 
-        recipeRepository.deleteById(id);
+        if (deleteAssociatedRecipes) {
+            recipeRepository.delete(recipe);
+        } else {
+            recipe.setUser(null);
+            recipeRepository.save(recipe);
+        }
     }
+
+    @Transactional
+    public void deleteUser(Integer userId, Boolean deleteRecipes) {
+        if (!userRepository.existsById(userId)) {
+            throw new ResourceNotFoundException("User not found");
+        }
+
+        if (deleteRecipes) {
+            // Delete all recipes associated with the user
+            userRepository.deleteById(userId);
+        } else {
+            // Remove the association between the user and the recipes
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+            // Clear the user reference from all recipes
+            for (Recipe recipe : user.getRecipes()) {
+                recipe.setUser(null);
+            }
+
+            // Save the changes
+            userRepository.deleteById(userId);
+        }
+    }
+
 
     public Page<RecipeDTO> searchRecipes(Specification<Recipe> spec, Pageable pageable) {
         return recipeRepository.findAll(spec, pageable).map(this::mapToDTO);
@@ -260,4 +311,7 @@ public class RecipeService {
                 .limit(limit)
                 .collect(Collectors.toList());
     }
+
+
+
 }

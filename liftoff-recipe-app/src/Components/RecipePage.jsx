@@ -9,21 +9,20 @@ import stockImage from '../Assets/MealifyNoImage.png'
 
 import Box from '@mui/material/Box';
 
+import '../Styles/RecipePage.css'
+
 function RecipePage({match}) {
     const [recipe, setRecipe] = useState(null);
     const [reviews, setReviews] = useState([]);
     const {recipeId} = useParams();
     const [isLoading, setIsLoading] = useState(false);
-    // const userId = localStorage.getItem('userId');
-    const {user} = useContext(UserContext);
+    const {user, setUser} = useContext(UserContext);
     const loggedUserId = localStorage.getItem('userId');
     const isUserRecipeOwner = user && recipe && recipe.userId.toString() === loggedUserId;
     const navigate = useNavigate()
 
 
     useEffect(() => {
-        // const token = localStorage.getItem('token');
-        // const userId = localStorage.getItem('userId')
         console.log(recipeId);
         console.log(loggedUserId);
         setIsLoading(true)
@@ -40,8 +39,49 @@ function RecipePage({match}) {
             .then((response) => {
                 setReviews(response.data.slice(0, 5));
             })
-            .catch((error) => console.error(error));
-    }, [recipeId]);
+            .catch((error) => console.error(error))
+            .finally(() => {
+                setIsLoading(false);
+            })
+    }, [recipeId, loggedUserId]);
+
+    const handleToggleFavorite = () => {
+        if (!isUserRecipeOwner && user) {
+            const isRecipeFavorited = user.favoriteRecipes.includes(recipeId);
+
+            const url = isRecipeFavorited
+                ? `http://localhost:8080/users/${loggedUserId}/favorites/${recipeId}`
+                : `http://localhost:8080/users/${loggedUserId}/favorites/${recipeId}`;
+
+            const method = isRecipeFavorited ? 'DELETE' : 'POST';
+
+            authAxios
+                .request({
+                    url,
+                    method,
+                })
+                .then(() => {
+                    const updatedUser = { ...user };
+                    if (isRecipeFavorited) {
+                        updatedUser.favoriteRecipes = updatedUser.favoriteRecipes.filter(
+                            (id) => id !== recipeId
+                        );
+                    } else {
+                        updatedUser.favoriteRecipes.push(recipeId);
+                    }
+                    setUser(updatedUser);
+                    setRecipe((prevRecipe) => ({
+                        ...prevRecipe,
+                        favorite: !isRecipeFavorited,
+                    }));
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
+    };
+
+
 
     const handleUpdate = () => {
         navigate(`/recipes/update/${recipeId}`)
@@ -89,6 +129,16 @@ function RecipePage({match}) {
                         Recipe</Button>
                 </div>
             )}
+
+            <p>
+                Liked: {recipe.favorite ? "Yes" : "No"}{" "}
+                {!isUserRecipeOwner &&
+                    <Button variant="contained" onClick={handleToggleFavorite}>
+                        {recipe.favorite ? "Unlike" : "Like"}
+                    </Button>
+                }
+            </p>
+
             <h3>Reviews:</h3>
             {reviews.length > 0 ? (
                 <>
@@ -116,8 +166,11 @@ function RecipePage({match}) {
                 </>
             ) : (
                 user ? (
-                    <p><Button sx={{color: 'white'}} variant="contained" onClick={() => navigate(`/recipes/${recipe.id}/review`)}>Be the first
-                        to review</Button></p>
+                    <p>
+                        <Button variant="contained" onClick={() => navigate(`/recipes/${recipe.id}/review`)}>
+                            {isUserRecipeOwner ? "View all reviews" : "Be the first to review"}
+                        </Button>
+                    </p>
                 ) : (
                     <p>You must be <Link to="/login">logged in </Link> to leave a review.</p>
                 )

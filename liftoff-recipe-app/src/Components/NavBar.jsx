@@ -44,6 +44,7 @@ function NavBar() {
     };
 
     const handleLogout = () => {
+        logout();
         localStorage.removeItem("token");
         navigate("/")
     }
@@ -170,16 +171,21 @@ function NavBar() {
                         }}
                     >
                     </Typography>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                      <Link to="/homepage">
-                        <Button sx={{ color: 'white' }} onClick={handleCloseNavMenu}>Home</Button>
-                      </Link>
-                      <Link to="/allrecipes">
-                        <Button sx={{ color: 'white' }} onClick={handleCloseNavMenu}>All Recipes</Button>
-                       </Link>
-                      <Link to="/randomrecipe">
-                        <Button sx={{ color: 'white' }} onClick={handleCloseNavMenu}>Random Recipe</Button>
-                      </Link>
+                    <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
+                        <Link to={user ? "/dashboard" : "/"}>
+                            <Button sx={{color: 'white'}} onClick={handleCloseNavMenu}>Home</Button>
+                        </Link>
+                        <Link to="/">
+                            <Button sx={{color: 'white'}} onClick={handleCloseNavMenu}>All Recipes</Button>
+                        </Link>
+                        <Link to="/recipes/random">
+                            <Button sx={{color: 'white'}} onClick={handleCloseNavMenu}>Random Recipe</Button>
+                        </Link>
+                        {user && (
+                            <Link to="/recipes/newrecipe">
+                                <Button sx={{color: 'white'}} onClick={handleCloseNavMenu}>Add A Recipe</Button>
+                            </Link>
+                        )}
                     </Box>
                     {user ? (
                     <Box sx={{ fontWeight: 500, color: 'white' }} >
@@ -221,6 +227,47 @@ function NavBar() {
                             </Link>
                         </Box>
                     )}
+
+                    {/*{user ? (*/}
+                    {/*    <Box sx={{flexGrow: 0}}>*/}
+                    {/*        <Tooltip title="Open settings">*/}
+                    {/*            <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>*/}
+                    {/*                <Avatar alt="Test Account" src="/static/images/avatar/2.jpg"/>*/}
+                    {/*            </IconButton>*/}
+                    {/*        </Tooltip>*/}
+                    {/*        <Menu*/}
+                    {/*            sx={{mt: '45px'}}*/}
+                    {/*            id="menu-appbar"*/}
+                    {/*            anchorEl={anchorElUser}*/}
+                    {/*            anchorOrigin={{*/}
+                    {/*                vertical: 'top',*/}
+                    {/*                horizontal: 'right',*/}
+                    {/*            }}*/}
+                    {/*            keepMounted*/}
+                    {/*            transformOrigin={{*/}
+                    {/*                vertical: 'top',*/}
+                    {/*                horizontal: 'right',*/}
+                    {/*            }}*/}
+                    {/*            open={Boolean(anchorElUser)}*/}
+                    {/*            onClose={handleCloseUserMenu}*/}
+                    {/*        >*/}
+                    {/*            {settings.map((setting) => (*/}
+                    {/*                <MenuItem key={setting} onClick={() => handleSettingClick(setting)}>*/}
+                    {/*                    <Typography textAlign="center">{setting}</Typography>*/}
+                    {/*                </MenuItem>*/}
+                    {/*            ))}*/}
+                    {/*        </Menu>*/}
+                    {/*    </Box>*/}
+                    {/*) : (*/}
+                    {/*    <Box sx={{flexGrow: 0}}>*/}
+                    {/*        <Link to="/login">*/}
+                    {/*            <Button sx={{color: 'white'}}>Login</Button>*/}
+                    {/*        </Link>*/}
+                    {/*        <Link to="/signup">*/}
+                    {/*            <Button sx={{color: 'white'}}>Sign Up</Button>*/}
+                    {/*        </Link>*/}
+                    {/*    </Box>*/}
+                    {/*)}*/}
                 </Toolbar>
             </Container>
         </AppBar>
