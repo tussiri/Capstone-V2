@@ -23,13 +23,8 @@ public class User extends AbstractEntity implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     private List<Recipe> recipes;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_favorite_recipe",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "recipe_id")
-    )
-    private Set<Recipe> favoriteRecipes = new HashSet<>();
+    @ElementCollection
+    private Set<Integer> favoriteRecipes;
 
     @PreRemove
     private void preRemove() {
@@ -59,11 +54,11 @@ public class User extends AbstractEntity implements UserDetails {
     // Getters and setters
 
 
-    public Set<Recipe> getFavoriteRecipes() {
+    public Set<Integer> getFavoriteRecipes() {
         return favoriteRecipes;
     }
 
-    public void setFavoriteRecipes(Set<Recipe> favoriteRecipes) {
+    public void setFavoriteRecipes(Set<Integer> favoriteRecipes) {
         this.favoriteRecipes = favoriteRecipes;
     }
 

@@ -21,6 +21,7 @@ export function UserProvider({children}) {
             return{
                 userId:decoded.userId,
                 username:decoded.sub,
+                favoriteRecipes:[],
             };
         }catch(error){
             console.error("Error parsing JWT token: ", error)

@@ -15,7 +15,7 @@ function RecipePage({match}) {
     const [reviews, setReviews] = useState([]);
     const {recipeId} = useParams();
     const [isLoading, setIsLoading] = useState(false);
-    const {user} = useContext(UserContext);
+    const {user, setUser} = useContext(UserContext);
     const loggedUserId = localStorage.getItem('userId');
     const isUserRecipeOwner = user && recipe && recipe.userId.toString() === loggedUserId;
     const navigate = useNavigate()
@@ -45,30 +45,42 @@ function RecipePage({match}) {
     }, [recipeId, loggedUserId]);
 
     const handleToggleFavorite = () => {
-        if (!isUserRecipeOwner) {
-            if (recipe.favorite) {
-                authAxios
-                    .delete(`http://localhost:8080/recipes/${recipeId}/favorite`)
-                    .then((response) => {
-                        console.log("Unfavorited recipe: ", response.data)
-                        setRecipe(prevRecipe => ({...prevRecipe, favorite: false}));
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                    });
-            } else {
-                authAxios
-                    .post(`http://localhost:8080/recipes/${recipeId}/favorite`)
-                    .then((response) => {
-                        console.log("Favorited recipe: ", response.data)
-                        setRecipe(prevRecipe => ({...prevRecipe, favorite: true}));
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                    });
-            }
+        if (!isUserRecipeOwner && user) {
+            const isRecipeFavorited = user.favoriteRecipes.includes(recipeId);
+
+            const url = isRecipeFavorited
+                ? `http://localhost:8080/users/${loggedUserId}/favorites/${recipeId}`
+                : `http://localhost:8080/users/${loggedUserId}/favorites/${recipeId}`;
+
+            const method = isRecipeFavorited ? 'DELETE' : 'POST';
+
+            authAxios
+                .request({
+                    url,
+                    method,
+                })
+                .then(() => {
+                    const updatedUser = { ...user };
+                    if (isRecipeFavorited) {
+                        updatedUser.favoriteRecipes = updatedUser.favoriteRecipes.filter(
+                            (id) => id !== recipeId
+                        );
+                    } else {
+                        updatedUser.favoriteRecipes.push(recipeId);
+                    }
+                    setUser(updatedUser);
+                    setRecipe((prevRecipe) => ({
+                        ...prevRecipe,
+                        favorite: !isRecipeFavorited,
+                    }));
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
         }
     };
+
+
 
     const handleUpdate = () => {
         navigate(`/recipes/update/${recipeId}`)
@@ -90,21 +102,6 @@ function RecipePage({match}) {
     if (!recipe) {
         return <LoadingScreen/>;
     }
-
-    // const renderIngredients = () => {
-    //     const ingredientsList = recipe.ingredients.map((ingredient) => (
-    //         <li key={ingredient}>{ingredient}</li>
-    //     ));
-    //     return <ul>{ingredientsList}</ul>;
-    // };
-    //
-    // const renderDirections = () => {
-    //     const directionsList = recipe.directions.split('.').filter((direction) => direction.trim() !== '');
-    //     const directionsItems = directionsList.map((direction, index) => (
-    //         <li key={index}>{direction.trim()}</li>
-    //     ));
-    //     return <ol>{directionsItems}</ol>;
-    // };
 
     return (
         <div>

@@ -70,4 +70,16 @@ public class UserController {
         UpdateUserDTO updateUserDTO = userService.updateUser(userId, updatedUser);
         return ResponseUtil.wrapResponse(updateUserDTO, HttpStatus.OK, "Account information updated successfully");
     }
+
+    @PostMapping("/users/{userId}/favorites/{recipeId}")
+    public ResponseEntity<Void> addFavorite(@PathVariable Integer userId, @PathVariable Integer recipeId) {
+        userService.addFavorite(userId, recipeId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/users/{userId}/favorites/{recipeId}")
+    public ResponseEntity<Void> removeFavorite(@PathVariable Integer userId, @PathVariable Integer recipeId) {
+        userService.removeFavorite(userId, recipeId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
