@@ -15,17 +15,13 @@ function RecipePage({match}) {
     const [reviews, setReviews] = useState([]);
     const {recipeId} = useParams();
     const [isLoading, setIsLoading] = useState(false);
-    // const userId = localStorage.getItem('userId');
     const {user} = useContext(UserContext);
-    // const loggedUserId = user?.id;
     const loggedUserId = localStorage.getItem('userId');
     const isUserRecipeOwner = user && recipe && recipe.userId.toString() === loggedUserId;
     const navigate = useNavigate()
 
 
     useEffect(() => {
-        // const token = localStorage.getItem('token');
-        // const userId = localStorage.getItem('userId')
         console.log(recipeId);
         console.log(loggedUserId);
         setIsLoading(true)
@@ -46,19 +42,31 @@ function RecipePage({match}) {
             .finally(() => {
                 setIsLoading(false);
             })
-    }, [recipeId]);
+    }, [recipeId, loggedUserId]);
 
     const handleToggleFavorite = () => {
         if (!isUserRecipeOwner) {
-            authAxios
-                .post(`http://localhost:8080/recipes/${recipeId}/favorite`)
-                .then((response) => {
-                    console.log("Favorited recipe: ", response.data)
-                    setRecipe(response.data.data);
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
+            if (recipe.favorite) {
+                authAxios
+                    .delete(`http://localhost:8080/recipes/${recipeId}/favorite`)
+                    .then((response) => {
+                        console.log("Unfavorited recipe: ", response.data)
+                        setRecipe(prevRecipe => ({...prevRecipe, favorite: false}));
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            } else {
+                authAxios
+                    .post(`http://localhost:8080/recipes/${recipeId}/favorite`)
+                    .then((response) => {
+                        console.log("Favorited recipe: ", response.data)
+                        setRecipe(prevRecipe => ({...prevRecipe, favorite: true}));
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            }
         }
     };
 
@@ -83,20 +91,20 @@ function RecipePage({match}) {
         return <LoadingScreen/>;
     }
 
-    const renderIngredients = () => {
-        const ingredientsList = recipe.ingredients.map((ingredient) => (
-            <li key={ingredient}>{ingredient}</li>
-        ));
-        return <ul>{ingredientsList}</ul>;
-    };
-
-    const renderDirections = () => {
-        const directionsList = recipe.directions.split('.').filter((direction) => direction.trim() !== '');
-        const directionsItems = directionsList.map((direction, index) => (
-            <li key={index}>{direction.trim()}</li>
-        ));
-        return <ol>{directionsItems}</ol>;
-    };
+    // const renderIngredients = () => {
+    //     const ingredientsList = recipe.ingredients.map((ingredient) => (
+    //         <li key={ingredient}>{ingredient}</li>
+    //     ));
+    //     return <ul>{ingredientsList}</ul>;
+    // };
+    //
+    // const renderDirections = () => {
+    //     const directionsList = recipe.directions.split('.').filter((direction) => direction.trim() !== '');
+    //     const directionsItems = directionsList.map((direction, index) => (
+    //         <li key={index}>{direction.trim()}</li>
+    //     ));
+    //     return <ol>{directionsItems}</ol>;
+    // };
 
     return (
         <div>
@@ -106,12 +114,11 @@ function RecipePage({match}) {
             <p className="recipe-description">{recipe.description}</p>
             <p className="recipe-category">Category: {recipe.category}</p>
             <p className="recipe-time">Preparation time: {recipe.time} minutes</p>
-            <p className="recipe-ingredients">Ingredients: {renderIngredients()}</p>
+            <p className="recipe-ingredients">Ingredients:
 
-            {/*{recipe.ingredients.join(", ")}</p>*/}
-            <p className="recipe-directions">Directions: {renderDirections()}</p>
-
-            {/*{recipe.directions}</p>*/}
+                {recipe.ingredients.join(", ")}</p>
+            <p className="recipe-directions">Directions:
+                {recipe.directions}</p>
             <p className="recipe-allergens">Allergens: {recipe.allergens.join(", ")}</p>
 
             {isUserRecipeOwner && (
@@ -125,9 +132,11 @@ function RecipePage({match}) {
 
             <p>
                 Liked: {recipe.favorite ? "Yes" : "No"}{" "}
-                <Button variant="contained" onClick={handleToggleFavorite}>
-                    {recipe.favorite ? "Unlike" : "Like"}
-                </Button>
+                {!isUserRecipeOwner &&
+                    <Button variant="contained" onClick={handleToggleFavorite}>
+                        {recipe.favorite ? "Unlike" : "Like"}
+                    </Button>
+                }
             </p>
 
             <h3>Reviews:</h3>
