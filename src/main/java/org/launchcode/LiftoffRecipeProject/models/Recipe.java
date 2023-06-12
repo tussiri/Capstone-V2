@@ -42,7 +42,7 @@ public class Recipe extends AbstractEntity {
     private Double rating;
 
     @JsonIgnore
-    @OneToMany(mappedBy="recipe")
+    @OneToMany(mappedBy="recipe", cascade = CascadeType.REMOVE)
     private List<Review> reviews;
 
     @ManyToOne

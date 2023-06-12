@@ -25,6 +25,13 @@ public class User extends AbstractEntity implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Recipe> recipes;
 
+    @PreRemove
+    private void preRemove() {
+        for (Review r : reviews) {
+            r.setUser(null);
+        }
+    }
+
     @OneToMany(mappedBy="user")
     @JsonManagedReference
     private List<Review> reviews;

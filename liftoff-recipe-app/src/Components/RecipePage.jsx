@@ -15,6 +15,7 @@ function RecipePage({match}) {
     const [isLoading, setIsLoading] = useState(false);
     // const userId = localStorage.getItem('userId');
     const {user} = useContext(UserContext);
+    // const loggedUserId = user?.id;
     const loggedUserId = localStorage.getItem('userId');
     const isUserRecipeOwner = user && recipe && recipe.userId.toString() === loggedUserId;
     const navigate = useNavigate()
@@ -39,7 +40,10 @@ function RecipePage({match}) {
             .then((response) => {
                 setReviews(response.data.slice(0, 5));
             })
-            .catch((error) => console.error(error));
+            .catch((error) => console.error(error))
+            .finally(() => {
+                setIsLoading(false);
+            })
     }, [recipeId]);
 
     const handleUpdate = () => {
@@ -63,6 +67,21 @@ function RecipePage({match}) {
         return <LoadingScreen/>;
     }
 
+    const renderIngredients = () => {
+        const ingredientsList = recipe.ingredients.map((ingredient) => (
+            <li key={ingredient}>{ingredient}</li>
+        ));
+        return <ul>{ingredientsList}</ul>;
+    };
+
+    const renderDirections = () => {
+        const directionsList = recipe.directions.split('.').filter((direction) => direction.trim() !== '');
+        const directionsItems = directionsList.map((direction, index) => (
+            <li key={index}>{direction.trim()}</li>
+        ));
+        return <ol>{directionsItems}</ol>;
+    };
+
     return (
         <div>
             <h2>{recipe.name}</h2>
@@ -70,8 +89,12 @@ function RecipePage({match}) {
             <p>{recipe.description}</p>
             <p>Category: {recipe.category}</p>
             <p>Preparation time: {recipe.time} minutes</p>
-            <p>Ingredients: {recipe.ingredients.join(", ")}</p>
-            <p>Directions: {recipe.directions}</p>
+            <p>Ingredients: </p>
+            {renderIngredients()}
+            {/*{recipe.ingredients.join(", ")}</p>*/}
+            <p>Directions: </p>
+            {renderDirections()}
+            {/*{recipe.directions}</p>*/}
             <p>Allergens: {recipe.allergens.join(", ")}</p>
 
             {isUserRecipeOwner && (
@@ -109,8 +132,11 @@ function RecipePage({match}) {
                 </>
             ) : (
                 user ? (
-                    <p><Button variant="contained" onClick={() => navigate(`/recipes/${recipe.id}/review`)}>Be the first
-                        to review</Button></p>
+                    <p>
+                        <Button variant="contained" onClick={() => navigate(`/recipes/${recipe.id}/review`)}>
+                            {isUserRecipeOwner ? "View all reviews" : "Be the first to review"}
+                        </Button>
+                    </p>
                 ) : (
                     <p>You must be <Link to="/login">logged in </Link> to leave a review.</p>
                 )

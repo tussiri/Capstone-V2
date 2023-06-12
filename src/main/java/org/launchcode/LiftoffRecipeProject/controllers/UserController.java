@@ -51,11 +51,22 @@ public class UserController {
         return ResponseUtil.wrapResponse(userDTO, HttpStatus.OK, "User updated successfully");
     }
 
+//    @DeleteMapping("/{userId}")
+//    public ResponseEntity<ResponseWrapper<Void>> deleteUser(@PathVariable Integer userId) {
+//        userService.deleteUser(userId);
+//        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.NO_CONTENT.value(), "User deleted successfully"), HttpStatus.NO_CONTENT);
+//    }
+
     @DeleteMapping("/{userId}")
-    public ResponseEntity<ResponseWrapper<Void>> deleteUser(@PathVariable Integer userId) {
-        userService.deleteUser(userId);
-        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.NO_CONTENT.value(), "User deleted successfully"), HttpStatus.NO_CONTENT);
+    public ResponseEntity<?> deleteUser(@PathVariable Integer userId, @RequestParam(defaultValue = "true") Boolean deleteRecipes) {
+        try {
+            userService.deleteUser(userId, deleteRecipes);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
     @PutMapping("/{userId}/account")
     public ResponseEntity<ResponseWrapper<UserDTO>> updateAccountInfo(
             @PathVariable Integer userId,
