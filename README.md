@@ -4,16 +4,15 @@ This is the capstone project for the liftoff program at LaunchCode
 
 # Mealify
 
-This app was created to give users a space where they can view, share recipes from other users, interact with recipes, share images, plan meals, and organize grocery lists.
+This app was created to give users a space where they can view, share recipes from other users, interact with recipes, and share images.
 
 ## Features
 
 Accounts: New users are able to Register an account or login if existing user. Users are also able to delete, update, and read account information once account is accessed.
 
-Comments: Users are allowed to make comments and leave reviews on other users meals/recipes. Comments also have CRUD capabilities allowing the user to be able to update, delete, and view comments/reviews.  
+Comments: Users are allowed to make comments and leave reviews on other users meals/recipes. Comments also have CRUD capabilities allowing the user to be able to update, delete, and view comments/reviews.
 
-Pantry: Users are allowed to store their personal/saved recipes in the pantry. The pantry utilizes CRUD capabilities as well so the user will be able to remove, update, and view what's in their pantry.
-
+Likes: Users are able to save recipes that they like and store them in a "liked recipes" section. Liked recipes have crud capabilities as well which allow the user to update, read, and delete their liked recipes as well.
 ## Techs/Frameworks
 Frontend: React.js
 
