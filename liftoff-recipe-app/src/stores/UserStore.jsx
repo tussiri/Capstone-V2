@@ -29,6 +29,27 @@ export function UserProvider({children}) {
         }
     }
 
+    async function register() {
+        try {
+            const token = localStorage.getItem('token');
+            const id = localStorage.getItem('userId');
+            if (token && id) {
+                const user = parseJwt(token)
+                setUser(user);
+                console.log("Stored token:", localStorage.getItem('token'));
+                navigate('/');
+                return Promise.resolve();
+            } else {
+                console.error("Error: No token found");
+                return Promise.reject("No token found");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            return Promise.reject(error);
+        }
+    }
+
+
     async function login(email, password) {
         navigate('/login')
         try {
@@ -62,7 +83,7 @@ export function UserProvider({children}) {
         navigate('/')
     }
 
-    return (<UserContext.Provider value={{user, setUser, login, logout, parseJwt}}>
+    return (<UserContext.Provider value={{user, setUser, login, logout, parseJwt, register}}>
             {children}
         </UserContext.Provider>
     );

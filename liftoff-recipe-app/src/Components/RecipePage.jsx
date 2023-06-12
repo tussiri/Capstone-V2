@@ -32,6 +32,7 @@ function RecipePage({match}) {
                 setRecipe(response.data.data);
                 console.log(response.data.data)
             })
+
             .catch((error) => console.error(error));
 
         authAxios
@@ -130,14 +131,14 @@ function RecipePage({match}) {
                 </div>
             )}
 
-            <p>
-                Liked: {recipe.favorite ? "Yes" : "No"}{" "}
-                {!isUserRecipeOwner &&
-                    <Button variant="contained" onClick={handleToggleFavorite}>
-                        {recipe.favorite ? "Unlike" : "Like"}
-                    </Button>
-                }
-            </p>
+            {/*<p>*/}
+            {/*    Liked: {recipe.favorite ? "Yes" : "No"}{" "}*/}
+            {/*    {!isUserRecipeOwner &&*/}
+            {/*        <Button variant="contained" onClick={handleToggleFavorite}>*/}
+            {/*            {recipe.favorite ? "Unlike" : "Like"}*/}
+            {/*        </Button>*/}
+            {/*    }*/}
+            {/*</p>*/}
 
             <h3>Reviews:</h3>
             {reviews.length > 0 ? (

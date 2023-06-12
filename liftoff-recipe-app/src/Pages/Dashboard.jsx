@@ -119,15 +119,6 @@ function Dashboard() {
     };
     return (
         <>
-            {/* New Recipe button only visible to logged-in users */}
-            {user && (
-                <>
-                    <Link to="newrecipe">
-                        <Button sx={{color: 'white', mt: 2}} variant="contained">Add New Recipe</Button>
-                    </Link>
-                </>
-            )}
-
             <div>
 
                 <div>
