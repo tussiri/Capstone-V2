@@ -65,6 +65,7 @@ function DeleteRecipe() {
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "space-between",
+                        color: 'white'
                     }}
                     component="form"
                     onSubmit={handleDelete}
