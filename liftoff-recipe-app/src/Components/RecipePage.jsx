@@ -8,6 +8,8 @@ import LoadingScreen from "../Pages/LoadingPage";
 import stockImage from '../Assets/MealifyNoImage.png'
 import NavBar from "./NavBar";
 
+import '../Styles/RecipePage.css'
+
 function RecipePage({match}) {
     const [recipe, setRecipe] = useState(null);
     const [reviews, setReviews] = useState([]);
@@ -45,6 +47,20 @@ function RecipePage({match}) {
                 setIsLoading(false);
             })
     }, [recipeId]);
+
+    const handleToggleFavorite = () => {
+        if (!isUserRecipeOwner) {
+            authAxios
+                .post(`http://localhost:8080/recipes/${recipeId}/favorite`)
+                .then((response) => {
+                    console.log("Favorited recipe: ", response.data)
+                    setRecipe(response.data.data);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
+    };
 
     const handleUpdate = () => {
         navigate(`/recipes/update/${recipeId}`)
@@ -84,18 +100,19 @@ function RecipePage({match}) {
 
     return (
         <div>
-            <h2>{recipe.name}</h2>
-            <img src={recipe.picture ? recipe.picture : stockImage} alt={recipe.name}/>
-            <p>{recipe.description}</p>
-            <p>Category: {recipe.category}</p>
-            <p>Preparation time: {recipe.time} minutes</p>
-            <p>Ingredients: </p>
-            {renderIngredients()}
+            <h2 className="recipe-name">{recipe.name}</h2>
+            <img src={recipe.picture ? recipe.picture : stockImage} alt={recipe.name}
+                 style={{maxWidth: '100%', height: 'auto'}}/>
+            <p className="recipe-description">{recipe.description}</p>
+            <p className="recipe-category">Category: {recipe.category}</p>
+            <p className="recipe-time">Preparation time: {recipe.time} minutes</p>
+            <p className="recipe-ingredients">Ingredients: {renderIngredients()}</p>
+
             {/*{recipe.ingredients.join(", ")}</p>*/}
-            <p>Directions: </p>
-            {renderDirections()}
+            <p className="recipe-directions">Directions: {renderDirections()}</p>
+
             {/*{recipe.directions}</p>*/}
-            <p>Allergens: {recipe.allergens.join(", ")}</p>
+            <p className="recipe-allergens">Allergens: {recipe.allergens.join(", ")}</p>
 
             {isUserRecipeOwner && (
                 <div>
@@ -105,6 +122,14 @@ function RecipePage({match}) {
                         Recipe</Button>
                 </div>
             )}
+
+            <p>
+                Liked: {recipe.favorite ? "Yes" : "No"}{" "}
+                <Button variant="contained" onClick={handleToggleFavorite}>
+                    {recipe.favorite ? "Unlike" : "Like"}
+                </Button>
+            </p>
+
             <h3>Reviews:</h3>
             {reviews.length > 0 ? (
                 <>

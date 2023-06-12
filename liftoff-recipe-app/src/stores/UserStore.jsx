@@ -56,12 +56,12 @@ export function UserProvider({children}) {
     }
 
     function logout() {
-        setUser(null)
         localStorage.removeItem("token");
+        setUser(null)
         navigate('/')
     }
 
-    return (<UserContext.Provider value={{user, login, logout, parseJwt}}>
+    return (<UserContext.Provider value={{user, setUser, login, logout, parseJwt}}>
             {children}
         </UserContext.Provider>
     );

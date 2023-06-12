@@ -54,21 +54,42 @@ function Dashboard() {
         };
         fetchRecipes();
     }, [userId]);
+    //
+    // useEffect(() => {
+    //     const fetchAllRecipes = async () => {
+    //         try {
+    //             console.log("Fetching all recipes...");
+    //             const response = await authAxios.get('http://localhost:8080/recipes');
+    //             const data = response.data.data;
+    //             console.log("Fetched all recipes", data);
+    //             setAllRecipes(data.content);
+    //         } catch (error) {
+    //             console.error("Error fetching all recipes: ", error);
+    //         }
+    //     };
+    //     fetchAllRecipes();
+    // }, [])
 
     useEffect(() => {
-        const fetchAllRecipes = async () => {
+        const fetchLikedRecipes = async () => {
             try {
-                console.log("Fetching all recipes...");
-                const response = await authAxios.get('http://localhost:8080/recipes');
-                const data = response.data.data;
-                console.log("Fetched all recipes", data);
-                setAllRecipes(data.content);
+                if (userId) {
+                    console.log("Fetching liked recipes...");
+                    const response = await authAxios.get(
+                        `http://localhost:8080/recipes/user/${userId}/favorite`
+                    );
+                    const data = response.data.data;
+                    console.log("Fetched liked recipes:", data);
+                    setLikedRecipes(data);
+                } else {
+                    console.log("User ID not found. Skipping liked recipes fetching.");
+                }
             } catch (error) {
-                console.error("Error fetching all recipes: ", error);
+                console.error("Error fetching liked recipes:", error);
             }
         };
-        fetchAllRecipes();
-    }, [])
+        fetchLikedRecipes();
+    }, [userId]);
 
 
     const handleCardClick = (recipeId) => {

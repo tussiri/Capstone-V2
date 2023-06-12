@@ -59,7 +59,7 @@ public class RecipeService {
 //        recipeDTO.setIngredients(recipe.getIngredients());
         recipeDTO.setDirections(recipe.getDirections());
         recipeDTO.setTime(recipe.getTime());
-        recipeDTO.setFavorite(recipe.getFavorite());
+        recipeDTO.setFavorite(recipe.isFavorite());
         recipeDTO.setPicture(recipe.getPicture());
         recipeDTO.setAllergens(recipe.getAllergens());
 //        recipeDTO.setRating(recipe.getRating());
@@ -217,7 +217,7 @@ public class RecipeService {
         recipe.setIngredients(updatedRecipe.getIngredients());
         recipe.setDirections(updatedRecipe.getDirections());
         recipe.setTime(updatedRecipe.getTime());
-        recipe.setFavorite(updatedRecipe.getFavorite());
+        recipe.setFavorite(updatedRecipe.isFavorite());
         recipe.setPicture(updatedRecipe.getPicture());
         recipe.setAllergens(updatedRecipe.getAllergens());
         recipe.setRating(updatedRecipe.getRating());
@@ -311,4 +311,53 @@ public class RecipeService {
                 .limit(limit)
                 .collect(Collectors.toList());
     }
+
+    public Recipe favoriteRecipe(Integer userId, Integer recipeId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Recipe recipe = recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
+        user.getFavoriteRecipes().add(recipe);
+        recipe.getFavoritedByUsers().add(user);
+        userRepository.save(user);
+        recipeRepository.save(recipe);
+        return recipe;
+    }
+
+    public List<Recipe> getFavoriteRecipes(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return new ArrayList<>(user.getFavoriteRecipes());
+    }
+
+//    public void likeRecipe(Integer recipeId) {
+//        // Find the recipe by its ID
+//        Recipe recipe = recipeRepository.findById(recipeId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
+//
+//        // Toggle the liked status
+//        Boolean favorite = recipe.isFavorite();
+//        recipe.setFavorite(!favorite);
+//
+//        // Save the updated recipe
+//        recipeRepository.save(recipe);
+//    }
+//    public ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> getLikedRecipesByUser(Integer userId, Pageable pageable) {
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+//
+//        List<Recipe> recipes = recipeRepository.findByUserAndFavorite(user, true);
+//
+//        int start = (int) pageable.getOffset();
+//        int end = Math.min((start + pageable.getPageSize()), recipes.size());
+//        List<RecipeDTO> recipeDTOs = recipes.subList(start, end).stream()
+//                .map(this::mapToDTO)
+//                .collect(Collectors.toList());
+//
+//        Page<RecipeDTO> recipePage = new PageImpl<>(recipeDTOs, pageable, recipes.size());
+//
+//        ResponseWrapper<Page<RecipeDTO>> responseWrapper = new ResponseWrapper<>(recipePage);
+//        return ResponseEntity.ok(responseWrapper);
+//    }
+
 }

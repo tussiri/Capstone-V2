@@ -16,6 +16,7 @@ import RandomRecipes from "./Pages/RandomRecipes";
 import NavBar from "./Components/NavBar";
 import BottomBar from "./Components/BottomBar"
 import AccountInfo from "./Pages/AccountInfo";
+import AccountEdit from "./Pages/AccountEdit";
 
 
 const theme = createTheme({
@@ -69,6 +70,7 @@ function App() {
                         <Route path="/users/:id/recipes/:recipeId" element={<RecipePage/>}/>
                         <Route path="/recipes/random" element={<RandomRecipes/>}/>
                         <Route path="/account" element={<AccountInfo/>}/>
+                        <Route path="/account/edit" element={<AccountEdit/>}/>
 
                         <Route path="/users/:id/recipes/:recipeId" component={RecipePage}/>
 

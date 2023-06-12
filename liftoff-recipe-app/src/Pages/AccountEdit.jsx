@@ -1,27 +1,48 @@
-import React, { useState } from "react";
+import React, {useContext, useState} from "react";
 import axios from "axios";
 import authAxios from "../utility/authAxios";
+import {UserContext} from "../stores/UserStore";
 
-function AccountEdit({ user }) {
+function AccountEdit() {
+    const {user, logout} = useContext(UserContext)
     const [firstName, setFirstName] = useState(user.firstName);
     const [lastName, setLastName] = useState(user.lastName);
     const [email, setEmail] = useState(user.email);
     const [password, setPassword] = useState("");
-    const [dateOfBirth, setDateOfBirth] = useState(user.dateOfBirth);
+    const [newPassword, setNewPassword] = useState("");
 
     const handleSave = async () => {
         try {
             const updatedUser = {
-                firstName:'',
-                lastName:'',
-                email:'',
-                password:'',
-                dateOfBirth:'',
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                password: password === "" ? undefined : password,
+                // dateOfBirth:'',
             };
+            console.log("Updated user: ", updatedUser)
 
-            await authAxios.put(`http://localhost:8080/users/${user.id}`, updatedUser);
+            const response = await authAxios.put(`http://localhost:8080/users/${user.id}`, updatedUser);
+            console.log("Server response: ", response)
+            setPassword("");
 
         } catch (error) {
+            console.log("There was an error updating the user's information: ", error)
+        }
+    };
+
+    const handleChangePassword = async () => {
+        try {
+            const updatedUser = {
+                password: newPassword
+            };
+
+            const response = await authAxios.put(`http://localhost:8080/users/${user.id}`, updatedUser);
+            console.log("Server response for password: ", response)
+            setNewPassword("");
+            setPassword("");
+        } catch (error) {
+            console.error(error);
         }
     };
 
@@ -40,25 +61,22 @@ function AccountEdit({ user }) {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
             />
-            <label>Email:</label>
-            <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-            />
-            <label>Password:</label>
+            <button onClick={handleSave}>Save</button>
+            <h2>Change Password</h2>
+            <label>Old Password:</label>
             <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
-            <label>Date of Birth:</label>
+            <label>New Password:</label>
             <input
-                type="date"
-                value={dateOfBirth}
-                onChange={(e) => setDateOfBirth(e.target.value)}
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
             />
-            <button onClick={handleSave}>Save</button>
+            <button onClick={handleChangePassword}>Change Password</button>
+            <button onClick={logout}>Logout</button>
         </div>
     );
 }

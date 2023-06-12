@@ -2,15 +2,13 @@ package org.launchcode.LiftoffRecipeProject.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import org.launchcode.LiftoffRecipeProject.DTO.RecipeDTO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -22,8 +20,16 @@ public class User extends AbstractEntity implements UserDetails {
     private String password;
     private LocalDate dateOfBirth;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     private List<Recipe> recipes;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_favorite_recipe",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "recipe_id")
+    )
+    private Set<Recipe> favoriteRecipes = new HashSet<>();
 
     @PreRemove
     private void preRemove() {
@@ -51,6 +57,15 @@ public class User extends AbstractEntity implements UserDetails {
     public User(){}
 
     // Getters and setters
+
+
+    public Set<Recipe> getFavoriteRecipes() {
+        return favoriteRecipes;
+    }
+
+    public void setFavoriteRecipes(Set<Recipe> favoriteRecipes) {
+        this.favoriteRecipes = favoriteRecipes;
+    }
 
     public String getFirstName() {
         return firstName;

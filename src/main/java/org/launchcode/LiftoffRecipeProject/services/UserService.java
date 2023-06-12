@@ -1,14 +1,16 @@
 package org.launchcode.LiftoffRecipeProject.services;
 
 import org.launchcode.LiftoffRecipeProject.DTO.LoginDTO;
+import org.launchcode.LiftoffRecipeProject.DTO.UpdateUserDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.UserDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.UserWithRecipesDTO;
+import org.launchcode.LiftoffRecipeProject.data.RecipeRepository;
 import org.launchcode.LiftoffRecipeProject.data.ReviewRepository;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
 import org.launchcode.LiftoffRecipeProject.exception.BadRequestException;
 import org.launchcode.LiftoffRecipeProject.exception.ResourceNotFoundException;
 import org.launchcode.LiftoffRecipeProject.exception.UnauthorizedException;
-import org.launchcode.LiftoffRecipeProject.models.Review;
+import org.launchcode.LiftoffRecipeProject.models.Recipe;
 import org.launchcode.LiftoffRecipeProject.models.User;
 import org.launchcode.LiftoffRecipeProject.security.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +50,11 @@ public class UserService {
     @Autowired
     private ReviewRepository reviewRepository;
 
+    @Autowired
+    private RecipeRepository recipeRepository;
+
+    private RecipeService recipeService;
+
 
 //    @Autowired
 ////    private SessionUtil sessionUtil;
@@ -73,7 +80,26 @@ public class UserService {
         return users.map(this::mapUserToUserWithRecipesDTO);
     }
 
-    public UserDTO updateUser(Integer userId, UserDTO updatedUserDTO) {
+//    public UserDTO updateUser(Integer userId, UserDTO updatedUserDTO) {
+//        Optional<User> optionalUser = userRepository.findById(userId);
+//
+//        if (!optionalUser.isPresent()) {
+//            throw new ResourceNotFoundException("User not found");
+//        }
+//
+//        User user = optionalUser.get();
+//
+//        user.setFirstName(updatedUserDTO.getFirstName());
+//        user.setLastName(updatedUserDTO.getLastName());
+//        user.setEmail(updatedUserDTO.getEmail());
+//        user.setDateOfBirth(updatedUserDTO.getDateOfBirth());
+//
+//        user.setPassword(bCryptPasswordEncoder.encode(updatedUserDTO.getPassword()));
+//        userRepository.save(user);
+//        return mapUserToUserDTO(user);
+//    }
+
+    public UpdateUserDTO updateUser(Integer userId, UpdateUserDTO updatedUserDTO) {
         Optional<User> optionalUser = userRepository.findById(userId);
 
         if (!optionalUser.isPresent()) {
@@ -84,18 +110,17 @@ public class UserService {
 
         user.setFirstName(updatedUserDTO.getFirstName());
         user.setLastName(updatedUserDTO.getLastName());
-        user.setEmail(updatedUserDTO.getEmail());
-        user.setDateOfBirth(updatedUserDTO.getDateOfBirth());
 
-        user.setPassword(bCryptPasswordEncoder.encode(updatedUserDTO.getPassword()));
+        if(updatedUserDTO.getPassword() != null && !updatedUserDTO.getPassword().isEmpty()){
+            user.setPassword(bCryptPasswordEncoder.encode(updatedUserDTO.getPassword()));
+        }
+
         userRepository.save(user);
-        return mapUserToUserDTO(user);
+        return mapUserToUpdateUserDTO(user);
     }
 
     public UserDTO loginUser(LoginDTO loginDTO) throws Exception {
         authenticate(loginDTO.getEmail(), loginDTO.getPassword());
-//        final UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.getEmail());
-//        final String jwt = jwtTokenUtil.generateToken(userDetails);
         User user = userRepository.findByEmail(loginDTO.getEmail());
 
         if (user != null) {
@@ -138,56 +163,54 @@ public class UserService {
         UserDetails userDetails = userDetailsService.loadUserByUsername(newUser.getEmail());
         String token = jwtTokenUtil.generateToken(userDetails, registeredUser.getId());
 
-//        UserDetails userDetails = userDetailsService.loadUserByUsername(newUser.getEmail());
-//        String token = jwtTokenUtil.generateToken(userDetails);
 
         UserDTO mappedUserDTO = mapUserToUserDTO(registeredUser);
-//        mappedUserDTO.setSessionToken(sessionToken);
         mappedUserDTO.setToken(token);
 
         return mappedUserDTO;
     }
 
-//    public void deleteUser(Integer userId, Boolean deleteRecipes){
-//        if(!userRepository.existsById(userId)){
-//            throw new ResourceNotFoundException("User not found");
-//        }
-//
-//        if (deleteRecipes) {
-//            // Delete all reviews associated with the user
-//            reviewRepository.deleteByUserId(userId);
-//        } else {
-//            // Find all reviews associated with the user
-//            List<Review> reviews = reviewRepository.findByUserId(userId);
-//
-//            // Set each review's user to null
-//            for (Review review : reviews) {
-//                review.setUser(null);
-//            }
-//
-//            // Save the reviews with the null users
-//            reviewRepository.saveAll(reviews);
-//        }
-//
-//        // Finally, delete the user
-//        userRepository.deleteById(userId);
-//    }
+    public Recipe favoriteRecipe(Integer userId, Integer recipeId) {
+        return recipeService.favoriteRecipe(userId, recipeId);
+    }
+
+    public List<Recipe> getFavoriteRecipes(Integer userId) {
+        return recipeService.getFavoriteRecipes(userId);
+    }
+
+    private User getOrphanUser() {
+        String orphanUsername = "orphanuser@mealify.com";
+        User orphanUser = userRepository.findByEmail(orphanUsername);
+        if (orphanUser == null) {
+            orphanUser = new User();
+            orphanUser.setEmail(orphanUsername);
+            orphanUser.setPassword(bCryptPasswordEncoder.encode("defaultPassword"));
+            userRepository.save(orphanUser);
+        }
+        return orphanUser;
+    }
 
     public void deleteUser(Integer userId, Boolean deleteRecipes) {
         if (!userRepository.existsById(userId)) {
             throw new ResourceNotFoundException("User not found");
         }
 
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User orphanUser = getOrphanUser();
+
         if (deleteRecipes) {
+
             userRepository.deleteById(userId);
         } else {
-            User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-            user.getRecipes().clear();
-            userRepository.save(user);
-            userRepository.deleteById(userId);  // Add this line
+            List<Recipe> recipes = user.getRecipes();
+            for (Recipe recipe : recipes) {
+                recipe.setUser(orphanUser);
+            }
+            recipeRepository.saveAll(user.getRecipes());
+            recipeRepository.flush();
+            userRepository.deleteById(userId);
         }
     }
-
 
     private UserDTO mapUserToUserDTO(User user) {
         UserDTO userDTO = new UserDTO();
@@ -209,4 +232,15 @@ public class UserService {
         userWithRecipesDTO.setRecipes(user.getRecipes());
         return userWithRecipesDTO;
     }
+
+    public UpdateUserDTO mapUserToUpdateUserDTO(User user) {
+        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+//        updateUserDTO.setId(user.getId());
+        updateUserDTO.setFirstName(user.getFirstName());
+        updateUserDTO.setLastName(user.getLastName());
+        updateUserDTO.setPassword(user.getPassword());
+        return updateUserDTO;
+    }
+
+
 }
