@@ -124,9 +124,9 @@ function RecipePage({match}) {
 
             {isUserRecipeOwner && (
                 <div>
-                    <Button sx={{color: 'white'}} variant="contained" onClick={() => navigate(`/recipes/update/${recipe.id}`)}>Update
+                    <Button sx={{color: 'white', m:1}} variant="contained" onClick={() => navigate(`/recipes/update/${recipe.id}`)}>Update
                         Recipe</Button>
-                    <Button sx={{color: 'white'}} variant="contained" onClick={() => navigate(`/recipes/delete/${recipeId}`)}>Delete
+                    <Button sx={{color: 'white', m:1}} variant="contained" onClick={() => navigate(`/recipes/delete/${recipeId}`)}>Delete
                         Recipe</Button>
                 </div>
             )}
@@ -149,7 +149,7 @@ function RecipePage({match}) {
                     </div>
                     {!isUserRecipeOwner && user ? (
                         <>
-                            <Button sx={{color: 'white'}} variant="contained"
+                            <Button sx={{color: 'white', m:1}} variant="contained"
                                     onClick={() => navigate(`/review/recipes/${recipe.id}/reviews`)}>
                                 View all reviews
                             </Button>
@@ -157,7 +157,7 @@ function RecipePage({match}) {
                                 your review</Button>
                         </>
                     ) : user ? (
-                        <Button sx={{color: 'white'}} variant="contained"
+                        <Button sx={{color: 'white', m:1}} variant="contained"
                                 onClick={() => navigate(`/review/recipes/${recipe.id}/reviews`)}>
                             View all reviews
                         </Button>
@@ -168,7 +168,7 @@ function RecipePage({match}) {
             ) : (
                 user ? (
                     <p>
-                        <Button variant="contained" onClick={() => navigate(`/recipes/${recipe.id}/review`)}>
+                        <Button sx={{color: 'white', m:1}} variant="contained" onClick={() => navigate(`/recipes/${recipe.id}/review`)}>
                             {isUserRecipeOwner ? "View all reviews" : "Be the first to review"}
                         </Button>
                     </p>
