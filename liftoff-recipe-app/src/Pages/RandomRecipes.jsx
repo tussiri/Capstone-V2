@@ -4,6 +4,7 @@ import FoodCard from '../Components/FoodCard';
 import Grid from '@mui/material/Grid';
 import {useNavigate, useParams} from "react-router-dom";
 import NavBar from "../Components/NavBar";
+import Box from '@mui/material/Box';
 
 const RandomRecipes = () => {
     const [recipes, setRecipes] = useState([]);
@@ -48,15 +49,26 @@ const RandomRecipes = () => {
 
     return (
         <div>
-            <Grid container spacing={3}>
+            <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column'}} justifyContent='center' alignItems="center">
+            <h2>Try this random recipe!</h2>
+                <Box sx={{
+                    maxWidth:'50%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    flexWrap: 'wrap',
+                    alignContent: 'start'
+                    }}
+                    justifyContent='center'
+                    alignItems="center">
                 {recipes.map((recipe, index) => (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                    <Box>
                         <FoodCard recipe={recipe}
                         key={recipe.id}
                         onClick={()=>handleCardClick(recipe.id)}/>
-                    </Grid>
+                    </Box>
                 ))}
-            </Grid>
+                </Box>
+            </Box>
         </div>
     )
 }

@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import {styled, alpha} from '@mui/material/styles';
+import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -17,13 +17,13 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import BarLogo from "../Assets/MealifyLogoNavBar.png";
-// import SearchBar from "../Components/SearchBar"
 import {UserContext} from "../stores/UserStore";
 import axios from 'axios';
 import authAxios from "../utility/authAxios";
 
 
-const pages = ['Home', 'All Recipes', 'Random Recipe', 'Search'];
+
+const pages = ['Home', 'All Recipes', 'Random Recipe'];
 const settings = ['Account', 'My Recipes', 'Logout'];
 
 function NavBar() {
@@ -154,27 +154,6 @@ function NavBar() {
 
                         </Menu>
                     </Box>
-
-                    <AdbIcon sx={{display: {xs: 'flex', md: 'none'}, mr: 1}}/>
-                    <Typography
-                        variant="h5"
-                        noWrap
-                        component="a"
-                        href=""
-                        sx={{
-                            mr: 2,
-                            display: {xs: 'flex', md: 'none'},
-                            flexGrow: 1,
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                    > LOGO
-                    </Typography>
-
-
                     <Typography
                         variant="h5"
                         noWrap
@@ -209,15 +188,15 @@ function NavBar() {
                         )}
                     </Box>
                     {user ? (
-                        <Box sx={{flexGrow: 0}}>
-                            <Tooltip title="Open settings">
-                                <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
-                                    <Avatar alt="Test Account" src="/static/images/avatar/2.jpg"/>
-                                </IconButton>
-                            </Tooltip>
-                            <Menu
-                                sx={{mt: '45px'}}
-                                id="menu-appbar"
+                    <Box sx={{ fontWeight: 500, color: 'white' }} >
+                    <Tooltip title='Account Settings'>
+                      <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
+                        <Avatar alt={user.firstName} src='/static/images/avatar/2.jpg'/>
+                      </IconButton>
+                    </Tooltip>
+                    <Menu
+                        sx={{mt: 5}}
+                        id='menu-appbar'
                                 anchorEl={anchorElUser}
                                 anchorOrigin={{
                                     vertical: 'top',
@@ -241,7 +220,7 @@ function NavBar() {
                     ) : (
                         <Box sx={{flexGrow: 0}}>
                             <Link to="/login">
-                                <Button sx={{color: 'white'}}>Login</Button>
+                                <Button sx={{color: 'white'}}>Sign In</Button>
                             </Link>
                             <Link to="/signup">
                                 <Button sx={{color: 'white'}}>Sign Up</Button>

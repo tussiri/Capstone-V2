@@ -5,7 +5,8 @@ import Button from "@mui/material/Button";
 import axios from "axios"
 import authAxios from "../utility/authAxios";
 import {useNavigate, useParams} from "react-router-dom";
-import NavBar from "../Components/NavBar";
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
 
 function UpdateRecipe() {
     const navigate = useNavigate()
@@ -70,28 +71,96 @@ function UpdateRecipe() {
     };
     return (
         <div>
-            <Box>
-                <h1>Update Recipe</h1>
+            <Box sx={{mt: 5}}>
+                <Typography component="h1" variant="h5">Update Recipe</Typography>
                 <Box
                     sx={{
-                        minHeight: 330,
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "space-between",
-                    }}
-                    component="form"
-                    onSubmit={updateRecipe}
+                        maxWidth:'100%',
+                        marginTop: 4,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        }}
                 >
-                    {/*<TextField name="id" label="Recipe id" variant="outlined" onChange={handleChange}/>*/}
-                    <TextField name="name" label="Recipe Name" variant="outlined" onChange={handleChange}/>
-                    <TextField name="description" label="description" variant="outlined" onChange={handleChange}/>
-                    <TextField name="category" label="category" variant="outlined" onChange={handleChange}/>
-                    <TextField name="time" label="Time" variant="outlined" onChange={handleChange}/>
-                    <TextField name="ingredients" label="Ingredients" variant="outlined" onChange={handleChange}/>
-                    <TextField name="directions" label="Directions" variant="outlined" onChange={handleChange}/>
-                    <Button type="submit" variant="contained">
-                        Update
-                    </Button>
+                    <Box component="form" noValidate sx={{ mt: 3, maxWidth:'60%'}}>
+                       <Grid container spacing={2}>
+                           <Grid item xs={12}>
+                              <TextField
+                                name="name"
+                                label="Recipe Name"
+                                required
+                                id="recipeName"
+                                fullWidth
+                                onChange={handleChange}
+                                 />
+                           </Grid>
+
+                           <Grid item xs={12}>
+                              <TextField
+                                name="description"
+                                label="Description"
+                                required
+                                id="description"
+                                fullWidth
+                                onChange={handleChange}
+                              />
+                           </Grid>
+
+                           <Grid item xs={12}>
+                              <TextField
+                                name="category"
+                                label="Category"
+                                required
+                                id="category"
+                                fullWidth
+                                onChange={handleChange}
+                              />
+                           </Grid>
+                           <Grid item xs={12}>
+                              <TextField
+                                 name="time"
+                                 label="Time to Cook"
+                                 required
+                                 id="time"
+                                 fullWidth
+                                 onChange={handleChange}
+                                 />
+                           </Grid>
+
+                           <Grid item xs={12}>
+                              <TextField
+                                name="ingredients"
+                                label="Ingredients List"
+                                required
+                                id="ingredients"
+                                onChange={handleChange}
+                                fullWidth
+                                multiline
+                                rows={3}
+                              />
+                           </Grid>
+
+                           <Grid item xs={12}>
+                              <TextField
+                                name="directions"
+                                label="Directions"
+                                required
+                                id="directions"
+                                onChange={handleChange}
+                                fullWidth
+                                multiline
+                                rows={4}
+                              />
+                           </Grid>
+                       </Grid>
+                       <Button
+                         type="submit"
+                         variant="contained"
+                         sx={{ mt: 3, mb: 2, color: 'white' }}
+                       >
+                       Submit Update
+                       </Button>
+                    </Box>
                 </Box>
             </Box>
         </div>

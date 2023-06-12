@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../stores/UserStore";
 import Button from "@mui/material/Button";
+
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
@@ -13,12 +14,11 @@ import Logo from "../Assets/MealifyLogoNoBG100x100.png";
 function Login() {
     const { login } = useContext(UserContext);
     const navigate = useNavigate();
-
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
     const handleLogin = (e) => {
         e.preventDefault();
+
         login(email, password)
             .then(() => navigate("/dashboard"))
             .catch((error) => console.log("Error:", error));

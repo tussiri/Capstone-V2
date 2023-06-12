@@ -1,6 +1,6 @@
 import {Routes, Route} from "react-router-dom";
 import "./App.css";
-import {createTheme, colors, ThemeProvider} from '@mui/material';
+import { createTheme, colors, ThemeProvider } from '@mui/material';
 import HomePage from "./Pages/HomePage";
 import SignUp from "./Pages/SignUp";
 import NewRecipePage from "./Pages/NewRecipePage";
@@ -17,7 +17,7 @@ import NavBar from "./Components/NavBar";
 import BottomBar from "./Components/BottomBar"
 import AccountInfo from "./Pages/AccountInfo";
 import AccountEdit from "./Pages/AccountEdit";
-
+import AllRecipes from "./Pages/AllRecipes";
 
 const theme = createTheme({
     palette: {
@@ -49,7 +49,7 @@ const theme = createTheme({
 function App() {
     return (
         <ThemeProvider theme={theme}>
-            <div className="App" style={{paddingBottom:'100px', paddingTop:'100px'}}>
+            <div className="App" style={{paddingBottom:'60px', paddingTop:'60px'}}>
                 <UserProvider>
                     <NavBar/>
                     <BottomBar/>
@@ -71,13 +71,16 @@ function App() {
                         <Route path="/recipes/random" element={<RandomRecipes/>}/>
                         <Route path="/account" element={<AccountInfo/>}/>
                         <Route path="/account/edit" element={<AccountEdit/>}/>
-
+                        <Route path="/homepage" element={<HomePage/>}/>
+                        <Route path="/allrecipes" element={<AllRecipes/>}/>
+                        <Route path="/randomrecipe" element={<RandomRecipes/>}/>
                         <Route path="/users/:id/recipes/:recipeId" component={RecipePage}/>
 
-                    </Routes>
-                </UserProvider>
-            </div>
-        </ThemeProvider>
+                </Routes>
+            </UserProvider>
+        </div>
+    </ThemeProvider>
+
     );
 }
 
