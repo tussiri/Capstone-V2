@@ -54,4 +54,5 @@ function AllRecipes() {
     )
 }
 
+
 export default AllRecipes

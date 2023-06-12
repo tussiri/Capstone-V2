@@ -12,6 +12,7 @@
 //     };
 //
 //     return (
+//         <NavBar>
 //         <div>
 //             <h2>{user.firstName}</h2>
 //             <p>{user.email}</p>
