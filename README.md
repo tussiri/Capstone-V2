@@ -12,7 +12,7 @@ Accounts: New users are able to Register an account or login if existing user. U
 
 Comments: Users are allowed to make comments and leave reviews on other users meals/recipes. Comments also have CRUD capabilities allowing the user to be able to update, delete, and view comments/reviews.
 
-Likes: Users are able to save recipes that they like and store them in a "liked recipes" section. Liked recipes have crud capabilities as well which allow the user to update, read, and delete their liked recipes as well.
+Likes: Users are able to save recipes that they like and store them in a "liked recipes" section. Liked recipes have crud capabilities as well which allow the user to update, read, and delete their liked recipes.
 ## Techs/Frameworks
 Frontend: React.js
 
