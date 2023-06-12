@@ -76,7 +76,15 @@ function Dashboard() {
     };
     return (
         <>
-            <SearchBar onSearch={handleSearch}/>
+            {/* New Recipe button only visible to logged-in users */}
+            {user && (
+                <>
+                    <Link to="newrecipe">
+                        <Button variant="contained">New Recipe</Button>
+                    </Link>
+                </>
+            )}
+
             <div className={'container'}>
                 {user && <Sidebar user={user} className="sidebar"/>}
                 <div className={"app-main"}>
