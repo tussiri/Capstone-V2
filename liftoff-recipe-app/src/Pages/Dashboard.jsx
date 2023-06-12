@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import axios from "axios";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import FoodCard from "../Components/FoodCard";
 import "../Styles/Dashboard.css";
 import authAxios from "../utility/authAxios";
@@ -16,7 +16,6 @@ function Dashboard() {
     const [recipes, setRecipes] = useState([]);
     const [allRecipes, setAllRecipes] = useState([]);
     const navigate = useNavigate();
-    // const [user, setUser] = useState(null);
     const userId = localStorage.getItem("userId")
     const [isSearching, setIsSearching] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
@@ -24,6 +23,8 @@ function Dashboard() {
     const [isLoading, setIsLoading] = useState(true);
     const {user, logout, login} = useContext(UserContext);
     const [likedRecipes, setLikedRecipes] = useState([]);
+    const {recipeId} = useParams();
+
 
 
     const handleSearch = (query) => {
@@ -78,7 +79,7 @@ function Dashboard() {
                     const response = await authAxios.get(
                         `http://localhost:8080/recipes/user/${userId}/favorite`
                     );
-                    const data = response.data.data;
+                    const data = response.data.result;
                     console.log("Fetched liked recipes:", data);
                     setLikedRecipes(data);
                 } else {
@@ -90,6 +91,26 @@ function Dashboard() {
         };
         fetchLikedRecipes();
     }, [userId]);
+
+
+    useEffect(() => {
+        const favoriteRecipe = async () => {
+            authAxios.post(`/recipes/${recipeId}/favorite`, {}, {
+                headers: {
+                    "userId": userId
+                }
+            })
+                .then(response => {
+                    setRecipes(recipes.map(recipe =>
+                        recipe.id === recipeId ? {...recipe, isFavorite: true} : recipe
+                    ));
+                    console.log(response.data.message);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+    })
 
 
     const handleCardClick = (recipeId) => {
