@@ -6,8 +6,8 @@ import unAuthAxios from '../utility/unAuthAxios'
 import authAxios from "../utility/authAxios";
 import FoodCard from "../Components/FoodCard";
 import LoadingScreen from "./LoadingPage";
-import NavBar from "../Components/NavBar";
 
+import Box from '@mui/material/Box';
 
 function SearchResults() {
     const location = useLocation();
@@ -45,10 +45,31 @@ function SearchResults() {
 
         return (
             <div>
-                {searchResults.map(recipe => (
-                    <FoodCard recipe={recipe} key={recipe.id} onClick={() => navigate(`/recipes/${recipe.id}`)}/>
-                ))}
+               <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column'}} justifyContent='center' alignItems="center">
+               <h2>Search results:</h2>
+                  <Box sx={{
+                        maxWidth:'100%',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        flexWrap: 'wrap',
+                        alignContent: 'start'
+                        }}
+                        justifyContent='center'
+                        alignItems="center">
+                            {searchResults.map(recipe => (
+                                <Box sx={{ maxWidth:'23%' }}>
+                                    <FoodCard
+                                        recipe={recipe}
+                                        key={recipe.id}
+                                        onClick={() => navigate(`/recipes/${recipe.id}`)}
+                                    />
+                               </Box>
+                            ))}
+
+                  </Box>
+               </Box>
             </div>
+
         );
     }
 

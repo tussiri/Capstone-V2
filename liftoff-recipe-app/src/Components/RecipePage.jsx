@@ -6,7 +6,8 @@ import authAxios from "../utility/authAxios";
 import {UserContext} from "../stores/UserStore";
 import LoadingScreen from "../Pages/LoadingPage";
 import stockImage from '../Assets/MealifyNoImage.png'
-import NavBar from "./NavBar";
+
+import Box from '@mui/material/Box';
 
 import '../Styles/RecipePage.css'
 
@@ -105,24 +106,26 @@ function RecipePage({match}) {
 
     return (
         <div>
-            <h2 className="recipe-name">{recipe.name}</h2>
-            <img src={recipe.picture ? recipe.picture : stockImage} alt={recipe.name}
-                 style={{maxWidth: '100%', height: 'auto'}}/>
-            <p className="recipe-description">{recipe.description}</p>
-            <p className="recipe-category">Category: {recipe.category}</p>
-            <p className="recipe-time">Preparation time: {recipe.time} minutes</p>
-            <p className="recipe-ingredients">Ingredients:
-
-                {recipe.ingredients.join(", ")}</p>
-            <p className="recipe-directions">Directions:
-                {recipe.directions}</p>
-            <p className="recipe-allergens">Allergens: {recipe.allergens.join(", ")}</p>
+          <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column'}} justifyContent='center' alignItems="center">
+            <h2>{recipe.name}</h2>
+            <Box sx={{ maxWidth: '250px', display: 'flex'}} justifyContent='center' alignItems="center">
+                <img src={recipe.picture ? recipe.picture : stockImage} alt={recipe.name}/>
+            </Box>
+            <Box sx={{ maxWidth: '50%', display: 'flex', flexDirection: 'column', justify: 'center' }} justifyContent='center'>
+                <p>{recipe.description}</p>
+                <p>Category: {recipe.category}</p>
+                <p>Preparation time: {recipe.time} minutes</p>
+                <p>Ingredients: {recipe.ingredients.join(", ")}</p>
+                <p>Directions: {recipe.directions}</p>
+                <p>Allergens: {recipe.allergens.join(", ")}</p>
+            </Box>
+          </Box>
 
             {isUserRecipeOwner && (
                 <div>
-                    <Button variant="contained" onClick={() => navigate(`/recipes/update/${recipe.id}`)}>Update
+                    <Button sx={{color: 'white'}} variant="contained" onClick={() => navigate(`/recipes/update/${recipe.id}`)}>Update
                         Recipe</Button>
-                    <Button variant="contained" onClick={() => navigate(`/recipes/delete/${recipeId}`)}>Delete
+                    <Button sx={{color: 'white'}} variant="contained" onClick={() => navigate(`/recipes/delete/${recipeId}`)}>Delete
                         Recipe</Button>
                 </div>
             )}
@@ -145,15 +148,15 @@ function RecipePage({match}) {
                     </div>
                     {!isUserRecipeOwner && user ? (
                         <>
-                            <Button variant="contained"
+                            <Button sx={{color: 'white'}} variant="contained"
                                     onClick={() => navigate(`/review/recipes/${recipe.id}/reviews`)}>
                                 View all reviews
                             </Button>
-                            <Button variant="contained" onClick={() => navigate(`/recipes/${recipe.id}/review`)}>Leave
+                            <Button sx={{color: 'white'}} variant="contained" onClick={() => navigate(`/recipes/${recipe.id}/review`)}>Leave
                                 your review</Button>
                         </>
                     ) : user ? (
-                        <Button variant="contained"
+                        <Button sx={{color: 'white'}} variant="contained"
                                 onClick={() => navigate(`/review/recipes/${recipe.id}/reviews`)}>
                             View all reviews
                         </Button>
