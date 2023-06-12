@@ -1,6 +1,5 @@
 import React, {useState, useContext} from 'react'
-import {Button, TextField, Box} from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
+import {Button, TextField, Box} from '@mui/material';
 import {UserContext} from "../stores/UserStore";
 import authAxios from "../utility/authAxios";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -12,24 +11,11 @@ import Grid from "@mui/material/Grid";
 import {useNavigate} from "react-router-dom";
 
 
-const useStyles = makeStyles((theme) => ({
-    form: {
-        display: 'flex',
-        flexDirection: 'column',
-        margin: 'auto',
-        width: 'fit-content',
-    },
-    textField: {
-        margin: theme.spacing(1),
-    },
-    submitButton: {
-        margin: theme.spacing(3),
-    },
-}));
+
 
 
 const NewRecipePage = () => {
-    const classes = useStyles();
+
 
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
@@ -41,6 +27,16 @@ const NewRecipePage = () => {
     const [allergens, setAllergens] = useState('');
     const navigate = useNavigate();
     const userId = localStorage.getItem('userId');
+    const [recipe, setRecipe] = useState({
+            // id: '',
+            name: '',
+            category: '',
+            description: '',
+            time: '',
+            servings: '',
+            ingredients: [],
+            directions: '',
+        })
 
 
     const {user} = useContext(UserContext);
@@ -74,74 +70,124 @@ const NewRecipePage = () => {
             console.error("Error creating recipe: ", error);
         }
     }
+    const handleChange = (e) => {
+            const {name, value} = e.target;
+            if (name === 'ingredients') {
+                if (value.trim() === '') {
+                    setRecipe({
+                        ...recipe,
+                        [name]: [],
+                    });
+                } else {
+                    setRecipe({
+                        ...recipe,
+                        [name]: value.split(',').map(item => item.trim()),
+                    });
+                }
+            } else {
+                setRecipe({
+                    ...recipe,
+                    [name]: value,
+                });
+            }
+        }
 
     return (
-        <Container component="main" maxWidth="xs">
-            <CssBaseline/>
-            <Box sx={{marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center',}}>
-                <img src={Logo}/>
-                <Typography component="h1" variant="h5">
-                    Add Recipe
-                </Typography>
-                <Box component="form" noValidate autoComplete="off" onSubmit={handleSubmit} sx={{mt: 3}}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                className={classes.textField}
-                                label="Recipe Name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                            <TextField
-                                className={classes.textField}
-                                label="Description"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                            />
-                            <TextField
-                                className={classes.textField}
-                                label="Category"
-                                value={category}
-                                onChange={(e) => setCategory(e.target.value)}
-                            />
-                            <TextField
-                                className={classes.textField}
-                                label="Ingredients (Comma Separated)"
-                                value={ingredients}
-                                onChange={(e) => setIngredients(e.target.value)}
-                            />
-                            <TextField
-                                className={classes.textField}
-                                label="Directions"
-                                value={directions}
-                                onChange={(e) => setDirections(e.target.value)}
-                            />
-                            <TextField
-                                className={classes.textField}
-                                label="Time"
-                                value={time}
-                                onChange={(e) => setTime(e.target.value)}
-                            />
-                            <TextField
-                                className={classes.textField}
-                                label="Picture URL"
-                                value={picture}
-                                onChange={(e) => setPicture(e.target.value)}
-                            />
-                            {/*<TextField*/}
-                            {/*    className={classes.textField}*/}
-                            {/*    label="Allergens"*/}
-                            {/*    value={allergens}*/}
-                            {/*    onChange={(e) => setAllergens(e.target.value)}*/}
-                            {/*/>*/}
-                            <Button type="submit" className={classes.submitButton} variant="contained" color="primary">
-                                Add Recipe
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </Box>
+        <div>
+        <Box sx={{mt: 3}}>
+            <img src={Logo}/>
+            <Typography component="h1" variant="h5">New Recipe</Typography>
+               <Box
+                  sx={{
+                     maxWidth:'100%',
+                     marginTop: 1,
+                     display: 'flex',
+                     flexDirection: 'column',
+                     alignItems: 'center',
+                  }}
+               >
+               <Box component="form" noValidate sx={{ mt: 3, maxWidth:'60%'}}>
+                  <Grid container spacing={2}>
+                      <Grid item xs={12}>
+                         <TextField
+                            name="name"
+                            label="Recipe Name"
+                            required
+                            id="recipeName"
+                            fullWidth
+                            onChange={handleChange}
+                         />
+                      </Grid>
+
+                      <Grid item xs={12}>
+                         <TextField
+                            name="description"
+                            label="Description"
+                            required
+                            id="description"
+                            fullWidth
+                            onChange={handleChange}
+                         />
+                      </Grid>
+
+                      <Grid item xs={12}>
+                         <TextField
+                            name="category"
+                            label="Category"
+                            required
+                            id="category"
+                            fullWidth
+                            onChange={handleChange}
+                         />
+                      </Grid>
+                      <Grid item xs={12}>
+                         <TextField
+                            name="time"
+                            label="Time to Cook"
+                            required
+                            id="time"
+                            fullWidth
+                            onChange={handleChange}
+                         />
+                      </Grid>
+
+                      <Grid item xs={12}>
+                         <TextField
+                            name="ingredients"
+                            label="Ingredients List"
+                            required
+                            id="ingredients"
+                            onChange={handleChange}
+                            fullWidth
+                            multiline
+                            rows={3}
+                         />
+                      </Grid>
+
+                      <Grid item xs={12}>
+                         <TextField
+                            name="directions"
+                            label="Directions"
+                            required
+                            id="directions"
+                            onChange={handleChange}
+                            fullWidth
+                            multiline
+                            rows={4}
+                         />
+                      </Grid>
+                  </Grid>
+                  <Button
+                     type="submit"
+                     variant="contained"
+                     sx={{ mt: 3, mb: 2, color: 'white' }}
+                  >
+                  Submit Recipe
+                  </Button>
+               </Box>
             </Box>
-        </Container>
+        </Box>
+        </div>
     );
 }
 
