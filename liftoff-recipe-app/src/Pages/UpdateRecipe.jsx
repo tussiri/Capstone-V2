@@ -76,13 +76,14 @@ function UpdateRecipe() {
                     sx={{
                         minHeight: 330,
                         display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "space-between",
+                        flexDirection: "column"
                     }}
+                    justifyContent='center'
+                    alignItems="center"
                     component="form"
                     onSubmit={updateRecipe}
                 >
-                    {/*<TextField name="id" label="Recipe id" variant="outlined" onChange={handleChange}/>*/}
+
                     <TextField name="name" label="Recipe Name" variant="outlined" onChange={handleChange}/>
                     <TextField name="description" label="description" variant="outlined" onChange={handleChange}/>
                     <TextField name="category" label="category" variant="outlined" onChange={handleChange}/>

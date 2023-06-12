@@ -106,6 +106,7 @@ const SearchBar = ({onSearch}) => {
                        value={searchTerm}
                        onChange={handleSearchTermChange}
                        placeholder="Search"
+                       required
 
             />
             <FormControl sx={{ m: 1, minWidth: 150, input: {color: 'white'} }} size="small">

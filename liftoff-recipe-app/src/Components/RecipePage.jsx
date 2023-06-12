@@ -6,7 +6,8 @@ import authAxios from "../utility/authAxios";
 import {UserContext} from "../stores/UserStore";
 import LoadingScreen from "../Pages/LoadingPage";
 import stockImage from '../Assets/MealifyNoImage.png'
-import NavBar from "./NavBar";
+
+import Box from '@mui/material/Box';
 
 function RecipePage({match}) {
     const [recipe, setRecipe] = useState(null);
@@ -65,20 +66,26 @@ function RecipePage({match}) {
 
     return (
         <div>
+          <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column'}} justifyContent='center' alignItems="center">
             <h2>{recipe.name}</h2>
-            <img src={recipe.picture ? recipe.picture : stockImage} alt={recipe.name}/>
-            <p>{recipe.description}</p>
-            <p>Category: {recipe.category}</p>
-            <p>Preparation time: {recipe.time} minutes</p>
-            <p>Ingredients: {recipe.ingredients.join(", ")}</p>
-            <p>Directions: {recipe.directions}</p>
-            <p>Allergens: {recipe.allergens.join(", ")}</p>
+            <Box sx={{ maxWidth: '250px', display: 'flex'}} justifyContent='center' alignItems="center">
+                <img src={recipe.picture ? recipe.picture : stockImage} alt={recipe.name}/>
+            </Box>
+            <Box sx={{ maxWidth: '50%', display: 'flex', flexDirection: 'column', justify: 'center' }} justifyContent='center'>
+                <p>{recipe.description}</p>
+                <p>Category: {recipe.category}</p>
+                <p>Preparation time: {recipe.time} minutes</p>
+                <p>Ingredients: {recipe.ingredients.join(", ")}</p>
+                <p>Directions: {recipe.directions}</p>
+                <p>Allergens: {recipe.allergens.join(", ")}</p>
+            </Box>
+          </Box>
 
             {isUserRecipeOwner && (
                 <div>
-                    <Button variant="contained" onClick={() => navigate(`/recipes/update/${recipe.id}`)}>Update
+                    <Button sx={{color: 'white'}} variant="contained" onClick={() => navigate(`/recipes/update/${recipe.id}`)}>Update
                         Recipe</Button>
-                    <Button variant="contained" onClick={() => navigate(`/recipes/delete/${recipeId}`)}>Delete
+                    <Button sx={{color: 'white'}} variant="contained" onClick={() => navigate(`/recipes/delete/${recipeId}`)}>Delete
                         Recipe</Button>
                 </div>
             )}
@@ -91,15 +98,15 @@ function RecipePage({match}) {
                     </div>
                     {!isUserRecipeOwner && user ? (
                         <>
-                            <Button variant="contained"
+                            <Button sx={{color: 'white'}} variant="contained"
                                     onClick={() => navigate(`/review/recipes/${recipe.id}/reviews`)}>
                                 View all reviews
                             </Button>
-                            <Button variant="contained" onClick={() => navigate(`/recipes/${recipe.id}/review`)}>Leave
+                            <Button sx={{color: 'white'}} variant="contained" onClick={() => navigate(`/recipes/${recipe.id}/review`)}>Leave
                                 your review</Button>
                         </>
                     ) : user ? (
-                        <Button variant="contained"
+                        <Button sx={{color: 'white'}} variant="contained"
                                 onClick={() => navigate(`/review/recipes/${recipe.id}/reviews`)}>
                             View all reviews
                         </Button>
@@ -109,7 +116,7 @@ function RecipePage({match}) {
                 </>
             ) : (
                 user ? (
-                    <p><Button variant="contained" onClick={() => navigate(`/recipes/${recipe.id}/review`)}>Be the first
+                    <p><Button sx={{color: 'white'}} variant="contained" onClick={() => navigate(`/recipes/${recipe.id}/review`)}>Be the first
                         to review</Button></p>
                 ) : (
                     <p>You must be <Link to="/login">logged in </Link> to leave a review.</p>
