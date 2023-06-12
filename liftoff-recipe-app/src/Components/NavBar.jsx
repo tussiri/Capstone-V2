@@ -201,6 +201,11 @@ function NavBar() {
                         <Link to="/recipes/random">
                             <Button sx={{color: 'white'}} onClick={handleCloseNavMenu}>Random Recipe</Button>
                         </Link>
+                        {user && (
+                            <Link to="/recipes/newrecipe">
+                                <Button sx={{color: 'white'}} onClick={handleCloseNavMenu}>Add A Recipe</Button>
+                            </Link>
+                        )}
                     </Box>
 
                     {user ? (

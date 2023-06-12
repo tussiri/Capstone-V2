@@ -1,318 +1,147 @@
-import React, {useEffect, useState} from "react";
+import React, {useState, useContext} from 'react'
+import {Button, TextField, Box} from '@material-ui/core';
+import {makeStyles} from '@material-ui/core/styles';
+import {UserContext} from "../stores/UserStore";
+import authAxios from "../utility/authAxios";
+import CssBaseline from "@mui/material/CssBaseline";
+import Container from "@mui/material/Container";
+
+import Logo from "../Assets/MealifyLogoNoBG100x100.png";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
 import {useNavigate} from "react-router-dom";
-import Logo from "../Assets/logo-removebg-preview 1.png";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import MenuItem from "@mui/material/MenuItem";
-import Button from "@mui/material/Button";
-import FavoriteTwoToneIcon from "@mui/icons-material/FavoriteTwoTone";
 
-import "../SignUp.css";
 
-function NewRecipePage() {
-    const DietaryPref = [
-        {
-            value: "Vgn",
-            label: "Vegan",
-        },
-        {
-            value: "Veg",
-            label: "Vegetarian",
-        },
-        {
-            value: "Non-Veg",
-            label: "Non-Vegetarian",
-        },
-    ];
-    const categories = [
+const useStyles = makeStyles((theme) => ({
+    form: {
+        display: 'flex',
+        flexDirection: 'column',
+        margin: 'auto',
+        width: 'fit-content',
+    },
+    textField: {
+        margin: theme.spacing(1),
+    },
+    submitButton: {
+        margin: theme.spacing(3),
+    },
+}));
 
-        {
-            value: "App",
-            label: "Appetizers",
-        },
-        {
-            value: "DST",
-            label: "Dessert",
-        },
-        {
-            value: "BKFST",
-            label: "Breakfast",
-        },
-        {
-            value: "DNR",
-            label: "Dinner",
-        },
-        {
-            value: "LUN",
-            label: "Lunch",
-        },
-        // {
-        //   value: "Sou",
-        //   label: "Soups",
-        // },
-        // {
-        //   value: "Sal",
-        //   label: "Salads",
-        // },
 
-    ];
+const NewRecipePage = () => {
+    const classes = useStyles();
 
-    const [user, setUser] = useState();
-    const [recipe, setRecipe] = useState({
-        name: '',
-        category: '',
-        description: '',
-        prepTime: '',
-        cookTime: '',
-        servings: '',
-        ingredients: [],
-        directions: '',
-    });
-
-    const [flag, setFlag] = React.useState(true);
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [category, setCategory] = useState('');
+    const [ingredients, setIngredients] = useState('');
+    const [directions, setDirections] = useState('');
+    const [time, setTime] = useState('');
+    const [picture, setPicture] = useState('');
+    const [allergens, setAllergens] = useState('');
     const navigate = useNavigate();
+    const userId = localStorage.getItem('userId');
 
 
-    const handleClick = () => {
-        setFlag(!flag);
-    };
+    const {user} = useContext(UserContext);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const formattedIngredients = ingredients.split(',').filter(ingredient => ingredient.trim() !== '');  // remove empty strings from array
+
+        try {
+            const response = await authAxios.post(`http://localhost:8080/recipes/${userId}`, {
+                name: name,
+                description: description,
+                category: category,
+                ingredients: formattedIngredients,
+                directions: directions,
+                time: time,
+                picture: picture,
+                // allergens: allergens
+            });
+                console.log("recipe sent: ", response)
+
+            if (response.status === 201) {
+                console.log("Recipe created successfully");
+                navigate('/');
+            } else {
+                console.error("Error creating recipe: ", response);
+            }
+
+        } catch (error) {
+            console.error("Error creating recipe: ", error);
+        }
+    }
 
     return (
-        <>
-            <h1
-                style={{
-                    position: "relative",
-                    top: "20px",
-                }}
-            >
-                New Recipe
-            </h1>
-
-            <img
-                src={Logo}
-                alt="Logo"
-                maxHeight="30"
-                maxWidth="30"
-                style={{position: "relative", top: "-60px", left: "650px"}}
-            ></img>
-            <FavoriteTwoToneIcon
-                onClick={handleClick}
-                style={flag ? {color: "black"} : {color: "crimson"}}
-                fontSize="large"
-            />
-            <h3
-                style={{
-                    position: "relative",
-                    top: "-30px",
-                    left: "-250px",
-                }}
-            >
-                Name
-            </h3>
-
-            <TextField
-                id="outlined-basic"
-                variant="outlined"
-                size="small"
-                style={{
-                    width: "54ch",
-                    position: "relative",
-                    top: "-40px",
-                    left: "-5px",
-                }}
-            />
-
-            <h3
-                style={{
-                    position: "relative",
-                    top: "-30px",
-                    left: "-235px",
-                }}
-            >
-                Category
-            </h3>
-
-            <TextField
-                id="outlined-select-currency"
-                select
-                size="small"
-                style={{
-                    width: "25ch",
-                    position: "relative",
-                    top: "-40px",
-                    left: "-150px",
-                }}
-            >
-                {categories.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                    </MenuItem>
-                ))}
-            </TextField>
-            <h3
-                style={{
-                    position: "relative",
-                    top: "-30px",
-                    left: "-187px",
-                }}
-            >
-                Dietary Preferences
-            </h3>
-
-            <TextField
-                id="outlined-select-currency"
-                select
-                size="small"
-                style={{
-                    width: "25ch",
-                    position: "relative",
-                    top: "-40px",
-                    left: "-150px",
-                }}
-            >
-                {DietaryPref.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                    </MenuItem>
-                ))}
-            </TextField>
-
-            <h3
-                style={{
-                    position: "relative",
-                    top: "-30px",
-                    left: "-225px",
-                }}
-            >
-                Description
-            </h3>
-
-            <TextField
-                id="outlined-multiline-flexible"
-                size="small"
-                multiline
-                maxRows={5}
-                style={{
-                    width: "54ch",
-                    position: "relative",
-                    top: "-40px",
-                    left: "-5px",
-                }}
-            />
-
-            <div
-                style={{
-                    position: "relative",
-                    top: "-20px",
-                    left: "-5px",
-                }}
-            >
-                <TextField
-                    id="filled-basic"
-                    label="Prep-time"
-                    variant="filled"
-                    size="small"
-                    style={{
-                        width: "16ch",
-                        padding: "1%",
-                    }}
-                />
-                <TextField
-                    id="filled-basic"
-                    label="Cook-time"
-                    variant="filled"
-                    size="small"
-                    style={{
-                        width: "16ch",
-                        padding: "1%",
-                    }}
-                />
-                <TextField
-                    id="filled-basic"
-                    label="Servings"
-                    variant="filled"
-                    size="small"
-                    style={{
-                        width: "16ch",
-                        padding: "1%",
-                    }}
-                />
-            </div>
-
-            <h3
-                style={{
-                    position: "relative",
-                    top: "-30px",
-                    left: "-225px",
-                }}
-            >
-                Ingredients
-            </h3>
-
-            <TextField
-                id="outlined-multiline-flexible"
-                size="small"
-                multiline
-                maxRows={5}
-                style={{
-                    width: "54ch",
-                    position: "relative",
-                    top: "-40px",
-                    left: "-5px",
-                }}
-            />
-
-            <h3
-                style={{
-                    position: "relative",
-                    top: "-30px",
-                    left: "-225px",
-                }}
-            >
-                Allergens
-            </h3>
-
-            <TextField
-                id="outlined-basic"
-                variant="outlined"
-                size="small"
-                style={{
-                    width: "54ch",
-                    position: "relative",
-                    top: "-40px",
-                    left: "-5px",
-                }}
-            />
-
-            <h3
-                style={{
-                    position: "relative",
-                    top: "-30px",
-                    left: "-225px",
-                }}
-            >
-                Directions
-            </h3>
-
-            <TextField
-                id="outlined-multiline-flexible"
-                size="small"
-                multiline
-                maxRows={5}
-                style={{
-                    width: "54ch",
-                    position: "relative",
-                    top: "-40px",
-                    left: "-5px",
-                }}
-            />
-
-            <div style={{position: "relative", top: "20px"}}>
-                <Button variant="contained" color="success">
-                    Submit
-                </Button>
-            </div>
-        </>
+        <Container component="main" maxWidth="xs">
+            <CssBaseline/>
+            <Box sx={{marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center',}}>
+                <img src={Logo}/>
+                <Typography component="h1" variant="h5">
+                    Add Recipe
+                </Typography>
+                <Box component="form" noValidate autoComplete="off" onSubmit={handleSubmit} sx={{mt: 3}}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                className={classes.textField}
+                                label="Recipe Name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                            <TextField
+                                className={classes.textField}
+                                label="Description"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                            />
+                            <TextField
+                                className={classes.textField}
+                                label="Category"
+                                value={category}
+                                onChange={(e) => setCategory(e.target.value)}
+                            />
+                            <TextField
+                                className={classes.textField}
+                                label="Ingredients (Comma Separated)"
+                                value={ingredients}
+                                onChange={(e) => setIngredients(e.target.value)}
+                            />
+                            <TextField
+                                className={classes.textField}
+                                label="Directions"
+                                value={directions}
+                                onChange={(e) => setDirections(e.target.value)}
+                            />
+                            <TextField
+                                className={classes.textField}
+                                label="Time"
+                                value={time}
+                                onChange={(e) => setTime(e.target.value)}
+                            />
+                            <TextField
+                                className={classes.textField}
+                                label="Picture URL"
+                                value={picture}
+                                onChange={(e) => setPicture(e.target.value)}
+                            />
+                            {/*<TextField*/}
+                            {/*    className={classes.textField}*/}
+                            {/*    label="Allergens"*/}
+                            {/*    value={allergens}*/}
+                            {/*    onChange={(e) => setAllergens(e.target.value)}*/}
+                            {/*/>*/}
+                            <Button type="submit" className={classes.submitButton} variant="contained" color="primary">
+                                Add Recipe
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Box>
+        </Container>
     );
 }
 

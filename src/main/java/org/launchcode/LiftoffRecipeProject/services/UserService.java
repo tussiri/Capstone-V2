@@ -3,10 +3,12 @@ package org.launchcode.LiftoffRecipeProject.services;
 import org.launchcode.LiftoffRecipeProject.DTO.LoginDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.UserDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.UserWithRecipesDTO;
+import org.launchcode.LiftoffRecipeProject.data.ReviewRepository;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
 import org.launchcode.LiftoffRecipeProject.exception.BadRequestException;
 import org.launchcode.LiftoffRecipeProject.exception.ResourceNotFoundException;
 import org.launchcode.LiftoffRecipeProject.exception.UnauthorizedException;
+import org.launchcode.LiftoffRecipeProject.models.Review;
 import org.launchcode.LiftoffRecipeProject.models.User;
 import org.launchcode.LiftoffRecipeProject.security.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,6 +45,10 @@ public class UserService {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    @Autowired
+    private ReviewRepository reviewRepository;
+
+
 //    @Autowired
 ////    private SessionUtil sessionUtil;
 
@@ -56,19 +63,20 @@ public class UserService {
         }
     }
 
-    public Page<UserDTO>getAllUsers(Pageable pageable){
-        Page<User>users = userRepository.findAll(pageable);
+    public Page<UserDTO> getAllUsers(Pageable pageable) {
+        Page<User> users = userRepository.findAll(pageable);
         return users.map(this::mapUserToUserDTO);
     }
+
     public Page<UserWithRecipesDTO> getAllUsersWithRecipes(Pageable pageable) {
         Page<User> users = userRepository.findAll(pageable);
         return users.map(this::mapUserToUserWithRecipesDTO);
     }
 
-    public UserDTO updateUser(Integer userId, UserDTO updatedUserDTO){
-        Optional <User>optionalUser=userRepository.findById(userId);
+    public UserDTO updateUser(Integer userId, UserDTO updatedUserDTO) {
+        Optional<User> optionalUser = userRepository.findById(userId);
 
-        if(!optionalUser.isPresent()){
+        if (!optionalUser.isPresent()) {
             throw new ResourceNotFoundException("User not found");
         }
 
@@ -93,7 +101,7 @@ public class UserService {
         if (user != null) {
             UserDTO userDTO = mapUserToUserDTO(user);
             final UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.getEmail());
-            final String jwt = jwtTokenUtil.generateToken(userDetails,user.getId());
+            final String jwt = jwtTokenUtil.generateToken(userDetails, user.getId());
             userDTO.setToken(jwt);
             return userDTO;
         } else {
@@ -140,12 +148,46 @@ public class UserService {
         return mappedUserDTO;
     }
 
-    public void deleteUser (Integer userId){
-        if(!userRepository.existsById(userId)){
+//    public void deleteUser(Integer userId, Boolean deleteRecipes){
+//        if(!userRepository.existsById(userId)){
+//            throw new ResourceNotFoundException("User not found");
+//        }
+//
+//        if (deleteRecipes) {
+//            // Delete all reviews associated with the user
+//            reviewRepository.deleteByUserId(userId);
+//        } else {
+//            // Find all reviews associated with the user
+//            List<Review> reviews = reviewRepository.findByUserId(userId);
+//
+//            // Set each review's user to null
+//            for (Review review : reviews) {
+//                review.setUser(null);
+//            }
+//
+//            // Save the reviews with the null users
+//            reviewRepository.saveAll(reviews);
+//        }
+//
+//        // Finally, delete the user
+//        userRepository.deleteById(userId);
+//    }
+
+    public void deleteUser(Integer userId, Boolean deleteRecipes) {
+        if (!userRepository.existsById(userId)) {
             throw new ResourceNotFoundException("User not found");
         }
-        userRepository.deleteById(userId);
+
+        if (deleteRecipes) {
+            userRepository.deleteById(userId);
+        } else {
+            User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            user.getRecipes().clear();
+            userRepository.save(user);
+            userRepository.deleteById(userId);  // Add this line
+        }
     }
+
 
     private UserDTO mapUserToUserDTO(User user) {
         UserDTO userDTO = new UserDTO();

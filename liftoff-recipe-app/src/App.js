@@ -58,7 +58,7 @@ function App() {
                         <Route path="/dashboard" element={<Dashboard/>}/>
                         <Route path="/dashboard/newrecipe" element={<NewRecipePage/>}/>
                         <Route path="/signup" element={<SignUp/>}/>
-                        <Route path="/newrecipe" element={<NewRecipePage/>}/>
+                        <Route path="/recipes/newrecipe" element={<NewRecipePage/>}/>
                         <Route path="/recipes/update/:recipeId" element={<UpdateRecipe/>}/>
                         <Route path="/recipes/delete/:recipeId" element={<DeleteRecipe/>}/>
                         <Route path="/recipes/:recipeId" element={<RecipePage/>}/>
