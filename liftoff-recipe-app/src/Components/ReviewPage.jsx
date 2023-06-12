@@ -111,6 +111,17 @@ function ReviewPage() {
     return (
         <div>
             <Button variant="contained" onClick={() => navigate(`/recipes/${recipeId}`)}>Back to Recipe</Button>
+            <h2>Reviews:</h2>
+            {reviews.map(review => (
+                <Card key={review.id}>
+                    <CardContent>
+                        {/*<p>Reviewer: {review.username}</p>*/}
+                        <StarRating rating={review.rating}/>
+                        <p>{review.comment}</p>
+                    </CardContent>
+                </Card>
+            ))}
+            <h2>Leave your review</h2>
             {recipe && recipe.userId.toString() !== loggedUserId && (
                 <form onSubmit={handleSubmit}>
                     <label>
@@ -124,16 +135,6 @@ function ReviewPage() {
                     <input type="submit" value="Submit"/>
                 </form>
             )}
-            <h2>Reviews:</h2>
-            {reviews.map(review => (
-                <Card key={review.id}>
-                    <CardContent>
-                        {/*<p>Reviewer: {review.username}</p>*/}
-                        <StarRating rating={review.rating}/>
-                        <p>{review.comment}</p>
-                    </CardContent>
-                </Card>
-            ))}
         </div>
     );
 }

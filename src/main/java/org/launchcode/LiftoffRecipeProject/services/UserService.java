@@ -1,12 +1,16 @@
 package org.launchcode.LiftoffRecipeProject.services;
 
 import org.launchcode.LiftoffRecipeProject.DTO.LoginDTO;
+import org.launchcode.LiftoffRecipeProject.DTO.UpdateUserDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.UserDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.UserWithRecipesDTO;
+import org.launchcode.LiftoffRecipeProject.data.RecipeRepository;
+import org.launchcode.LiftoffRecipeProject.data.ReviewRepository;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
 import org.launchcode.LiftoffRecipeProject.exception.BadRequestException;
 import org.launchcode.LiftoffRecipeProject.exception.ResourceNotFoundException;
 import org.launchcode.LiftoffRecipeProject.exception.UnauthorizedException;
+import org.launchcode.LiftoffRecipeProject.models.Recipe;
 import org.launchcode.LiftoffRecipeProject.models.User;
 import org.launchcode.LiftoffRecipeProject.security.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,6 +47,15 @@ public class UserService {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    @Autowired
+    private ReviewRepository reviewRepository;
+
+    @Autowired
+    private RecipeRepository recipeRepository;
+
+    private RecipeService recipeService;
+
+
 //    @Autowired
 ////    private SessionUtil sessionUtil;
 
@@ -56,19 +70,39 @@ public class UserService {
         }
     }
 
-    public Page<UserDTO>getAllUsers(Pageable pageable){
-        Page<User>users = userRepository.findAll(pageable);
+    public Page<UserDTO> getAllUsers(Pageable pageable) {
+        Page<User> users = userRepository.findAll(pageable);
         return users.map(this::mapUserToUserDTO);
     }
+
     public Page<UserWithRecipesDTO> getAllUsersWithRecipes(Pageable pageable) {
         Page<User> users = userRepository.findAll(pageable);
         return users.map(this::mapUserToUserWithRecipesDTO);
     }
 
-    public UserDTO updateUser(Integer userId, UserDTO updatedUserDTO){
-        Optional <User>optionalUser=userRepository.findById(userId);
+//    public UserDTO updateUser(Integer userId, UserDTO updatedUserDTO) {
+//        Optional<User> optionalUser = userRepository.findById(userId);
+//
+//        if (!optionalUser.isPresent()) {
+//            throw new ResourceNotFoundException("User not found");
+//        }
+//
+//        User user = optionalUser.get();
+//
+//        user.setFirstName(updatedUserDTO.getFirstName());
+//        user.setLastName(updatedUserDTO.getLastName());
+//        user.setEmail(updatedUserDTO.getEmail());
+//        user.setDateOfBirth(updatedUserDTO.getDateOfBirth());
+//
+//        user.setPassword(bCryptPasswordEncoder.encode(updatedUserDTO.getPassword()));
+//        userRepository.save(user);
+//        return mapUserToUserDTO(user);
+//    }
 
-        if(!optionalUser.isPresent()){
+    public UpdateUserDTO updateUser(Integer userId, UpdateUserDTO updatedUserDTO) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (!optionalUser.isPresent()) {
             throw new ResourceNotFoundException("User not found");
         }
 
@@ -76,24 +110,23 @@ public class UserService {
 
         user.setFirstName(updatedUserDTO.getFirstName());
         user.setLastName(updatedUserDTO.getLastName());
-        user.setEmail(updatedUserDTO.getEmail());
-        user.setDateOfBirth(updatedUserDTO.getDateOfBirth());
 
-        user.setPassword(bCryptPasswordEncoder.encode(updatedUserDTO.getPassword()));
+        if(updatedUserDTO.getPassword() != null && !updatedUserDTO.getPassword().isEmpty()){
+            user.setPassword(bCryptPasswordEncoder.encode(updatedUserDTO.getPassword()));
+        }
+
         userRepository.save(user);
-        return mapUserToUserDTO(user);
+        return mapUserToUpdateUserDTO(user);
     }
 
     public UserDTO loginUser(LoginDTO loginDTO) throws Exception {
         authenticate(loginDTO.getEmail(), loginDTO.getPassword());
-//        final UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.getEmail());
-//        final String jwt = jwtTokenUtil.generateToken(userDetails);
         User user = userRepository.findByEmail(loginDTO.getEmail());
 
         if (user != null) {
             UserDTO userDTO = mapUserToUserDTO(user);
             final UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.getEmail());
-            final String jwt = jwtTokenUtil.generateToken(userDetails,user.getId());
+            final String jwt = jwtTokenUtil.generateToken(userDetails, user.getId());
             userDTO.setToken(jwt);
             return userDTO;
         } else {
@@ -130,21 +163,58 @@ public class UserService {
         UserDetails userDetails = userDetailsService.loadUserByUsername(newUser.getEmail());
         String token = jwtTokenUtil.generateToken(userDetails, registeredUser.getId());
 
-//        UserDetails userDetails = userDetailsService.loadUserByUsername(newUser.getEmail());
-//        String token = jwtTokenUtil.generateToken(userDetails);
 
         UserDTO mappedUserDTO = mapUserToUserDTO(registeredUser);
-//        mappedUserDTO.setSessionToken(sessionToken);
         mappedUserDTO.setToken(token);
 
         return mappedUserDTO;
     }
 
-    public void deleteUser (Integer userId){
-        if(!userRepository.existsById(userId)){
+    public void addFavorite(Integer userId, Integer recipeId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        user.getFavoriteRecipes().add(recipeId);
+        userRepository.save(user);
+    }
+
+    public void removeFavorite(Integer userId, Integer recipeId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        user.getFavoriteRecipes().remove(recipeId);
+        userRepository.save(user);
+    }
+
+
+    private User getOrphanUser() {
+        String orphanUsername = "orphanuser@mealify.com";
+        User orphanUser = userRepository.findByEmail(orphanUsername);
+        if (orphanUser == null) {
+            orphanUser = new User();
+            orphanUser.setEmail(orphanUsername);
+            orphanUser.setPassword(bCryptPasswordEncoder.encode("defaultPassword"));
+            userRepository.save(orphanUser);
+        }
+        return orphanUser;
+    }
+
+    public void deleteUser(Integer userId, Boolean deleteRecipes) {
+        if (!userRepository.existsById(userId)) {
             throw new ResourceNotFoundException("User not found");
         }
-        userRepository.deleteById(userId);
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User orphanUser = getOrphanUser();
+
+        if (deleteRecipes) {
+
+            userRepository.deleteById(userId);
+        } else {
+            List<Recipe> recipes = user.getRecipes();
+            for (Recipe recipe : recipes) {
+                recipe.setUser(orphanUser);
+            }
+            recipeRepository.saveAll(user.getRecipes());
+            recipeRepository.flush();
+            userRepository.deleteById(userId);
+        }
     }
 
     private UserDTO mapUserToUserDTO(User user) {
@@ -167,4 +237,15 @@ public class UserService {
         userWithRecipesDTO.setRecipes(user.getRecipes());
         return userWithRecipesDTO;
     }
+
+    public UpdateUserDTO mapUserToUpdateUserDTO(User user) {
+        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+//        updateUserDTO.setId(user.getId());
+        updateUserDTO.setFirstName(user.getFirstName());
+        updateUserDTO.setLastName(user.getLastName());
+        updateUserDTO.setPassword(user.getPassword());
+        return updateUserDTO;
+    }
+
+
 }
