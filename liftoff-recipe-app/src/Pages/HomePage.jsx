@@ -11,6 +11,7 @@ import authAxios from "../utility/authAxios";
 import {UserContext} from "../stores/UserStore";
 import Sidebar from "../Components/SideBar";
 import Grid from "@mui/material/Grid";
+import Box from '@mui/material/Box';
 
 
 function HomePage() {
@@ -83,29 +84,30 @@ function HomePage() {
     }
 
     return (
-        <>
-            <SearchBar onSearch={handleSearch}/>
-            <h2>All Recipes</h2>
-            <div className="container">
-                <Sidebar user={user} className="sidebar"/>
-                <Grid container spacing={3}>
+        <div>
+            <h2 sx={{ mt:5 }} >Welcome to Mealify!</h2>
+            <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column'}} justifyContent='center' alignItems="center">
+                <Box sx={{
+                    maxWidth:'100%',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    alignContent: 'start'
+                    }}
+                    justifyContent='center'
+                    alignItems="center">
                     {recipes.map((recipe) => (
-                        <Grid item xs={12} sm={6} md={4} lg={3}>
+                        <Box sx={{maxWidth:'23%'}}>
                             <FoodCard
                                 key={recipe.id}
                                 recipe={recipe}
                                 onClick={() => handleCardClick(recipe.id)}
                             />
-                        </Grid>
+                        </Box>
                     ))}
-                </Grid>
-                {isSearching && hasSearched ? (
-                    <LoadingScreen/>
-                ) : (
-                    <SearchResults query={searchQuery} onSearchComplete={handleSearchComplete}/>
-                )}
-            </div>
-        </>
+                </Box>
+            </Box>
+        </div>
     )
         ;
 }

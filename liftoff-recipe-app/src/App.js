@@ -70,8 +70,9 @@ function App() {
                         <Route path="/users/:id/recipes/:recipeId" element={<RecipePage/>}/>
                         <Route path="/recipes/random" element={<RandomRecipes/>}/>
                         <Route path="/account" element={<AccountInfo/>}/>
-
-
+                        <Route path="/homepage" element={<HomePage/>}/>
+                        <Route path="/allrecipes" element={<AllRecipes/>}/>
+                        <Route path="/randomrecipe" element={<RandomRecipes/>}/>
                         <Route path="/users/:id/recipes/:recipeId" component={RecipePage}/>
 
                 </Routes>

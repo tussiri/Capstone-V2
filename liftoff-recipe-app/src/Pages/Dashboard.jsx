@@ -11,6 +11,7 @@ import Button from "@mui/material/Button";
 import LoadingScreen from "./LoadingPage";
 import SearchResults from "./SearchResults";
 import {UserContext} from "../stores/UserStore";
+import Box from '@mui/material/Box';
 
 function Dashboard() {
     const [recipes, setRecipes] = useState([]);
@@ -80,34 +81,56 @@ function Dashboard() {
             {user && (
                 <>
                     <Link to="newrecipe">
-                        <Button variant="contained">New Recipe</Button>
+                        <Button sx={{color: 'white', mt: 2}} variant="contained">Add New Recipe</Button>
                     </Link>
                 </>
             )}
 
-            <div className={'container'}>
-                {user && <Sidebar user={user} className="sidebar"/>}
-                <div className={"app-main"}>
+            <div>
+
+                <div>
                     {user ? (
-                        <>
-                            {/*<Button variant="contained" onClick={logout}>Log Out</Button>*/}
+                          <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column'}} justifyContent='center' alignItems="center">
                             <h2>Your Recipes</h2>
+                            <Box sx={{
+                                maxWidth:'100%',
+                                display: 'flex',
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                alignContent: 'start'
+                                }}
+                                justifyContent='center'
+                                alignItems="center">
                             {recipes && recipes.length > 0 && recipes.map((recipe) => (
+                                <Box sx={{ maxWidth:'23%' }}>
                                 <FoodCard
                                     key={recipe.id}
                                     recipe={recipe}
                                     onClick={() => handleCardClick(recipe.id)}
                                 />
+                                </Box>
                             ))}
+                            </Box>
+                            <Box sx={{
+                                maxWidth:'100%',
+                                display: 'flex',
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                }}
+                                justifyContent='center'
+                                alignItems="center">
                             <h2>Liked Recipes</h2>
                             {likedRecipes.map((recipe) => (
+                                <Box sx={{ maxWidth:'23%' }}>
                                 <FoodCard
                                     key={recipe.id}
                                     recipe={recipe}
                                     onClick={() => handleCardClick(recipe.id)}
                                 />
+                                </Box>
                             ))}
-                        </>
+                            </Box>
+                        </Box>
                     ) : (
                         <>
                             {
