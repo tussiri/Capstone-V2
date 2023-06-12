@@ -1,5 +1,7 @@
 package org.launchcode.LiftoffRecipeProject.data;
 
+import org.launchcode.LiftoffRecipeProject.DTO.RecipeDTO;
+import org.launchcode.LiftoffRecipeProject.models.Ingredient;
 import org.launchcode.LiftoffRecipeProject.models.Recipe;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,5 +19,16 @@ public interface RecipeRepository extends PagingAndSortingRepository<Recipe, Int
     List<Recipe> findAll();
 
     @Query("SELECT r FROM Recipe r JOIN r.ingredients i WHERE lower(i.name) LIKE (concat('%', :ingredientName, '%'))")
-    Page<Recipe> getRecipesByIngredient(@Param("ingredientName")String ingredientName, Pageable pageable);
+    Page<RecipeDTO> getRecipesByIngredient(@Param("ingredientName")String ingredientName, Pageable pageable);
+
+    Page<Recipe>findByIngredientsNameContaining(Ingredient ingredient, Pageable pageable);
+
+    Page<Recipe>findByNameContaining(String name, Pageable pageable);
+
+    Page<Recipe>findByUserId(Integer userId, Pageable pageable);
+
+    @Query("SELECT r.recipe FROM Review r GROUP BY r.recipe HAVING AVG(r.rating) > :rating")
+    List<Recipe> findRecipesWithRatingGreaterThan(@Param("rating") Double rating);
+
+
 }

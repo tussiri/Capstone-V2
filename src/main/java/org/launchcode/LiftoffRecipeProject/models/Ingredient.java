@@ -2,6 +2,8 @@ package org.launchcode.LiftoffRecipeProject.models;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class Ingredient extends AbstractEntity{
 
@@ -9,8 +11,13 @@ public class Ingredient extends AbstractEntity{
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
 
-    @Column(unique = true)
+    @Column(unique = false)
     private String name;
+
+    private String quantity;
+
+    @ManyToMany(mappedBy="ingredients")
+    private List<Recipe> recipes;
 
     public Ingredient(){}
 
@@ -25,5 +32,21 @@ public class Ingredient extends AbstractEntity{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(String quantity) {
+        this.quantity = quantity;
+    }
+
+    public List<Recipe> getRecipes() {
+        return recipes;
+    }
+
+    public void setRecipes(List<Recipe> recipes) {
+        this.recipes = recipes;
     }
 }

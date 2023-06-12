@@ -1,103 +1,164 @@
-import React, {useContext, useEffect, useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
-import Button from "@mui/material/Button";
-import axios from 'axios';
-import NavBar from "../Components/NavBar"
-import SearchBar from "../Components/SearchBar"
-import SearchResults from "./SearchResults";
-import LoadingScreen from "./LoadingPage";
-import authAxios from "../utility/authAxios";
-import {UserContext} from "../stores/UserStore";
-import Sidebar from "../Components/SideBar";
+// import React, {useContext, useEffect, useState} from 'react';
+// import {UserContext} from "../stores/UserStore";
+// import axios from "axios";
+// import AccountEdit from "./AccountEdit";
+// import {useNavigate} from "react-router-dom";
 //
-// //create component to view edit and delete user info and account
-// // this component displays user information
+// function AccountInfo({onEdit, user}) {
+// const navigate=useNavigate()
+//     const handleUpload = async (e) => {
+//         const file = e.target.files[0];
+//         // upload file logic here
+//     };
 //
-// function AccountInfo({user, onEdit}) {
-//     const {name, email, phone, location}= user;
 //     return (
 //         <NavBar>
 //         <div>
-//             <h1>Account Information </h1>
-//             <p>Name:{name}</p>
-//             <p>Email:{email}</p>
-//             <p>Phone:{phone}</p>
-//             <p>Location:{location}</p>
+//             <h2>{user.firstName}</h2>
+//             <p>{user.email}</p>
+//             <img src={user.avatar} alt={user.name}/> {/* I assume user object has a avatar url property */}
+//             <input type='file' accept='image/*' onChange={handleUpload}/>
 //             <button onClick={onEdit}>Edit</button>
-//
 //         </div>
 //     );
-//
 // }
-// //allows user to edit account information
-// function AccountEdit({user, onSave,onCancel}){
-//     const[name, setName]= useState(user.name);
-//     const[email, setEmail]= useState(user.email);
-//     const[phone, setPhone]= useState(user.phone);
-//     const[location, setLocation]= useState(user.locationv  );
 //
-//     const handleSave =() => {
-//         onSave({ name, email,phone});
+//
+// function AccountPage() {
+//     const {user, setUser, parseJwt} = useContext(UserContext);
+//     const [editing, setEditing] = useState(false);
+//     const [currentUser, setCurrentUser] = useState(null);
+//     const navigate = useNavigate();
+//
+//     useEffect(() => {
+//         setCurrentUser(user);
+//     }, [user]);
+//
+//     const handleEdit = () => {
+//         setEditing(true);
 //     };
+//
+//     const handleSave = async (data) => {
+//         try {
+//             const response = await axios.put(`/users/${user.id}/account`, data);
+//             setUser(response.data);
+//             setEditing(false);
+//         } catch (error) {
+//             console.error("Failed to update user:", error);
+//         }
+//     };
+//
 //     const handleCancel = () => {
-//         onCancel();
+//         setEditing(false);
+//     };
+//
+//     const handleDelete = async () => {
+//         if(window.confirm('Are you sure you want to delete your account? This action cannot be undone.')){
+//             try {
+//                 await axios.delete(`/users/${user.id}`);
+//                 setUser(null);
+//                 localStorage.removeItem("token");
+//                 navigate('/');
+//             } catch (error) {
+//                 console.error("Failed to delete user:", error);
+//             }
+//         }
 //     };
 //
 //     return (
 //         <div>
-//             <h1>Edit Account Information</h1>
-//             <label>Name:</label>
-//             <input type="text" name="{name}"onChange={(e)=> setName(e.target.value)}/>
-//             <label>Email:</label>
-//             <input type="email" email="{email}"onChange={(e)=> setEmail(e.target.value)}/>
-//             <label>Phone:</label>
-//             <input type="tel" phone="{phone}"onChange={(e)=> setPhone(e.target.value)}/>
-//             <label>Name:</label>
-//             <input type="text" name="{location}"onChange={(e)=> setLocation(e.target.value)}/>
-//             //
-//             <button onClick={handleSave}>Save</button>
-//             <button onClick={handleCancel}>Cancel</button>
+//             {editing ? (
+//                 <AccountEdit user={currentUser} onSave={handleSave} onCancel={handleCancel}/>
+//             ) : (
+//                 <AccountInfo user={currentUser} onEdit={handleEdit}/>
+//             )}
+//             <button onClick={handleDelete}>Delete Account</button>
 //         </div>
-//
 //     );
-// //
-//     function AccountPage() {
-//         const [user, setUser]= useState({
-//             name: "First Last",
-//             email: "User@example.com",
-//             phone: "123",
-//             location:"Earth",
-//         });
-//         const [editing, setEditing]=useState(false);
-//         const handleEdit =() => {
-//             setEditing(true);
-//         };
-//
-//         const handleSave = (data) => {
-//             setUser(data);
-//             setEditing(false);
-//         };
-//
-//         const handleCancel = () => {
-//             setEditing(false);
-//         };
-//
-//         const handleDelete = () => {
-//             // handle deleting the user's account
-//         };
-//
-//         return (
-//             <div>
-//                 {editing ? (
-//                     <AccountEdit user={user} onSave={handleSave} onCancel={handleCancel} />
-//                 ) : (
-//                     <AccountInfo user={user} onEdit={handleEdit} />
-//                 )}
-//                 <button onClick={handleDelete}>Delete Account</button>
-//             </div>
-//         );
-//     }
-//
 // }
 //
-// export default AccountInfo
+// export default AccountPage;
+
+import React, {useContext, useEffect, useState} from 'react';
+import {UserContext} from "../stores/UserStore";
+import axios from "axios";
+import AccountEdit from "./AccountEdit";
+import {useNavigate} from "react-router-dom";
+import authAxios from "../utility/authAxios";
+
+function AccountInfo({onEdit, user}) {
+    const navigate=useNavigate()
+    const handleUpload = async (e) => {
+        const file = e.target.files[0];
+        // upload file logic here
+    };
+
+    return (
+        user &&
+        <div>
+            <h2>{user.firstName}</h2>
+            <p>{user.email}</p>
+            <img src={user.avatar} alt={user.name}/> {/* I assume user object has a avatar url property */}
+            <input type='file' accept='image/*' onChange={handleUpload}/>
+            <button onClick={onEdit}>Edit</button>
+        </div>
+    );
+}
+
+function AccountPage() {
+    const {user, setUser, parseJwt} = useContext(UserContext);
+    const [editing, setEditing] = useState(false);
+    const [currentUser, setCurrentUser] = useState(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        setCurrentUser(user);
+    }, [user]);
+
+    const handleEdit = () => {
+        setEditing(true);
+    };
+
+    const handleSave = async (data) => {
+        console.log(user);
+        console.log(user.id);
+        try {
+            const response = await authAxios.put(`/users/${user.id}`, data);
+            console.log("Response: ", response.data)
+            setUser(response.data);
+            setEditing(false);
+        } catch (error) {
+            console.error("Failed to update user:", error);
+        }
+    };
+
+    const handleCancel = () => {
+        setEditing(false);
+    };
+
+    const handleDelete = async () => {
+        if(window.confirm('Are you sure you want to delete your account? This action cannot be undone.')){
+            try {
+                await axios.delete(`/users/${user.id}`);
+                setUser(null);
+                localStorage.removeItem("token");
+                navigate('/');
+            } catch (error) {
+                console.error("Failed to delete user:", error);
+            }
+        }
+    };
+
+    return (
+        <div>
+            {editing ? (
+                <AccountEdit user={currentUser} onSave={handleSave} onCancel={handleCancel}/>
+            ) : (
+                currentUser && <AccountInfo user={currentUser} onEdit={handleEdit}/>
+            )}
+            <button onClick={handleDelete}>Delete Account</button>
+        </div>
+    );
+}
+
+export default AccountPage;

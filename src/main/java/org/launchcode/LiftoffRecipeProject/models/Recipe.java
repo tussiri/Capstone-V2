@@ -16,6 +16,9 @@ public class Recipe extends AbstractEntity {
     inverseJoinColumns =@JoinColumn(name="ingredient_id"))
     private List<Ingredient> ingredients;
 
+//    @ElementCollection
+//    private List<String>ingredients;
+
     @Column(name="directions", columnDefinition="MEDIUMTEXT")
     private String directions;
 
@@ -37,6 +40,10 @@ public class Recipe extends AbstractEntity {
     private List<String> allergens;
 
     private Double rating;
+
+    @JsonIgnore
+    @OneToMany(mappedBy="recipe")
+    private List<Review> reviews;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -147,5 +154,12 @@ public class Recipe extends AbstractEntity {
     public void setRating(Double rating) {
         this.rating = rating;
     }
-}
 
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+}
