@@ -27,7 +27,7 @@ dependencies {
 	implementation 'com.sun.xml.bind:jaxb-core:2.3.0.1'
 	implementation 'com.sun.xml.bind:jaxb-impl:2.3.3'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	implementation 'com.mysql:mysql-connector-j'
+	runtimeOnly 'com.mysql:mysql-connector-j'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 	testCompileOnly 'javax.xml.bind:jaxb-api:2.4.0-b180725.0427'
@@ -39,5 +39,3 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
-

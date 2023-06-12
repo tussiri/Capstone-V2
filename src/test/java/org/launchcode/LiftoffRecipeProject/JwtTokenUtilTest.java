@@ -25,12 +25,12 @@ public class JwtTokenUtilTest {
     private CustomUserDetailsService userDetailsService;
 
     @Test
-    public void testGenerateToken() {
+    public void testGenerateToken(Integer userId) {
         // Create a UserDetails instance with mock data
         UserDetails userDetails = new User("testuser", "password", new ArrayList<>());
 
         // Generate the token
-        String token = jwtTokenUtil.generateToken(userDetails);
+        String token = jwtTokenUtil.generateToken(userDetails, userId);
 
         // Assert that the token is not null
         Assertions.assertNotNull(token);

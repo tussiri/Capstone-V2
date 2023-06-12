@@ -1,15 +1,14 @@
 package org.launchcode.LiftoffRecipeProject.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import org.launchcode.LiftoffRecipeProject.DTO.RecipeDTO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -21,8 +20,22 @@ public class User extends AbstractEntity implements UserDetails {
     private String password;
     private LocalDate dateOfBirth;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     private List<Recipe> recipes;
+
+    @ElementCollection
+    private Set<Integer> favoriteRecipes;
+
+    @PreRemove
+    private void preRemove() {
+        for (Review r : reviews) {
+            r.setUser(null);
+        }
+    }
+
+    @OneToMany(mappedBy="user")
+    @JsonManagedReference
+    private List<Review> reviews;
 
     public User(String email, String password, String firstName, String lastName, LocalDate dateOfBirth) {
         this.email = email;
@@ -35,9 +48,19 @@ public class User extends AbstractEntity implements UserDetails {
         }
     }
 
+
     public User(){}
 
     // Getters and setters
+
+
+    public Set<Integer> getFavoriteRecipes() {
+        return favoriteRecipes;
+    }
+
+    public void setFavoriteRecipes(Set<Integer> favoriteRecipes) {
+        this.favoriteRecipes = favoriteRecipes;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -115,5 +138,13 @@ public class User extends AbstractEntity implements UserDetails {
 
     public void setRecipes(List<Recipe> recipes) {
         this.recipes = recipes;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 }

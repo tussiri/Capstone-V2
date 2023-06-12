@@ -1,17 +1,15 @@
-label {
-    display: inline-block;
-    padding: 10px;
-    cursor: pointer;
-}
-
-input[type="radio"] {
-    display: none;
-}
-
-.fa-star {
-    color: gray;
-}
-
-input[type="radio"]:checked ~ .fa-star {
+.filled-star {
     color: gold;
+}
+
+.empty-star {
+    color: lightgrey;
+}
+
+.filled-star:hover, .filled-star:hover ~ .fa-star {
+    color: gold;
+}
+
+.empty-star:hover, .empty-star:hover ~ .fa-star {
+    color: lightgrey;
 }

@@ -1,10 +1,10 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import axios from "axios";
 import "../SignUp.css";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Logo from "../Assets/logo-removebg-preview 1.png";
+import Logo from "../Assets/MealifyLogoNoBG100x100.png";
 import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import FilledInput from "@mui/material/FilledInput";
@@ -13,8 +13,17 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import CssBaseline from '@mui/material/CssBaseline';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
+import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
+import {DatePicker} from '@mui/x-date-pickers/DatePicker';
+import {UserContext} from "../stores/UserStore";
 
 function SignUp() {
     let navigate = useNavigate();
@@ -28,7 +37,11 @@ function SignUp() {
         confirmPassword: "",
         dateOfBirth: "",
     });
-    const [errors, setErrors] = useState({});
+    const [{firstName}, setErrors] = useState({});
+    //const [errors, setErrors] = useState({});
+    const [selectedDate, setSelectedDate] = React.useState(new Date('2014-08-18T21:11:54'));
+    const {register} = useContext(UserContext);
+    const [error, setError] = useState("");
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -44,12 +57,6 @@ function SignUp() {
         }));
     };
 
-    const formatDate = (dateString) => {
-        // Convert the date string to ISO-8601 format
-        const [month, day, year] = dateString.split("-");
-        return `${year}-${month}-${day}`;
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -59,162 +66,163 @@ function SignUp() {
             console.log("Registration successful:", response.data);
 
             localStorage.setItem("token", token);
+            register();
             navigate("/");
-        }catch (error) {
-        if (error.response && error.response.data) {
-            setErrors(error.response.data.errors);
-        } else {
+        } catch (error) {
             console.error("Registration failed:", error);
-        }
-    }
-};
 
-return (
-    <>
-        <img src={Logo} alt="Logo" maxHeight="50" maxWidth="50"></img>
-        <h1>Mealify</h1>
-        <div className="App">
-            <h1
-                style={{
-                    position: "relative",
-                    top: "20px",
-                }}
-            >
-                Sign Up
-            </h1>
-            <Box
-                component="form"
-                sx={{
-                    "& .MuiTextField-root": {m: 1, width: "52ch"},
-                }}
-                noValidate
-                autoComplete="off"
-            >
-                <div style={{position: "relative", top: "50px", left: "-5px"}}>
-                    <TextField
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        // error={errors.email}
-                        // helperText={errors.email}
-                        sx={{color: "action.active", mr: 1, my: 0.5}}
-                        label="Username(Email)*"
-                        variant="filled"
-                    />
-                </div>
-            </Box>
-            <Box
-                component="form"
-                sx={{
-                    "& .MuiTextField-root": {m: 1, width: "25ch"},
-                }}
-                noValidate
-                autoComplete="off"
-            >
-                <div style={{position: "relative", top: "50px", left: "-5px"}}>
-                    <TextField
-                        id="firstName"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleChange}
-                        // error={errors.firstName}
-                        // helperText={errors.firstName}
-                        sx={{color: "action.active", mr: 1, my: 0.5}}
-                        label="First Name*"
-                        variant="filled"
-                    />
-                    <TextField
-                        id="lastName"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleChange}
-                        error={errors.lastName}
-                        helperText={errors.lastName}
-                        sx={{color: "action.active", mr: 1, my: 0.5}}
-                        label="Last Name*"
-                        variant="filled"
-                    />
-                    <TextField
-                        id="dateOfBirth"
-                        type="date"
-                        name="dateOfBirth"
-                        value={formData.dateOfBirth}
-                        onChange={handleChange}
-                        // error={errors.dateOfBirth}
-                        // helperText={errors.dateOfBirth}
-                        sx={{color: "action.active", mr: 1, my: 0.5}}
-                        label="Date of Birth*"
-                        variant="filled"
-                    />
-                </div>
-            </Box>
-            <Box sx={{display: "flex", flexWrap: "wrap"}}>
-                <div style={{position: "relative", top: "50px", left: "460px"}}>
-                    <FormControl sx={{m: 1, width: "52ch"}} variant="filled">
-                        <InputLabel htmlFor="password">Enter Password*</InputLabel>
-                        <FilledInput
-                            id="password"
-                            name="password"
-                            type={showPassword ? "text" : "password"}
-                            value={formData.password}
-                            onChange={handleChange}
-                            // error={errors.password}
-                            // helperText={errors.password}
-                            endAdornment={
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={handleClickShowPassword}
-                                        onMouseDown={handleMouseDownPassword}
-                                        edge="end"
-                                    >
-                                        {showPassword ? <VisibilityOff/> : <Visibility/>}
-                                    </IconButton>
-                                </InputAdornment>
-                            }
-                            label="Password"
-                        />
-                    </FormControl>
-                </div>
-            </Box>
-            <Box sx={{display: "flex", flexWrap: "wrap"}}>
-                <div style={{position: "relative", top: "50px", left: "460px"}}>
-                    <FormControl sx={{m: 1, width: "52ch"}} variant="filled">
-                        <InputLabel htmlFor="confirmPassword">Confirm Password*</InputLabel>
-                        <FilledInput
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            type={showPassword ? "text" : "password"}
-                            value={formData.confirmPassword}
-                            onChange={handleChange}
-                            // error={errors.confirmPassword}
-                            // helperText={errors.confirmPassword}
-                            endAdornment={
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={handleClickShowPassword}
-                                        onMouseDown={handleMouseDownPassword}
-                                        edge="end"
-                                    >
-                                        {showPassword ? <VisibilityOff/> : <Visibility/>}
-                                    </IconButton>
-                                </InputAdornment>
-                            }
-                            label="Confirm Password"
-                        />
-                    </FormControl>
-                </div>
-            </Box>
-            <div style={{position: "relative", top: "80px"}}>
-                <Button variant="contained" color="success" onClick={handleSubmit}>
-                    Continue
-                </Button>
-            </div>
+            if (error.response && error.response.data) {
+                setErrors(error.response.data.errors);
+            } else {
+                setError("An unexpected error occurred.");
+            }
+        }
+
+    };
+
+    return (
+        <div>
+            <Container component="main" maxWidth="xs">
+                <CssBaseline/>
+                <Box
+                    sx={{
+                        marginTop: 4,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+                    <img src={Logo}/>
+                    <Typography component="h1" variant="h5">
+                        Sign up
+                    </Typography>
+                    {error && <Typography color="error">{error}</Typography>}
+                    <Box component="form" noValidate onSubmit={handleSubmit} sx={{mt: 3}}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    autoComplete="given-name"
+                                    name="firstName"
+                                    required
+                                    fullWidth
+                                    id="firstName"
+                                    label="First Name"
+                                    autoFocus
+                                    value={formData.firstName}
+                                    onChange={handleChange}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="lastName"
+                                    label="Last Name"
+                                    name="lastName"
+                                    autoComplete="family-name"
+                                    value={formData.lastName}
+                                    onChange={handleChange}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="email"
+                                    label="Email Address"
+                                    name="email"
+                                    autoComplete="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <FormControl fullWidth components={['DatePicker']}>
+                                        <DatePicker
+                                            fullWidth
+                                            label="Date of Birth"
+                                            required
+                                            id="birthday"
+                                            name="birthday"
+                                        />
+                                    </FormControl>
+                                </LocalizationProvider>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl fullWidth>
+                                    <InputLabel htmlFor="passwordField">Password</InputLabel>
+                                    <OutlinedInput
+                                        required
+                                        fullWidth
+                                        name="password"
+                                        label="Password"
+                                        type={showPassword ? 'text' : 'password'}
+                                        id="password"
+                                        autoComplete="new-password"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        endAdornment={
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    aria-label="toggle password visibility"
+                                                    onClick={handleClickShowPassword}
+                                                    onMouseDown={handleMouseDownPassword}
+                                                    edge="end">
+                                                    {showPassword ? <VisibilityOff/> : <Visibility/>}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        }
+                                    />
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl fullWidth>
+                                    <InputLabel htmlFor="confirmPasswordField">Confirm Password</InputLabel>
+                                    <OutlinedInput
+                                        required
+                                        name="confirmPassword"
+                                        label="Confirm Password"
+                                        type={showPassword ? 'text' : 'password'}
+                                        id="confirmPassword"
+                                        autoComplete="new-password"
+                                        endAdornment={
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    aria-label="toggle password visibility"
+                                                    onClick={handleClickShowPassword}
+                                                    onMouseDown={handleMouseDownPassword}
+                                                    edge="end">
+                                                    {showPassword ? <VisibilityOff/> : <Visibility/>}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        }
+                                    />
+                                </FormControl>
+                            </Grid>
+                        </Grid>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{mt: 3, mb: 2, color: 'white'}}
+                        >
+                            Sign Up
+                        </Button>
+                        <Grid container justifyContent="center">
+                            <Grid item>
+                                <Link to='/login' variant="body2">
+                                    <Button>Already have an account? Sign in</Button>
+                                </Link>
+                            </Grid>
+                        </Grid>
+                    </Box>
+                </Box>
+            </Container>
         </div>
-    </>
-);
+    );
+
 }
 
 export default SignUp;
