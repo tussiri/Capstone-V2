@@ -3,7 +3,9 @@ package org.launchcode.LiftoffRecipeProject.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "recipes")
@@ -25,8 +27,11 @@ public class Recipe extends AbstractEntity {
     @Column(nullable = false)
     private int time;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Boolean favorite;
+
+    @ManyToMany(mappedBy = "favoriteRecipes")
+    private Set<User> favoritedByUsers = new HashSet<>();
 
     @Column(columnDefinition="MEDIUMTEXT")
     private String description;
@@ -67,6 +72,14 @@ public class Recipe extends AbstractEntity {
 
     // Getters and setters
 
+    public Set<User> getFavoritedByUsers() {
+        return favoritedByUsers;
+    }
+
+    public void setFavoritedByUsers(Set<User> favoritedByUsers) {
+        this.favoritedByUsers = favoritedByUsers;
+    }
+
     public String getName() {
         return name;
     }
@@ -99,7 +112,7 @@ public class Recipe extends AbstractEntity {
         this.time = time;
     }
 
-    public Boolean getFavorite() {
+    public Boolean isFavorite() {
         return favorite;
     }
 

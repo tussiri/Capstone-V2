@@ -3,6 +3,7 @@ package org.launchcode.LiftoffRecipeProject.controllers;
 
 import jakarta.validation.Valid;
 import org.launchcode.LiftoffRecipeProject.DTO.ResponseWrapper;
+import org.launchcode.LiftoffRecipeProject.DTO.UpdateUserDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.UserDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.UserWithRecipesDTO;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
@@ -46,16 +47,10 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseWrapper<UserDTO>> updateUser(@PathVariable Integer id, @Valid @RequestBody UserDTO updatedUser) {
-        UserDTO userDTO = userService.updateUser(id, updatedUser);
-        return ResponseUtil.wrapResponse(userDTO, HttpStatus.OK, "User updated successfully");
+    public ResponseEntity<ResponseWrapper<UpdateUserDTO>> updateUser(@PathVariable Integer id, @Valid @RequestBody UpdateUserDTO updatedUser) {
+        UpdateUserDTO updateUserDTO = userService.updateUser(id, updatedUser);
+        return ResponseUtil.wrapResponse(updateUserDTO, HttpStatus.OK, "User updated successfully");
     }
-
-//    @DeleteMapping("/{userId}")
-//    public ResponseEntity<ResponseWrapper<Void>> deleteUser(@PathVariable Integer userId) {
-//        userService.deleteUser(userId);
-//        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.NO_CONTENT.value(), "User deleted successfully"), HttpStatus.NO_CONTENT);
-//    }
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable Integer userId, @RequestParam(defaultValue = "true") Boolean deleteRecipes) {
@@ -68,11 +63,11 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/account")
-    public ResponseEntity<ResponseWrapper<UserDTO>> updateAccountInfo(
+    public ResponseEntity<ResponseWrapper<UpdateUserDTO>> updateAccountInfo(
             @PathVariable Integer userId,
-            @Valid @RequestBody UserDTO updatedUser
+            @Valid @RequestBody UpdateUserDTO updatedUser
     ) {
-        UserDTO userDTO = userService.updateUser(userId, updatedUser);
-        return ResponseUtil.wrapResponse(userDTO, HttpStatus.OK, "Account information updated successfully");
+        UpdateUserDTO updateUserDTO = userService.updateUser(userId, updatedUser);
+        return ResponseUtil.wrapResponse(updateUserDTO, HttpStatus.OK, "Account information updated successfully");
     }
 }

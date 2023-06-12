@@ -6,11 +6,14 @@ import jakarta.validation.Valid;
 import org.launchcode.LiftoffRecipeProject.DTO.RecipeDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.ResponseWrapper;
 import org.launchcode.LiftoffRecipeProject.data.ReviewRepository;
+import org.launchcode.LiftoffRecipeProject.data.UserRepository;
 import org.launchcode.LiftoffRecipeProject.exception.ResourceNotFoundException;
 import org.launchcode.LiftoffRecipeProject.models.Recipe;
 import org.launchcode.LiftoffRecipeProject.models.SearchCriteria;
+import org.launchcode.LiftoffRecipeProject.models.User;
 import org.launchcode.LiftoffRecipeProject.services.IngredientService;
 import org.launchcode.LiftoffRecipeProject.services.RecipeService;
+import org.launchcode.LiftoffRecipeProject.services.UserService;
 import org.launchcode.LiftoffRecipeProject.specification.RecipeSpecification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -33,15 +37,21 @@ public class RecipeController {
 
     private final RecipeService recipeService;
 
+    private final UserService userService;
+
+    private final UserRepository userRepository;
+
     private IngredientService ingredientService;
 
     private final ReviewRepository reviewRepository;
 
     @Autowired
-    public RecipeController(RecipeService recipeService, IngredientService ingredientService, ReviewRepository reviewRepository) {
+    public RecipeController(RecipeService recipeService, UserRepository userRepository, IngredientService ingredientService, ReviewRepository reviewRepository, UserService userService) {
         this.recipeService = recipeService;
         this.ingredientService = ingredientService;
         this.reviewRepository = reviewRepository;
+        this.userService=userService;
+        this.userRepository=userRepository;
     }
 
     //GET /recipes-returns all recipes
@@ -91,25 +101,6 @@ public class RecipeController {
         RecipeDTO updatedRecipeDTO = recipeService.updateRecipe(recipeId, recipeDTO, userId);
         return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Recipe updated successfully", updatedRecipeDTO), HttpStatus.OK);
     }
-
-    //DELETE /recipes/{id}  deletes an existing recipe.
-//    @DeleteMapping("/delete/{recipeId}")
-//    public ResponseEntity<ResponseWrapper<Void>> deleteRecipe(@PathVariable Integer recipeId, @RequestHeader("userId") Integer userId) {
-//        logger.info("Received delete request for recipeId: {} from userId: {}", recipeId, userId);
-//        recipeService.deleteRecipe(recipeId, userId);
-//        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.NO_CONTENT.value(), "Recipe deleted successfully", null), HttpStatus.NO_CONTENT);
-//    }
-
-
-//    @DeleteMapping("/byRecipeIds")
-//    public ResponseEntity<String> deleteReviewsByRecipeIds(@RequestBody List<Integer> recipeIds) {
-//        try {
-//            reviewRepository.deleteByRecipeIdIn(recipeIds);
-//            return new ResponseEntity<>("Reviews deleted successfully", HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>("Failed to delete reviews", HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
 
     @GetMapping("/search")
     public ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> searchRecipes(
@@ -162,6 +153,46 @@ public class RecipeController {
     public ResponseEntity<ResponseWrapper<List<RecipeDTO>>> getRandomRecipes() {
         List<RecipeDTO> randomRecipes = recipeService.getRandomRecipes();
         return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Random recipes retrieved successfully", randomRecipes), HttpStatus.OK);
+    }
+
+//    @PostMapping("/{recipeId}/like")
+//    public ResponseEntity<ResponseWrapper<Void>> likeRecipe(@PathVariable Integer recipeId, @RequestHeader("userId") Integer userId) {
+//        Recipe recipe = recipeRepository.findById(recipeId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+//        if (user.getLikedRecipes().contains(recipe)) {
+//            user.getLikedRecipes().remove(recipe);
+//        } else {
+//            user.getLikedRecipes().add(recipe);
+//        }
+//        userRepository.save(user);
+//        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Recipe liked/unliked successfully", null), HttpStatus.OK);
+//    }
+//
+//    @GetMapping("/users/{userId}/favorites")
+//    public ResponseEntity<ResponseWrapper<List<RecipeDTO>>> getFavoriteRecipesByUser(@PathVariable Integer userId) {
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+//        List<RecipeDTO> favoriteRecipeDTOs = user.getFavoriteRecipes().stream()
+//                .map(this::mapToDTO)
+//                .collect(Collectors.toList());
+//        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Favorite recipes retrieved successfully", favoriteRecipeDTOs), HttpStatus.OK);
+//    }
+
+@PostMapping("/{recipeId}/favorite")
+public ResponseEntity<ResponseWrapper<Void>> favoriteRecipe(@PathVariable Integer recipeId, @RequestHeader("userId") Integer userId) {
+    userService.favoriteRecipe(userId, recipeId);
+    return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Recipe favorited successfully", null), HttpStatus.OK);
+}
+
+    @GetMapping("/users/{userId}/favorites")
+    public ResponseEntity<ResponseWrapper<List<RecipeDTO>>> getFavoriteRecipesByUser(@PathVariable Integer userId) {
+        List<RecipeDTO> favoriteRecipeDTOs = userService.getFavoriteRecipes(userId)
+                .stream()
+                .map(recipeService::mapToDTO)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Favorite recipes retrieved successfully", favoriteRecipeDTOs), HttpStatus.OK);
     }
 
 

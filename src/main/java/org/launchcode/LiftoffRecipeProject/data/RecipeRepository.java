@@ -3,6 +3,7 @@ package org.launchcode.LiftoffRecipeProject.data;
 import org.launchcode.LiftoffRecipeProject.DTO.RecipeDTO;
 import org.launchcode.LiftoffRecipeProject.models.Ingredient;
 import org.launchcode.LiftoffRecipeProject.models.Recipe;
+import org.launchcode.LiftoffRecipeProject.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -31,4 +32,7 @@ public interface RecipeRepository extends PagingAndSortingRepository<Recipe, Int
     List<Recipe> findRecipesWithRatingGreaterThan(@Param("rating") Double rating);
 
 
+    void flush();
+
+    List<Recipe> findByUserAndFavorite(User user, boolean favorite);
 }
