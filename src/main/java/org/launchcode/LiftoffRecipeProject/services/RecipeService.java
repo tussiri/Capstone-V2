@@ -312,52 +312,6 @@ public class RecipeService {
                 .collect(Collectors.toList());
     }
 
-    public Recipe favoriteRecipe(Integer userId, Integer recipeId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        Recipe recipe = recipeRepository.findById(recipeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
-        user.getFavoriteRecipes().add(recipe);
-        recipe.getFavoritedByUsers().add(user);
-        userRepository.save(user);
-        recipeRepository.save(recipe);
-        return recipe;
-    }
 
-    public List<Recipe> getFavoriteRecipes(Integer userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        return new ArrayList<>(user.getFavoriteRecipes());
-    }
-
-//    public void likeRecipe(Integer recipeId) {
-//        // Find the recipe by its ID
-//        Recipe recipe = recipeRepository.findById(recipeId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
-//
-//        // Toggle the liked status
-//        Boolean favorite = recipe.isFavorite();
-//        recipe.setFavorite(!favorite);
-//
-//        // Save the updated recipe
-//        recipeRepository.save(recipe);
-//    }
-//    public ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> getLikedRecipesByUser(Integer userId, Pageable pageable) {
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-//
-//        List<Recipe> recipes = recipeRepository.findByUserAndFavorite(user, true);
-//
-//        int start = (int) pageable.getOffset();
-//        int end = Math.min((start + pageable.getPageSize()), recipes.size());
-//        List<RecipeDTO> recipeDTOs = recipes.subList(start, end).stream()
-//                .map(this::mapToDTO)
-//                .collect(Collectors.toList());
-//
-//        Page<RecipeDTO> recipePage = new PageImpl<>(recipeDTOs, pageable, recipes.size());
-//
-//        ResponseWrapper<Page<RecipeDTO>> responseWrapper = new ResponseWrapper<>(recipePage);
-//        return ResponseEntity.ok(responseWrapper);
-//    }
 
 }

@@ -155,45 +155,6 @@ public class RecipeController {
         return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Random recipes retrieved successfully", randomRecipes), HttpStatus.OK);
     }
 
-//    @PostMapping("/{recipeId}/like")
-//    public ResponseEntity<ResponseWrapper<Void>> likeRecipe(@PathVariable Integer recipeId, @RequestHeader("userId") Integer userId) {
-//        Recipe recipe = recipeRepository.findById(recipeId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-//        if (user.getLikedRecipes().contains(recipe)) {
-//            user.getLikedRecipes().remove(recipe);
-//        } else {
-//            user.getLikedRecipes().add(recipe);
-//        }
-//        userRepository.save(user);
-//        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Recipe liked/unliked successfully", null), HttpStatus.OK);
-//    }
-//
-//    @GetMapping("/users/{userId}/favorites")
-//    public ResponseEntity<ResponseWrapper<List<RecipeDTO>>> getFavoriteRecipesByUser(@PathVariable Integer userId) {
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-//        List<RecipeDTO> favoriteRecipeDTOs = user.getFavoriteRecipes().stream()
-//                .map(this::mapToDTO)
-//                .collect(Collectors.toList());
-//        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Favorite recipes retrieved successfully", favoriteRecipeDTOs), HttpStatus.OK);
-//    }
-
-@PostMapping("/{recipeId}/favorite")
-public ResponseEntity<ResponseWrapper<Void>> favoriteRecipe(@PathVariable Integer recipeId, @RequestHeader("userId") Integer userId) {
-    userService.favoriteRecipe(userId, recipeId);
-    return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Recipe favorited successfully", null), HttpStatus.OK);
-}
-
-    @GetMapping("/users/{userId}/favorites")
-    public ResponseEntity<ResponseWrapper<List<RecipeDTO>>> getFavoriteRecipesByUser(@PathVariable Integer userId) {
-        List<RecipeDTO> favoriteRecipeDTOs = userService.getFavoriteRecipes(userId)
-                .stream()
-                .map(recipeService::mapToDTO)
-                .collect(Collectors.toList());
-        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Favorite recipes retrieved successfully", favoriteRecipeDTOs), HttpStatus.OK);
-    }
 
 
 }

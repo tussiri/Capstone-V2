@@ -170,13 +170,18 @@ public class UserService {
         return mappedUserDTO;
     }
 
-    public Recipe favoriteRecipe(Integer userId, Integer recipeId) {
-        return recipeService.favoriteRecipe(userId, recipeId);
+    public void addFavorite(Integer userId, Integer recipeId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        user.getFavoriteRecipes().add(recipeId);
+        userRepository.save(user);
     }
 
-    public List<Recipe> getFavoriteRecipes(Integer userId) {
-        return recipeService.getFavoriteRecipes(userId);
+    public void removeFavorite(Integer userId, Integer recipeId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        user.getFavoriteRecipes().remove(recipeId);
+        userRepository.save(user);
     }
+
 
     private User getOrphanUser() {
         String orphanUsername = "orphanuser@mealify.com";
