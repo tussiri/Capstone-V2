@@ -4,15 +4,16 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
+import stockImage from '../Assets/MealifyNoImage.png';
 
-function FoodCard({recipe, onClick}) {
+function FoodCard({recipe, userId, onClick}) {
     return (
         <Card onClick={onClick} className='recipe-card'>
             <CardActionArea>
                 <CardMedia
                     component="img"
                     height="150"
-                    image={recipe.picture}
+                    image={recipe.picture ? recipe.picture : stockImage}
                     alt={recipe.name}
                 />
                 <CardContent>

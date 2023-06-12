@@ -26,16 +26,18 @@ const theme2 = createTheme({
 
 const SearchBar = ({onSearch}) => {
     const [inputValue, setInputValue] = useState('')
-    const [selectedOption, setSelectedOption] = useState('');
+    const [selectedOption, setSelectedOption] = useState('All');
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
 
     const handleOptionChange = (event) => {
         setSelectedOption(event.target.value);
+        console.log(`selected option: `, event.target.value)
     };
 
     const handleSearchTermChange = (event) => {
         setSearchTerm(event.target.value);
+        console.log('search term: ', event.target.value)
         if (onSearch) {
             onSearch(event.target.value)
         }
@@ -53,12 +55,22 @@ const SearchBar = ({onSearch}) => {
             case 'By Time to Prepare':
                 url += `time=<${searchTerm}`
                 break;
+            case 'Category':
+                url += `category=${searchTerm}`
+                break;
+            // case 'By rating':
+            //     url += `rating=<${searchTerm}`
+            //     break;
             default:
                 break;
         }
 
-//         const token = localStorage.getItem('token')
-//         console.log("Retrieved token:", token);
+
+        console.log('Url: ', url)
+
+        // const token = localStorage.getItem('token')
+        // console.log("Retrieved token:", token);
+
 
         navigate('/searchresults', {state: {query: url}});
     };

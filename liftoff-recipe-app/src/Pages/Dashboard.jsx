@@ -14,7 +14,7 @@ import {UserContext} from "../stores/UserStore";
 
 function Dashboard() {
     const [recipes, setRecipes] = useState([]);
-    const [recommended, setRecommended] = useState([]);
+    const [allRecipes, setAllRecipes] = useState([]);
     const navigate = useNavigate();
     // const [user, setUser] = useState(null);
     const userId = localStorage.getItem("userId")
@@ -22,7 +22,7 @@ function Dashboard() {
     const [hasSearched, setHasSearched] = useState(false);
     const [searchQuery, setSearchQuery] = useState('')
     const [isLoading, setIsLoading] = useState(true);
-    const {user, logout} = useContext(UserContext);
+    const {user, logout, login} = useContext(UserContext);
     const [likedRecipes, setLikedRecipes] = useState([]);
 
 
@@ -52,9 +52,23 @@ function Dashboard() {
                 console.error("Error fetching recipes:", error);
             }
         };
-
         fetchRecipes();
     }, [userId]);
+
+    useEffect(() => {
+        const fetchAllRecipes = async () => {
+            try {
+                console.log("Fetching all recipes...");
+                const response = await authAxios.get('http://localhost:8080/recipes');
+                const data = response.data.data;
+                console.log("Fetched all recipes", data);
+                setAllRecipes(data.content);
+            } catch (error) {
+                console.error("Error fetching all recipes: ", error);
+            }
+        };
+        fetchAllRecipes();
+    }, [])
 
 
     const handleCardClick = (recipeId) => {
@@ -62,7 +76,6 @@ function Dashboard() {
     };
     return (
         <>
-
             {/* New Recipe button only visible to logged-in users */}
             {user && (
                 <>
@@ -71,11 +84,13 @@ function Dashboard() {
                     </Link>
                 </>
             )}
+
             <div className={'container'}>
                 {user && <Sidebar user={user} className="sidebar"/>}
                 <div className={"app-main"}>
                     {user ? (
                         <>
+                            {/*<Button variant="contained" onClick={logout}>Log Out</Button>*/}
                             <h2>Your Recipes</h2>
                             {recipes && recipes.length > 0 && recipes.map((recipe) => (
                                 <FoodCard
@@ -95,17 +110,6 @@ function Dashboard() {
                         </>
                     ) : (
                         <>
-
-                            <div className="recipe-section">
-                                {!user && recipes.map((recipe) => (
-                                    <FoodCard
-                                        key={recipe.id}
-                                        recipe={recipe}
-                                        onClick={() => handleCardClick(recipe.id)}
-                                    />
-                                ))}
-                            </div>
-
                             {
                                 isSearching && hasSearched ? (
                                     <LoadingScreen/>
@@ -114,11 +118,13 @@ function Dashboard() {
                                 )
                             }
                         </>
-                    )}
+                    )
+                    }
                 </div>
             </div>
         </>
-    );
+    )
+        ;
 }
 
 export default Dashboard;

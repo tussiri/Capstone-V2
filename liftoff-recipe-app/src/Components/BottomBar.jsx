@@ -41,6 +41,8 @@ function BottomBar(){
   const handleSearchComplete = () => {
           setIsSearching(false);
           setHasSearched(true)
+          setSearchQuery('')
+
   }
 
   useEffect(() => {

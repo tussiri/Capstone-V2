@@ -1,12 +1,12 @@
 package org.launchcode.LiftoffRecipeProject.services;
 
-import org.launchcode.LiftoffRecipeProject.data.IngredientRepository;
-import org.launchcode.LiftoffRecipeProject.models.Ingredient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+        import org.launchcode.LiftoffRecipeProject.data.IngredientRepository;
+        import org.launchcode.LiftoffRecipeProject.models.Ingredient;
+        import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+        import java.util.List;
+        import java.util.stream.Collectors;
 
 @Service
 public class IngredientService {
@@ -31,6 +31,19 @@ public class IngredientService {
 
     public List<Ingredient>findByNameIn(List<String>names){
         return ingredientRepository.findByNameIn(names);
+    }
+
+    public Ingredient splitIngredientLine(String ingredientLine) {
+        String[] parts = ingredientLine.split(",", 2);
+        Ingredient ingredient = new Ingredient();
+
+        if (parts.length >= 2) {
+            ingredient.setName(parts[1].trim());
+        } else {
+            ingredient.setName(parts[0].trim());
+        }
+
+        return ingredient;
     }
 
 }

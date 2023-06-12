@@ -1,5 +1,6 @@
 package org.launchcode.LiftoffRecipeProject.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,6 +25,10 @@ public class User extends AbstractEntity implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Recipe> recipes;
 
+    @OneToMany(mappedBy="user")
+    @JsonManagedReference
+    private List<Review> reviews;
+
     public User(String email, String password, String firstName, String lastName, LocalDate dateOfBirth) {
         this.email = email;
         this.password = password;
@@ -34,6 +39,7 @@ public class User extends AbstractEntity implements UserDetails {
             this.recipes = new ArrayList<>();
         }
     }
+
 
     public User(){}
 
@@ -115,5 +121,13 @@ public class User extends AbstractEntity implements UserDetails {
 
     public void setRecipes(List<Recipe> recipes) {
         this.recipes = recipes;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 }

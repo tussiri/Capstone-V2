@@ -22,7 +22,7 @@ public class ReviewController {
     @Autowired
     private ReviewRepository reviewRepository;
 
-
+@Autowired
     private RecipeRepository recipeRepository;
 
     @Autowired
@@ -54,8 +54,8 @@ public class ReviewController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<List<Review>> getAllReviews() {
+    @GetMapping("/recipes/{recipeId}/reviews")
+    public ResponseEntity<List<Review>> getAllReviews(@PathVariable String recipeId) {
         List<Review> reviews = (List<Review>) reviewRepository.findAll();
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }

@@ -20,11 +20,9 @@ import Checkbox from '@mui/material/Checkbox';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-
 
 function SignUp() {
     let navigate = useNavigate();
@@ -38,7 +36,8 @@ function SignUp() {
         confirmPassword: "",
         dateOfBirth: "",
     });
-    const [errors, setErrors] = useState({});
+    const [{firstName}, setErrors] = useState({});
+    //const [errors, setErrors] = useState({});
     const [selectedDate, setSelectedDate] = React.useState(new Date('2014-08-18T21:11:54'));
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -65,14 +64,14 @@ function SignUp() {
 
             localStorage.setItem("token", token);
             navigate("/");
-        }catch (error) {
-        if (error.response && error.response.data) {
-            setErrors(error.response.data.errors);
-        } else {
-            console.error("Registration failed:", error);
+        } catch (error) {
+            if (error.response && error.response.data) {
+                setErrors(error.response.data.errors);
+            } else {
+                console.error("Registration failed:", error);
+            }
         }
-    }
-};
+    };
 
 return (
 <div>
@@ -101,6 +100,8 @@ return (
                       id="firstName"
                       label="First Name"
                       autoFocus
+                      value={formData.firstName}
+                      onChange={handleChange}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
@@ -111,6 +112,8 @@ return (
                       label="Last Name"
                       name="lastName"
                       autoComplete="family-name"
+                      value={formData.lastName}
+                      onChange={handleChange}
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -121,6 +124,8 @@ return (
                       label="Email Address"
                       name="email"
                       autoComplete="email"
+                      value={formData.email}
+                      onChange={handleChange}
                     />
                   </Grid>
 
@@ -148,6 +153,8 @@ return (
                       type={showPassword ? 'text' : 'password'}
                       id="password"
                       autoComplete="new-password"
+                      value={formData.password}
+                      onChange={handleChange}
                       endAdornment={
                          <InputAdornment position="end">
                             <IconButton
@@ -207,6 +214,7 @@ return (
           </Container>
 </div>
 );
+
 }
 
 export default SignUp;
