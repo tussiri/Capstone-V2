@@ -20,20 +20,26 @@ function AllRecipes() {
     const navigate=useNavigate();
     const {recipeId} = useParams();
 
-//     useEffect(() => {
-//         axios.get(`http://localhost:8080/recipes?page=${page - 1}&size=10`)
-//             .then((res) => {
-//                 if (response.status === 200) {
-//                     setRecipes(response.data.data.content);
-//                     setTotalPages(response.data.data.totalPages);
-//                     setLoading(false);
-//                 }
-//             })
-//             .catch((error) => {
-//                 console.log("There was an error fetching all recipes: ", error);
-//                 setLoading(false);
-//             })
-//     }, [page])
+    useEffect(() => {
+        axios.get(`http://localhost:8080/recipes?page=${page}&size=10`)
+            .then((response) => {
+                if (response.status === 200) {
+                    setRecipes(response.data.data.content);
+                    setTotalPages(response.data.data.totalPages);
+                    setLoading(false);
+                }
+            })
+            .catch((error) => {
+                console.log("There was an error fetching all recipes: ", error);
+                setLoading(false);
+            })
+    }, [page])
+
+    const handleNextPage = () => {
+            if (page < totalPages) {
+                setPage(prevPage => prevPage + 1);
+            }
+        };
 
     const handleCardClick = async (recipeId) => {
        try {
@@ -51,7 +57,7 @@ function AllRecipes() {
     return (
     <div>
                 <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column'}} justifyContent='center' alignItems="center">
-                <h2>Try this random recipe!</h2>
+                <h2>All Recipes</h2>
                     <Box sx={{
                         maxWidth:'100%',
                         display: 'flex',
@@ -70,6 +76,11 @@ function AllRecipes() {
                        </Box>
                     ))}
 
+                    </Box >
+                    <Box sx={{ maxWidth:'50%', m:5 }}>
+                    {page < totalPages && (
+                                            <Button sx={{ color: 'white'}} variant="contained" fullWidth onClick={handleNextPage}>Next Page</Button>
+                                        )}
                     </Box>
                 </Box>
             </div>
