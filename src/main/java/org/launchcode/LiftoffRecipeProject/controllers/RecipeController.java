@@ -150,10 +150,11 @@ public class RecipeController {
 
     //GET random recipes if no search parameters are provided.
     @GetMapping("/random")
-    public ResponseEntity<ResponseWrapper<List<RecipeDTO>>> getRandomRecipes() {
-        List<RecipeDTO> randomRecipes = recipeService.getRandomRecipes();
-        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Random recipes retrieved successfully", randomRecipes), HttpStatus.OK);
+    public ResponseEntity<ResponseWrapper<RecipeDTO>> getRandomRecipe() {
+        RecipeDTO randomRecipe = recipeService.getRandomRecipe();
+        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Random recipe retrieved successfully", randomRecipe), HttpStatus.OK);
     }
+
 
 
 
