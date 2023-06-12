@@ -1,6 +1,6 @@
-import React, { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { UserContext } from "../stores/UserStore";
+import React, {useState, useContext} from "react";
+import {Link, useNavigate} from "react-router-dom";
+import {UserContext} from "../stores/UserStore";
 import Button from "@mui/material/Button";
 
 import CssBaseline from "@mui/material/CssBaseline";
@@ -12,22 +12,24 @@ import Container from "@mui/material/Container";
 import Logo from "../Assets/MealifyLogoNoBG100x100.png";
 
 function Login() {
-    const { login } = useContext(UserContext);
+    const {login} = useContext(UserContext);
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
     const handleLogin = (e) => {
         e.preventDefault();
 
         login(email, password)
             .then(() => navigate("/dashboard"))
             .catch((error) => console.log("Error:", error));
+        setError("Invalid email or password.")
     };
 
     return (
         <div>
             <Container component="main" maxWidth="xs">
-                <CssBaseline />
+                <CssBaseline/>
                 <Box
                     sx={{
                         marginTop: 8,
@@ -36,11 +38,15 @@ function Login() {
                         alignItems: "center",
                     }}
                 >
-                    <img src={Logo} />
+                    <img src={Logo}/>
                     <Typography component="h1" variant="h5">
                         Sign in
                     </Typography>
-                    <Box component="form" onSubmit={handleLogin} noValidate sx={{ mt: 1 }}>
+
+                    {error && <Typography color="error">{error}</Typography>}
+
+
+                    <Box component="form" onSubmit={handleLogin} noValidate sx={{mt: 1}}>
                         <TextField
                             margin="normal"
                             required
@@ -69,7 +75,7 @@ function Login() {
                             type="submit"
                             fullWidth
                             variant="contained"
-                            sx={{ mt: 3, mb: 2, color: "white" }}
+                            sx={{mt: 3, mb: 2, color: "white"}}
                         >
                             Sign In
                         </Button>

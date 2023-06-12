@@ -5,20 +5,26 @@ import Grid from '@mui/material/Grid';
 import {useNavigate, useParams} from "react-router-dom";
 import NavBar from "../Components/NavBar";
 import Box from '@mui/material/Box';
+import LoadingScreen from "./LoadingPage";
 
 const RandomRecipes = () => {
     const [recipes, setRecipes] = useState([]);
     const {recipeId} = useParams();
-    const navigate=useNavigate();
+    const navigate = useNavigate();
+    const[loading, setLoading]=useState(false);
 
 
     useEffect(() => {
+        setLoading(true);
         const fetchRandomRecipes = async () => {
 
             try {
                 const response = await axios.get(`http://localhost:8080/recipes/random`);
                 console.log("Response: ", response.data.data);
-                setRecipes(response.data.data);
+                setRecipes([response.data.data]);
+                setTimeout(() => {
+                    setLoading(false);
+                }, 1000);
             } catch (error) {
                 if (error.response) {
                     console.log(error.response.data);
@@ -31,6 +37,7 @@ const RandomRecipes = () => {
                     console.log('Error', error.message);
                 }
                 console.log(error.config);
+                setLoading(false)
             }
         }
 
@@ -46,27 +53,32 @@ const RandomRecipes = () => {
         }
     };
 
+    if (loading) {
+        return <LoadingScreen/>
+    }
+
 
     return (
         <div>
-            <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column'}} justifyContent='center' alignItems="center">
-            <h2>Try this random recipe!</h2>
+            <Box sx={{maxWidth: '100%', display: 'flex', flexDirection: 'column'}} justifyContent='center'
+                 alignItems="center">
+                <h2>Try this random recipe!</h2>
                 <Box sx={{
-                    maxWidth:'50%',
+                    maxWidth: '50%',
                     display: 'flex',
                     flexDirection: 'column',
                     flexWrap: 'wrap',
                     alignContent: 'start'
-                    }}
-                    justifyContent='center'
-                    alignItems="center">
-                {recipes.map((recipe, index) => (
-                    <Box>
-                        <FoodCard recipe={recipe}
-                        key={recipe.id}
-                        onClick={()=>handleCardClick(recipe.id)}/>
-                    </Box>
-                ))}
+                }}
+                     justifyContent='center'
+                     alignItems="center">
+                    {recipes.map((recipe, index) => (
+                        <Box>
+                            <FoodCard recipe={recipe}
+                                      key={recipe.id}
+                                      onClick={() => handleCardClick(recipe.id)}/>
+                        </Box>
+                    ))}
                 </Box>
             </Box>
         </div>

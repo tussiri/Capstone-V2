@@ -299,19 +299,25 @@ public class RecipeService {
         return reviewRepository.findAverageRatingByRecipeId(recipeId);
     }
 
-    public List<RecipeDTO> getRandomRecipes() {
+    public RecipeDTO getRandomRecipe() {
         List<Recipe> recipes = recipeRepository.findAll();
         Collections.shuffle(recipes);
-
-        Random rand = new Random();
-        int limit = rand.nextInt(recipes.size()) + 1;
-
-        return recipes.stream()
-                .map(this::mapToDTO)
-                .limit(limit)
-                .collect(Collectors.toList());
+        return this.mapToDTO(recipes.get(0));
     }
+//
+//    public RecipeDTO getRandomRecipes() {
+//        List<Recipe> recipes = recipeRepository.findAll();
+//        Collections.shuffle(recipes);
+////        return this.mapToDTO(recipes.get(0));
+//
+//        Random rand = new Random();
+//        int limit = rand.nextInt(recipes.size()) + 1;
+//
+//        return recipes.stream()
+//                .map(this::mapToDTO)
+//                .limit(limit)
+//                .collect(Collectors.toList());
+//    }
 
 
-
-}
+    }
