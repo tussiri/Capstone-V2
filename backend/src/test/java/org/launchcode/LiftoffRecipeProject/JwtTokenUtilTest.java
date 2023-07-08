@@ -25,8 +25,9 @@ public class JwtTokenUtilTest {
     private CustomUserDetailsService userDetailsService;
 
     @Test
-    public void testGenerateToken(Integer userId) {
+    public void testGenerateToken() {
         // Create a UserDetails instance with mock data
+        Integer userId=1;
         UserDetails userDetails = new User("testuser", "password", new ArrayList<>());
 
         // Generate the token
