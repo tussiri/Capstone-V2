@@ -37,10 +37,10 @@ function SignUp() {
         confirmPassword: "",
         dateOfBirth: "",
     });
-    const [{firstName}, setErrors] = useState({});
+    const [errors, setErrors] = useState({});
     //const [errors, setErrors] = useState({});
     const [selectedDate, setSelectedDate] = React.useState(new Date('2014-08-18T21:11:54'));
-    const {register} = useContext(UserContext);
+    const {register, login} = useContext(UserContext);
     const [error, setError] = useState("");
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -61,13 +61,14 @@ function SignUp() {
         e.preventDefault();
         try {
             const response = await axios.post("http://localhost:8080/auth/register", formData);
-            const {token} = response.data;
+            const {user, token} = response.data.data;
 
             console.log("Registration successful:", response.data);
 
             localStorage.setItem("token", token);
             register();
-            navigate("/");
+            await login(formData.email, formData.password);
+            navigate("/dashboard");
         } catch (error) {
             console.error("Registration failed:", error);
 
@@ -101,7 +102,7 @@ function SignUp() {
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    autoComplete="given-name"
+                                    autoComplete="firstName"
                                     name="firstName"
                                     required
                                     fullWidth
@@ -144,8 +145,15 @@ function SignUp() {
                                             fullWidth
                                             label="Date of Birth"
                                             required
-                                            id="birthday"
-                                            name="birthday"
+                                            id="dateOfBirth"
+                                            name="dateOfBirth"
+                                            value={formData.dateOfBirth}
+                                            onChange={(newValue) => {
+                                                setFormData((prevFormData) => ({
+                                                    ...prevFormData,
+                                                    dateOfBirth: newValue,
+                                                }));
+                                            }}
                                         />
                                     </FormControl>
                                 </LocalizationProvider>

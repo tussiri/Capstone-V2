@@ -36,7 +36,7 @@ export function UserProvider({children}) {
             if (token && id) {
                 const user = parseJwt(token)
                 setUser(user);
-                console.log("Stored token:", localStorage.getItem('token'));
+                console.log("Stored token: ", localStorage.getItem('token'));
                 navigate('/');
                 return Promise.resolve();
             } else {

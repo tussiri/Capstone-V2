@@ -38,6 +38,7 @@ public class UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -54,6 +55,7 @@ public class UserService {
     private RecipeRepository recipeRepository;
 
     private RecipeService recipeService;
+
 
 
 //    @Autowired
@@ -150,16 +152,24 @@ public class UserService {
         if (existingUser != null) {
             throw new BadRequestException("User already exists");
         }
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String encodedPassword = encoder.encode(userDTO.getPassword());
+
+        System.out.println("Password before encoding: " + userDTO.getPassword());
+        System.out.println("Password after encoding: " + encodedPassword);
+        System.out.println("BCryptPasswordEncoder: " + bCryptPasswordEncoder);
+
 
         User newUser = new User(
                 userDTO.getEmail(),
-                bCryptPasswordEncoder.encode(userDTO.getPassword()),
+                encodedPassword,
                 userDTO.getFirstName(),
                 userDTO.getLastName(),
                 userDTO.getDateOfBirth()
         );
 
         User registeredUser = userRepository.save(newUser);
+        System.out.println("Encoded password: " + registeredUser.getPassword());
         UserDetails userDetails = userDetailsService.loadUserByUsername(newUser.getEmail());
         String token = jwtTokenUtil.generateToken(userDetails, registeredUser.getId());
 

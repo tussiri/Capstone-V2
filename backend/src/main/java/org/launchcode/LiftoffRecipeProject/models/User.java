@@ -24,7 +24,7 @@ public class User extends AbstractEntity implements UserDetails {
     private List<Recipe> recipes;
 
     @ElementCollection
-    private Set<Integer> favoriteRecipes;
+    private Set<Integer> favoriteRecipes = new HashSet<>();
 
     @PreRemove
     private void preRemove() {
@@ -43,9 +43,15 @@ public class User extends AbstractEntity implements UserDetails {
         this.firstName = firstName;
         this.lastName = lastName;
         this.dateOfBirth = LocalDate.from(dateOfBirth);
-        if(this.recipes==null) {
+        if (this.recipes == null) {
             this.recipes = new ArrayList<>();
         }
+        favoriteRecipes = new HashSet<>();
+        System.out.println("User constructor called"); // Add this line
+    }
+
+    public void initializeFavoriteRecipes() {
+        favoriteRecipes = new HashSet<>();
     }
 
 

@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/recipes")
 public class RecipeController {
 
-    private static final Logger logger = LoggerFactory.getLogger(RecipeController.class);
+    public static final Logger logger = LoggerFactory.getLogger(RecipeController.class);
 
     private final RecipeService recipeService;
 
