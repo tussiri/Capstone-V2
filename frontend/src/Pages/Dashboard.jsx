@@ -38,24 +38,24 @@ function Dashboard() {
         setHasSearched(true)
     }
 
-    useEffect(() => {
-        const fetchRecipes = async () => {
-            try {
-                if (userId) {
-                    console.log("Fetching recipes...");
-                    const response = await authAxios.get(`http://localhost:8080/recipes/user/${userId}`);
-                    const data = response.data.data;
-                    console.log("Fetched recipes:", data);
-                    setRecipes(data.content);
-                } else {
-                    console.log("User ID not found. Skipping recipe fetching.");
-                }
-            } catch (error) {
-                console.error("Error fetching recipes:", error);
-            }
-        };
-        fetchRecipes();
-    }, [userId]);
+    // useEffect(() => {
+    //     const fetchRecipes = async () => {
+    //         try {
+    //             if (userId) {
+    //                 console.log("Fetching recipes...");
+    //                 const response = await authAxios.get(`http://localhost:8080/recipes/user/${userId}`);
+    //                 const data = response.data.data;
+    //                 console.log("Fetched recipes:", data);
+    //                 setRecipes(data.content);
+    //             } else {
+    //                 console.log("User ID not found. Skipping recipe fetching.");
+    //             }
+    //         } catch (error) {
+    //             console.error("Error fetching recipes:", error);
+    //         }
+    //     };
+    //     fetchRecipes();
+    // }, [userId]);
     //
     // useEffect(() => {
     //     const fetchAllRecipes = async () => {
