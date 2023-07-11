@@ -10,6 +10,7 @@ import org.launchcode.LiftoffRecipeProject.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -52,5 +53,10 @@ public class FavoriteRecipeService {
     public Optional<Favorite> getFavoriteByUserAndRecipe(Integer userId, Integer recipeId) {
         return favoriteRepository.findByUserIdAndRecipeId(userId, recipeId);
     }
+
+    public List<Favorite> getFavoritesByUser(Integer userId) {
+        return favoriteRepository.findByUserIdWithRecipes(userId);
+    }
+
 
 }

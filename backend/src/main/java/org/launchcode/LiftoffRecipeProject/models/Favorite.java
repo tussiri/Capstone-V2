@@ -1,15 +1,22 @@
 package org.launchcode.LiftoffRecipeProject.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 
 @Entity
 public class Favorite extends AbstractEntity{
 
     @ManyToOne
+    @JsonManagedReference
+    @Fetch(FetchMode.JOIN)
     private User user;
 
     @ManyToOne
+    @JsonManagedReference
+    @Fetch(FetchMode.JOIN)
     private Recipe recipe;
 
     public User getUser() {

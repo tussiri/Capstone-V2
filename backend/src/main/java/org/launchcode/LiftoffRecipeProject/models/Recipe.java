@@ -1,6 +1,9 @@
 package org.launchcode.LiftoffRecipeProject.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -10,6 +13,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "recipes")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Recipe extends AbstractEntity {
 
     private String name;
@@ -32,7 +38,7 @@ public class Recipe extends AbstractEntity {
     private Boolean favorite;
 
     @ManyToMany(mappedBy = "favoriteRecipes")
-    @JsonIgnore
+    @JsonBackReference
     private List<User> favoritedByUsers = new ArrayList<>();
 
     @Column(columnDefinition="MEDIUMTEXT")
