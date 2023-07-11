@@ -9,6 +9,8 @@ import org.launchcode.LiftoffRecipeProject.models.Favorite;
 import org.launchcode.LiftoffRecipeProject.models.User;
 import org.launchcode.LiftoffRecipeProject.models.Recipe;
 import org.launchcode.LiftoffRecipeProject.services.FavoriteRecipeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,8 @@ public class FavoriteRecipeController {
 
     @Autowired
     private FavoriteRepository favoriteRepository;
+
+    public static final Logger logger = LoggerFactory.getLogger(FavoriteRecipeController.class);
 
 
     @PostMapping("/{userId}/{recipeId}")
