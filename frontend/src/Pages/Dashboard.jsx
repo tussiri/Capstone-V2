@@ -15,13 +15,13 @@ import Box from '@mui/material/Box';
 
 function Dashboard() {
     const [recipes, setRecipes] = useState([]);
-    const [allRecipes, setAllRecipes] = useState([]);
+    // const [allRecipes, setAllRecipes] = useState([]);
     const navigate = useNavigate();
     const userId = localStorage.getItem("userId")
     const [isSearching, setIsSearching] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
     const [searchQuery, setSearchQuery] = useState('')
-    const [isLoading, setIsLoading] = useState(true);
+    // const [isLoading, setIsLoading] = useState(true);
     const {user, logout, login} = useContext(UserContext);
     const [likedRecipes, setLikedRecipes] = useState([]);
     const {recipeId} = useParams();
@@ -38,24 +38,24 @@ function Dashboard() {
         setHasSearched(true)
     }
 
-    // useEffect(() => {
-    //     const fetchRecipes = async () => {
-    //         try {
-    //             if (userId) {
-    //                 console.log("Fetching recipes...");
-    //                 const response = await authAxios.get(`http://localhost:8080/recipes/user/${userId}`);
-    //                 const data = response.data.data;
-    //                 console.log("Fetched recipes:", data);
-    //                 setRecipes(data.content);
-    //             } else {
-    //                 console.log("User ID not found. Skipping recipe fetching.");
-    //             }
-    //         } catch (error) {
-    //             console.error("Error fetching recipes:", error);
-    //         }
-    //     };
-    //     fetchRecipes();
-    // }, [userId]);
+    useEffect(() => {
+        const fetchRecipes = async () => {
+            try {
+                if (userId) {
+                    console.log("Fetching recipes...");
+                    const response = await authAxios.get(`http://localhost:8080/recipes/user/${userId}`);
+                    const data = response.data.data;
+                    console.log("Fetched recipes:", data);
+                    setRecipes(data.content);
+                } else {
+                    console.log("User ID not found. Skipping recipe fetching.");
+                }
+            } catch (error) {
+                console.error("Error fetching recipes:", error);
+            }
+        };
+        fetchRecipes();
+    }, [userId]);
     //
     // useEffect(() => {
     //     const fetchAllRecipes = async () => {
@@ -78,11 +78,12 @@ function Dashboard() {
                 if (userId) {
                     console.log("Fetching liked recipes...");
                     const response = await authAxios.get(
-                        `http://localhost:8080/recipes/user/${userId}/favorite`
+                        `http://localhost:8080/favorites/user/${userId}`
                     );
-                    const data = response.data.result;
+                    const data = response.data.data;
                     console.log("Fetched liked recipes:", data);
                     setLikedRecipes(data);
+                    console.log("Updated likedRecipes state:", likedRecipes);
                 } else {
                     console.log("User ID not found. Skipping liked recipes fetching.");
                 }
@@ -92,6 +93,7 @@ function Dashboard() {
         };
         fetchLikedRecipes();
     }, [userId]);
+
 
 
     useEffect(() => {
@@ -153,15 +155,18 @@ function Dashboard() {
                                 justifyContent='center'
                                 alignItems="center">
                             <h2>Liked Recipes</h2>
-                            {likedRecipes.map((recipe) => (
-                                <Box sx={{ maxWidth:'23%' }}>
-                                <FoodCard
-                                    key={recipe.id}
-                                    recipe={recipe}
-                                    onClick={() => handleCardClick(recipe.id)}
-                                />
-                                </Box>
-                            ))}
+                                {likedRecipes.map((favorite, index) => {
+                                    console.log(`Rendering recipe card for favorite at index ${index}:`, favorite);
+                                    return typeof favorite.recipe === 'object' && (
+                                        <Box sx={{ maxWidth:'23%' }}>
+                                            <FoodCard
+                                                key={favorite.recipe.id}
+                                                recipe={favorite.recipe}
+                                                onClick={() => handleCardClick(favorite.recipe.id)}
+                                            />
+                                        </Box>
+                                    );
+                                })}
                             </Box>
                         </Box>
                     ) : (
