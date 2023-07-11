@@ -14,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RecipeRepository extends PagingAndSortingRepository<Recipe, Integer>, CrudRepository<Recipe, Integer>, JpaSpecificationExecutor<Recipe> {
@@ -35,4 +36,6 @@ public interface RecipeRepository extends PagingAndSortingRepository<Recipe, Int
     void flush();
 
     List<Recipe> findByUserAndFavorite(User user, boolean favorite);
+
+    Optional<Object> findById(Recipe recipeId);
 }
