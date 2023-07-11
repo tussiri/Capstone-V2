@@ -12,12 +12,12 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import {useParams} from "react-router-dom";
 import authAxios from "../utility/authAxios";
 
-function FoodCard({recipe, onClick, user}) {
+function FoodCard({recipe, onClick, user, userId}) {
     const [isClicked, setIsClicked] = useState(false);
     const [isFavorite, setIsFavorite] = useState(false);
     // const userId = localStorage.getItem("userId")
     const {recipeId} = useParams();
-    const userId = localStorage.getItem("userId")
+    // const userId = localStorage.getItem("userId")
 
 
 
@@ -41,18 +41,36 @@ function FoodCard({recipe, onClick, user}) {
         }
     };
 
-    useEffect(() => {
-        const fetchFavoriteStatus = async () => {
-            try {
-                const response = await authAxios.get(`http://localhost:8080/favorites/user/${userId}/recipe/${recipe.id}`);
-                setIsFavorite(response.data.data != null);
-            } catch (error) {
-                console.error(error);
-            }
-        };
+    // useEffect(() => {
+    //     const fetchFavoriteStatus = async () => {
+    //         try {
+    //             const response = await authAxios.get(`http://localhost:8080/favorites/user/${userId}/recipe/${recipe.id}`);
+    //             setIsFavorite(response.data.data != null);
+    //         } catch (error) {
+    //             console.error(error);
+    //         }
+    //     };
+    //
+    //     fetchFavoriteStatus();
+    // }, [userId, recipeId]);
 
-        fetchFavoriteStatus();
-    }, [userId, recipeId]);
+    const fetchFavoriteStatus = async (recipeId) => {
+        try {
+            const response = await authAxios.post(
+                "/favorites",
+                { recipeId },
+                {
+                    headers: {
+                        userId: userId,
+                    },
+                }
+            );
+            console.log(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
 
     return (
         <Card onClick={handleClick} className='food-card'>

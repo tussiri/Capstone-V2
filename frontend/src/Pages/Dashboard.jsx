@@ -83,7 +83,6 @@ function Dashboard() {
                     const data = response.data.data;
                     console.log("Fetched liked recipes:", data);
                     setLikedRecipes(data);
-                    console.log("Updated likedRecipes state:", likedRecipes);
                 } else {
                     console.log("User ID not found. Skipping liked recipes fetching.");
                 }
@@ -155,18 +154,15 @@ function Dashboard() {
                                 justifyContent='center'
                                 alignItems="center">
                             <h2>Liked Recipes</h2>
-                                {likedRecipes.map((favorite, index) => {
-                                    console.log(`Rendering recipe card for favorite at index ${index}:`, favorite);
-                                    return typeof favorite.recipe === 'object' && (
-                                        <Box sx={{ maxWidth:'23%' }}>
-                                            <FoodCard
-                                                key={favorite.recipe.id}
-                                                recipe={favorite.recipe}
-                                                onClick={() => handleCardClick(favorite.recipe.id)}
-                                            />
-                                        </Box>
-                                    );
-                                })}
+                                {likedRecipes.map((favorite) => (
+                                    <Box sx={{ maxWidth:'23%' }}>
+                                        <FoodCard
+                                            key={favorite.recipe.id}
+                                            recipe={favorite.recipe}
+                                            onClick={() => handleCardClick(favorite.recipe.id)}
+                                        />
+                                    </Box>
+                                ))}
                             </Box>
                         </Box>
                     ) : (
