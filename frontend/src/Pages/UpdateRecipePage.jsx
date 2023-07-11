@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../SignUp.css";
+import "../Styles/SignUp.css";
 import Logo from "../Assets/logo-removebg-preview 1.png";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";

@@ -19,10 +19,12 @@ import AccountInfo from "./Pages/AccountInfo";
 import AccountEdit from "./Pages/AccountEdit";
 import AllRecipes from "./Pages/AllRecipes";
 
+import './Styles/global.css'
+
 const theme = createTheme({
     palette: {
         primary: {
-          main: colors.orange[400],
+          main: colors.teal[300],
         },
         secondary: {
           main: colors.grey[50]
@@ -75,8 +77,9 @@ function App() {
                         <Route path="/allrecipes" element={<AllRecipes/>}/>
                         <Route path="/randomrecipe" element={<RandomRecipes/>}/>
                         <Route path="/users/:id/recipes/:recipeId" component={RecipePage}/>
+                        <Route path="/recipes" element={AllRecipes} />
 
-                </Routes>
+                    </Routes>
             </UserProvider>
         </div>
     </ThemeProvider>

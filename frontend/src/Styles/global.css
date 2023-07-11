@@ -1,20 +1,17 @@
 /* global.css */
+
 body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-
+    line-height: 1.6;
 }
 
 .container {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-}
-
-.recipe-card {
-    flex: 0 0 calc(33.333% - 20px);
-    margin: 10px;
+    margin: 1rem;
 }
 
 .sidebar {
@@ -25,7 +22,7 @@ body {
     width: 20%;
     padding: 20px;
     box-sizing: border-box;
-    background-color: #f5f5f5;
+    background-color: #ffffff;
 }
 
 .app-main {
@@ -34,3 +31,42 @@ body {
     width: 80%;
     box-sizing: border-box;
 }
+
+.food-card {
+    margin: 1rem;
+    flex: 1 0 18rem;
+    max-width: 18rem;
+    height: 25rem;
+    overflow: auto;
+    padding: 10px;
+    box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    transition: transform .2s;
+}
+
+.food-card:hover{
+    transform:scale(1.05);
+}
+
+/* consistent footer styling */
+footer {
+    width: 100%;
+    height: 60px; /* adjust as needed */
+    background-color: #f8f9fa; /* adjust as needed */
+    text-align: center;
+    line-height: 60px; /* adjust as needed */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}
+
+/* consistent button styling */
+button {
+    padding: 10px 20px; /* adjust as needed */
+    border-radius: 5px; /* adjust as needed */
+    border: none; /* adjust as needed */
+    /*background-color: #007bff; !* adjust as needed *!*/
+    color: #ffffff; /* adjust as needed */
+    cursor: pointer;
+}
+
