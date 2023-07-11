@@ -36,6 +36,14 @@ public class RecipeService {
     private final RecipeData recipeData;
     private Ingredient ingredient;
 
+    public Page<Recipe> findPaginated(Pageable pageable) {
+        return recipeRepository.findAll(pageable);
+    }
+
+    public Optional<Recipe> findById(int id) {
+        return recipeRepository.findById(id);
+    }
+
     @Autowired
     public RecipeService(RecipeRepository recipeRepository, IngredientRepository ingredientRepository, UserRepository userRepository, RecipeData recipeData, IngredientService ingredientService, ReviewRepository reviewRepository) {
         this.recipeRepository = recipeRepository;
@@ -304,20 +312,5 @@ public class RecipeService {
         Collections.shuffle(recipes);
         return this.mapToDTO(recipes.get(0));
     }
-//
-//    public RecipeDTO getRandomRecipes() {
-//        List<Recipe> recipes = recipeRepository.findAll();
-//        Collections.shuffle(recipes);
-////        return this.mapToDTO(recipes.get(0));
-//
-//        Random rand = new Random();
-//        int limit = rand.nextInt(recipes.size()) + 1;
-//
-//        return recipes.stream()
-//                .map(this::mapToDTO)
-//                .limit(limit)
-//                .collect(Collectors.toList());
-//    }
 
-
-    }
+}
