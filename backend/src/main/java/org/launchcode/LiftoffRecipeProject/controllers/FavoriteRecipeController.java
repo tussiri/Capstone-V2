@@ -19,21 +19,19 @@ import java.util.Optional;
 @RequestMapping("/favorites")
 public class FavoriteRecipeController {
 
-    @Autowired
-    private UserRepository userRepository;
+//    @Autowired
+//    private UserRepository userRepository;
+//
+//    @Autowired
+//    private RecipeRepository recipeRepository;
 
     @Autowired
-    private RecipeRepository recipeRepository;
-
     private FavoriteRecipeService favoriteRecipeService;
+
 
     @PostMapping("/{userId}/{recipeId}")
     public ResponseEntity<ResponseWrapper<Favorite>> addFavorite(@PathVariable Integer userId, @PathVariable Integer recipeId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        Recipe recipe = recipeRepository.findById(recipeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
-        Favorite favorite = favoriteRecipeService.addFavorite(user, recipe);
+        Favorite favorite = favoriteRecipeService.addFavorite(userId, recipeId);
         return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.CREATED.value(), "Favorite added successfully", favorite), HttpStatus.CREATED);
     }
 
@@ -43,11 +41,11 @@ public class FavoriteRecipeController {
         return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Favorite deleted successfully"), HttpStatus.OK);
     }
 
-    @DeleteMapping("/user/{userId}/recipe/{recipeId}")
-    public ResponseEntity<ResponseWrapper<Void>> deleteFavoriteByUserAndRecipe(@PathVariable Integer userId, @PathVariable Integer recipeId) {
-        favoriteRecipeService.deleteFavoriteByUserAndRecipe(userId, recipeId);
-        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Favorite deleted successfully"), HttpStatus.OK);
-    }
+//    @DeleteMapping("/user/{userId}/recipe/{recipeId}")
+//    public ResponseEntity<ResponseWrapper<Void>> deleteFavoriteByUserAndRecipe(@PathVariable Integer userId, @PathVariable Integer recipeId) {
+//        favoriteRecipeService.deleteFavoriteByUserAndRecipe(userId, recipeId);
+//        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Favorite deleted successfully"), HttpStatus.OK);
+//    }
 
     @GetMapping("/user/{userId}/recipe/{recipeId}")
     public ResponseEntity<ResponseWrapper<Favorite>> getFavoriteByUserAndRecipe(@PathVariable Integer userId, @PathVariable Integer recipeId) {

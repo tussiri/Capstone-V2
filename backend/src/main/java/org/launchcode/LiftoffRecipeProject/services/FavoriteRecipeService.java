@@ -15,21 +15,25 @@ import java.util.Optional;
 @Service
 public class FavoriteRecipeService {
 
+    @Autowired
     private final FavoriteRepository favoriteRepository;
-    private final UserRepository userRepository;
-    private final RecipeRepository recipeRepository;
 
     @Autowired
+    private final UserRepository userRepository;
+
+    @Autowired
+    private final RecipeRepository recipeRepository;
+
     public FavoriteRecipeService(FavoriteRepository favoriteRepository, UserRepository userRepository, RecipeRepository recipeRepository) {
         this.favoriteRepository = favoriteRepository;
         this.userRepository = userRepository;
         this.recipeRepository = recipeRepository;
     }
 
-    public Favorite addFavorite(User userId, Recipe recipeId) {
-        User user = userRepository.findById(userId.getId())
+    public Favorite addFavorite(Integer userId, Integer recipeId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        Recipe recipe = (Recipe) recipeRepository.findById(recipeId)
+        Recipe recipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
 
         Favorite favorite = new Favorite();
@@ -42,13 +46,6 @@ public class FavoriteRecipeService {
     public void deleteFavorite(Integer favoriteId) {
         Favorite favorite = favoriteRepository.findById(favoriteId)
                 .orElseThrow(() -> new ResourceNotFoundException("Favorite not found"));
-
-        favoriteRepository.delete(favorite);
-    }
-
-    public void deleteFavoriteByUserAndRecipe(Integer userId, Integer recipeId) {
-        Favorite favorite = favoriteRepository.findByUserIdAndRecipeId(userId, recipeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
         favoriteRepository.delete(favorite);
     }
 
