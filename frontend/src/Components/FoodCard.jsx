@@ -31,7 +31,7 @@ function FoodCard({recipe, onClick, user}) {
             console.log("Heart icon clicked");
             event.stopPropagation();
             if (!isFavorite) {
-                await axios.post(`http://localhost:8080/favorites/${userId}/${recipe.id}`);
+                await authAxios.post(`http://localhost:8080/favorites/${userId}/${recipe.id}`);
             } else {
                 await axios.delete(`http://localhost:8080/favorites/${recipe.id}`);
             }
@@ -45,7 +45,7 @@ function FoodCard({recipe, onClick, user}) {
         const fetchFavoriteStatus = async () => {
             try {
                 const response = await authAxios.get(`http://localhost:8080/favorites/user/${userId}/recipe/${recipe.id}`);
-                setIsFavorite(response.data.data.content != null);
+                setIsFavorite(response.data.data != null);
             } catch (error) {
                 console.error(error);
             }
