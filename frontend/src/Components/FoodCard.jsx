@@ -12,12 +12,13 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import {useParams} from "react-router-dom";
 import authAxios from "../utility/authAxios";
 
-function FoodCard({recipe, onClick, user}) {
+function FoodCard({recipe, onClick, user, }) {
     const [isClicked, setIsClicked] = useState(false);
     const [isFavorite, setIsFavorite] = useState(false);
-    // const userId = localStorage.getItem("userId")
-    const {recipeId} = useParams();
+    const recipeDetails = recipe.recipe ? recipe.recipe : recipe;
     const userId = localStorage.getItem("userId")
+    const {recipeId} = useParams();
+    // const userId = localStorage.getItem("userId")
 
 
 
@@ -26,33 +27,23 @@ function FoodCard({recipe, onClick, user}) {
         onClick();
     }
 
-    const handleFavoriteClick = async (event) => {
+    const fetchFavoriteStatus = async (recipeId) => {
         try {
-            console.log("Heart icon clicked");
-            event.stopPropagation();
-            if (!isFavorite) {
-                await axios.post(`http://localhost:8080/favorites/${userId}/${recipe.id}`);
-            } else {
-                await axios.delete(`http://localhost:8080/favorites/${recipe.id}`);
-            }
-            setIsFavorite(!isFavorite);
+            const response = await authAxios.post(
+                "/favorites",
+                { recipeId },
+                {
+                    headers: {
+                        userId: userId,
+                    },
+                }
+            );
+            console.log(response.data);
         } catch (error) {
-            console.error("Error while favoriting:", error.message);
+            console.error(error);
         }
     };
 
-    useEffect(() => {
-        const fetchFavoriteStatus = async () => {
-            try {
-                const response = await authAxios.get(`http://localhost:8080/favorites/user/${userId}/recipe/${recipe.id}`);
-                setIsFavorite(response.data.data.content != null);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchFavoriteStatus();
-    }, [userId, recipeId]);
 
     return (
         <Card onClick={handleClick} className='food-card'>
@@ -77,9 +68,9 @@ function FoodCard({recipe, onClick, user}) {
                     <Typography variant="body2" color="text.secondary">
                         Preparation Time: {recipe.time} minutes
                     </Typography>
-                    <IconButton aria-label="add to favorites" onClick={handleFavoriteClick}>
-                        <FavoriteIcon color={isFavorite ? "primary" : "action"} />
-                    </IconButton>
+                    {/*<IconButton aria-label="add to favorites" onClick={handleFavoriteClick}>*/}
+                    {/*    <FavoriteIcon color={isFavorite ? "primary" : "action"} />*/}
+                    {/*</IconButton>*/}
                 </CardContent>
             </CardActionArea>
         </Card>
