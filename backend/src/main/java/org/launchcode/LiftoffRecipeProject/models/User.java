@@ -28,13 +28,13 @@ public class User extends AbstractEntity implements UserDetails {
     private List<Recipe> recipes;
 
     @ManyToMany
-//    @JoinTable(
-//            name = "user_favorite_recipes",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "recipe_id")
-//    )
-    @JsonManagedReference
+    @JoinTable(
+            name = "user_favorite_recipes",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "recipe_id")
+    )
     private List<Recipe> favoriteRecipes;
+
 
     @PreRemove
     private void preRemove() {
@@ -57,12 +57,9 @@ public class User extends AbstractEntity implements UserDetails {
             this.recipes = new ArrayList<>();
         }
         this.favoriteRecipes = favoriteRecipes;
-        System.out.println("User constructor called"); // Add this line
+        System.out.println("User constructor called");
     }
 
-//    public void initializeFavoriteRecipes() {
-//        favoriteRecipes = new List<>();
-//    }
 
 
     public User(){}
@@ -76,15 +73,6 @@ public class User extends AbstractEntity implements UserDetails {
     public void setFavoriteRecipes(List<Recipe> favoriteRecipes) {
         this.favoriteRecipes = favoriteRecipes;
     }
-
-
-//    public Set<Integer> getFavoriteRecipes() {
-//        return favoriteRecipes;
-//    }
-//
-//    public void setFavoriteRecipes(Set<Integer> favoriteRecipes) {
-//        this.favoriteRecipes = favoriteRecipes;
-//    }
 
     public String getFirstName() {
         return firstName;

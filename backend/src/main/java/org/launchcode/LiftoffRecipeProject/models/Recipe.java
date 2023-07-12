@@ -25,9 +25,6 @@ public class Recipe extends AbstractEntity {
     inverseJoinColumns =@JoinColumn(name="ingredient_id"))
     private List<Ingredient> ingredients;
 
-//    @ElementCollection
-//    private List<String>ingredients;
-
     @Column(name="directions", columnDefinition="MEDIUMTEXT")
     private String directions;
 
@@ -36,10 +33,6 @@ public class Recipe extends AbstractEntity {
 
     @Column(nullable = true)
     private Boolean favorite;
-
-    @ManyToMany(mappedBy = "favoriteRecipes")
-    @JsonBackReference
-    private List<User> favoritedByUsers = new ArrayList<>();
 
     @Column(columnDefinition="MEDIUMTEXT")
     private String description;
@@ -79,15 +72,6 @@ public class Recipe extends AbstractEntity {
     }
 
     // Getters and setters
-
-
-    public Boolean getFavorite() {
-        return favorite;
-    }
-
-    public List<User> getFavoritedByUsers() {
-        return favoritedByUsers;
-    }
 
     public String getName() {
         return name;
