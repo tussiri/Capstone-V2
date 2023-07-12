@@ -12,10 +12,11 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import {useParams} from "react-router-dom";
 import authAxios from "../utility/authAxios";
 
-function FoodCard({recipe, onClick, user, userId}) {
+function FoodCard({recipe, onClick, user, }) {
     const [isClicked, setIsClicked] = useState(false);
     const [isFavorite, setIsFavorite] = useState(false);
-    // const userId = localStorage.getItem("userId")
+    const recipeDetails = recipe.recipe ? recipe.recipe : recipe;
+    const userId = localStorage.getItem("userId")
     const {recipeId} = useParams();
     // const userId = localStorage.getItem("userId")
 
@@ -25,34 +26,6 @@ function FoodCard({recipe, onClick, user, userId}) {
         setIsClicked(!isClicked);
         onClick();
     }
-
-    const handleFavoriteClick = async (event) => {
-        try {
-            console.log("Heart icon clicked");
-            event.stopPropagation();
-            if (!isFavorite) {
-                await authAxios.post(`http://localhost:8080/favorites/${userId}/${recipe.id}`);
-            } else {
-                await axios.delete(`http://localhost:8080/favorites/${recipe.id}`);
-            }
-            setIsFavorite(!isFavorite);
-        } catch (error) {
-            console.error("Error while favoriting:", error.message);
-        }
-    };
-
-    // useEffect(() => {
-    //     const fetchFavoriteStatus = async () => {
-    //         try {
-    //             const response = await authAxios.get(`http://localhost:8080/favorites/user/${userId}/recipe/${recipe.id}`);
-    //             setIsFavorite(response.data.data != null);
-    //         } catch (error) {
-    //             console.error(error);
-    //         }
-    //     };
-    //
-    //     fetchFavoriteStatus();
-    // }, [userId, recipeId]);
 
     const fetchFavoriteStatus = async (recipeId) => {
         try {
@@ -95,9 +68,9 @@ function FoodCard({recipe, onClick, user, userId}) {
                     <Typography variant="body2" color="text.secondary">
                         Preparation Time: {recipe.time} minutes
                     </Typography>
-                    <IconButton aria-label="add to favorites" onClick={handleFavoriteClick}>
-                        <FavoriteIcon color={isFavorite ? "primary" : "action"} />
-                    </IconButton>
+                    {/*<IconButton aria-label="add to favorites" onClick={handleFavoriteClick}>*/}
+                    {/*    <FavoriteIcon color={isFavorite ? "primary" : "action"} />*/}
+                    {/*</IconButton>*/}
                 </CardContent>
             </CardActionArea>
         </Card>
