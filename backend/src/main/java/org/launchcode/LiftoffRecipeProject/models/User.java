@@ -1,8 +1,9 @@
 package org.launchcode.LiftoffRecipeProject.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import org.launchcode.LiftoffRecipeProject.DTO.RecipeDTO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +13,9 @@ import java.util.*;
 
 @Entity
 @Table(name = "users")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class User extends AbstractEntity implements UserDetails {
 
     private String firstName;
@@ -23,8 +27,14 @@ public class User extends AbstractEntity implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     private List<Recipe> recipes;
 
-    @ElementCollection
-    private Set<Integer> favoriteRecipes = new HashSet<>();
+    @ManyToMany
+    @JoinTable(
+            name = "user_favorite_recipes",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "recipe_id")
+    )
+    private List<Recipe> favoriteRecipes;
+
 
     @PreRemove
     private void preRemove() {
@@ -46,25 +56,21 @@ public class User extends AbstractEntity implements UserDetails {
         if (this.recipes == null) {
             this.recipes = new ArrayList<>();
         }
-        favoriteRecipes = new HashSet<>();
-        System.out.println("User constructor called"); // Add this line
+        this.favoriteRecipes = favoriteRecipes;
+        System.out.println("User constructor called");
     }
 
-    public void initializeFavoriteRecipes() {
-        favoriteRecipes = new HashSet<>();
-    }
 
 
     public User(){}
 
     // Getters and setters
 
-
-    public Set<Integer> getFavoriteRecipes() {
+    public List<Recipe> getFavoriteRecipes() {
         return favoriteRecipes;
     }
 
-    public void setFavoriteRecipes(Set<Integer> favoriteRecipes) {
+    public void setFavoriteRecipes(List<Recipe> favoriteRecipes) {
         this.favoriteRecipes = favoriteRecipes;
     }
 

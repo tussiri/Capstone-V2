@@ -1,12 +1,9 @@
 package org.launchcode.LiftoffRecipeProject;
 
 import org.junit.jupiter.api.Test;
-import org.launchcode.LiftoffRecipeProject.data.FavoriteRepository;
-import org.launchcode.LiftoffRecipeProject.services.FavoriteRecipeService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.launchcode.LiftoffRecipeProject.models.Favorite;
 import org.launchcode.LiftoffRecipeProject.models.User;
 import org.launchcode.LiftoffRecipeProject.models.Recipe;
 

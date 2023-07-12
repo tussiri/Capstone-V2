@@ -180,11 +180,16 @@ public class UserService {
         return mappedUserDTO;
     }
 
-    public void addFavorite(Integer userId, Integer recipeId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        user.getFavoriteRecipes().add(recipeId);
-        userRepository.save(user);
+    public User addFavorite(Integer userId, Integer recipeId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Recipe recipe = recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
+
+        user.getFavoriteRecipes().add(recipe);
+        return userRepository.save(user);
     }
+
 
     public void removeFavorite(Integer userId, Integer recipeId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));

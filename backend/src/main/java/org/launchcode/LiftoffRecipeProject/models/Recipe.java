@@ -1,6 +1,9 @@
 package org.launchcode.LiftoffRecipeProject.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -10,6 +13,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "recipes")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Recipe extends AbstractEntity {
 
     private String name;
@@ -19,9 +25,6 @@ public class Recipe extends AbstractEntity {
     inverseJoinColumns =@JoinColumn(name="ingredient_id"))
     private List<Ingredient> ingredients;
 
-//    @ElementCollection
-//    private List<String>ingredients;
-
     @Column(name="directions", columnDefinition="MEDIUMTEXT")
     private String directions;
 
@@ -30,10 +33,6 @@ public class Recipe extends AbstractEntity {
 
     @Column(nullable = true)
     private Boolean favorite;
-
-    @ManyToMany(mappedBy = "favoriteRecipes")
-    @JsonIgnore
-    private List<User> favoritedByUsers = new ArrayList<>();
 
     @Column(columnDefinition="MEDIUMTEXT")
     private String description;
@@ -73,15 +72,6 @@ public class Recipe extends AbstractEntity {
     }
 
     // Getters and setters
-
-
-    public Boolean getFavorite() {
-        return favorite;
-    }
-
-    public List<User> getFavoritedByUsers() {
-        return favoritedByUsers;
-    }
 
     public String getName() {
         return name;
