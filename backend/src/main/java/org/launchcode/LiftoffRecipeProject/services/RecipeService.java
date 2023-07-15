@@ -82,12 +82,10 @@ public class RecipeService {
 //                        .collect(Collectors.toList())
 //        );
 
-        recipeDTO.setIngredients(
-                recipe.getIngredients().stream()
-                        .map(ingredient -> ingredient.getName())
-//                        .map(ingredient -> ingredient.getQuantity()+ ": " + ingredient.getName())
-                        .collect(Collectors.toList())
-        );
+        List <IngredientDTO> ingredientDTOS = recipe.getIngredients().stream()
+                .map(this::mapToIngredientDTO)
+                .collect(Collectors.toList());
+        recipeDTO.setIngredients(ingredientDTOS);
 
         return recipeDTO;
     }
@@ -97,7 +95,6 @@ public class RecipeService {
         recipe.setName(recipeDTO.getName());
         recipe.setDescription(recipeDTO.getDescription());
         recipe.setCategory(recipeDTO.getCategory());
-//        recipe.setIngredients(recipeDTO.getIngredients());
         recipe.setDirections(recipeDTO.getDirections());
         recipe.setTime(recipeDTO.getTime());
         recipe.setFavorite(recipeDTO.isFavorite());
@@ -105,33 +102,26 @@ public class RecipeService {
         recipe.setAllergens(recipeDTO.getAllergens());
         recipe.setRating(recipeDTO.getRating());
 
-//        List<Ingredient> ingredients = ingredientService.saveAll(
-//                recipeDTO.getIngredients().stream().map(name -> {
-//                    Ingredient ingredient = new Ingredient();
-//                    ingredient.setName(name);
-//                    return ingredient;
-//                }).collect(Collectors.toList())
-//        );
 
-        List<IngredientDTO> ingredientDTOs = recipeDTO.getIngredients().stream().map(name -> {
-            IngredientDTO ingredientDTO = new IngredientDTO();
-            ingredientDTO.setName(name);
-            return ingredientDTO;
+        List<IngredientDTO> ingredientDTOs = recipeDTO.getIngredients().stream().map(ingredientDto -> {
+            IngredientDTO newIngredientDTO = new IngredientDTO();
+            newIngredientDTO.setName(ingredientDto.getName());
+            return newIngredientDTO;
         }).collect(Collectors.toList());
 
-        List<Ingredient> ingredients = ingredientService.saveAll(ingredientDTOs);
-
-
-//        recipe.setIngredients(
-//                recipeDTO.getIngredients().stream()
-//                        .map(this::mapDTOToIngredient)
-//                        .collect(Collectors.toList())
-//        );
-        recipe.setIngredients(recipeDTO.getIngredients().stream()
+        List<Ingredient> ingredients = recipeDTO.getIngredients().stream()
                 .map(this::mapDTOToIngredient)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
+        recipe.setIngredients(ingredients);
+
 
         return recipe;
+    }
+
+    public Ingredient mapNameToIngredient(String ingredientName) {
+        Ingredient ingredient = new Ingredient();
+        ingredient.setName(ingredientName);
+        return ingredient;
     }
 
     public IngredientDTO mapToIngredientDTO(Ingredient ingredient) {
@@ -141,9 +131,10 @@ public class RecipeService {
         return ingredientDTO;
     }
 
-    private Ingredient mapDTOToIngredient(String ingredientName) {
+    private Ingredient mapDTOToIngredient(IngredientDTO ingredientDTO) {
         Ingredient ingredient = new Ingredient();
-        ingredient.setName(ingredientName);
+        ingredient.setName(ingredientDTO.getName());
+        ingredient.setQuantity(ingredientDTO.getQuantity());
         return ingredient;
 //
 //        return ingredientRepository.findByName(ingredientName)
@@ -166,15 +157,11 @@ public class RecipeService {
 //            savedIngredients.add(ingredientRepository.save(ingredient));
 //        }
         List<Ingredient> savedIngredients = new ArrayList<>();
-        for (String ingredientName : recipeDTO.getIngredients()) {
-            Ingredient ingredient = ingredientRepository.findByName(ingredientName)
-                    .orElseGet(() -> {
-                        Ingredient newIngredient = new Ingredient();
-                        newIngredient.setName(ingredientName);
-                        return ingredientRepository.save(newIngredient);
-                    });
-            savedIngredients.add(ingredient);
+        for (IngredientDTO ingredientDto : recipeDTO.getIngredients()) {
+            Ingredient ingredient = mapDTOToIngredient(ingredientDto);
+            savedIngredients.add(ingredientRepository.save(ingredient));
         }
+        recipe.setIngredients(savedIngredients);
 
 
         recipe.setUser(user);
@@ -213,7 +200,8 @@ public class RecipeService {
         recipe.setCategory(updatedRecipe.getCategory());
 
         List<Ingredient> updatedIngredients = new ArrayList<>();
-        for (String ingredientName : recipeDTO.getIngredients()) {
+        for (IngredientDTO ingredientDto : recipeDTO.getIngredients()) {
+            String ingredientName = ingredientDto.getName();
             Ingredient ingredient = ingredientRepository.findByName(ingredientName)
                     .orElseGet(() -> {
                         Ingredient newIngredient = new Ingredient();

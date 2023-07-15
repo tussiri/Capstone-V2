@@ -2,19 +2,24 @@ package org.launchcode.LiftoffRecipeProject.controllers;
 
 
 import jakarta.validation.Valid;
-import org.launchcode.LiftoffRecipeProject.DTO.ResponseWrapper;
-import org.launchcode.LiftoffRecipeProject.DTO.UpdateUserDTO;
-import org.launchcode.LiftoffRecipeProject.DTO.UserDTO;
-import org.launchcode.LiftoffRecipeProject.DTO.UserWithRecipesDTO;
+import org.launchcode.LiftoffRecipeProject.DTO.*;
+import org.launchcode.LiftoffRecipeProject.data.RecipeRepository;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
+import org.launchcode.LiftoffRecipeProject.exception.ResourceNotFoundException;
+import org.launchcode.LiftoffRecipeProject.models.Recipe;
+import org.launchcode.LiftoffRecipeProject.models.User;
 import org.launchcode.LiftoffRecipeProject.services.UserService;
 import org.launchcode.LiftoffRecipeProject.util.ResponseUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -24,7 +29,12 @@ public class UserController {
     private UserRepository userRepository;
 
     @Autowired
+    private RecipeRepository recipeRepository;
+
+    @Autowired
     private UserService userService;
+
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
 
     @GetMapping
@@ -71,15 +81,28 @@ public class UserController {
         return ResponseUtil.wrapResponse(updateUserDTO, HttpStatus.OK, "Account information updated successfully");
     }
 
-    @PostMapping("/users/{userId}/favorites/{recipeId}")
-    public ResponseEntity<Void> addFavorite(@PathVariable Integer userId, @PathVariable Integer recipeId) {
+    @PostMapping("/{userId}/favorites/{recipeId}")
+    public ResponseEntity<ResponseWrapper<UserFavoriteRecipeDTO>>addFavorite(@PathVariable Integer userId, @PathVariable Integer recipeId){
+        System.out.println("Favorite Recipe Request Received");
         userService.addFavorite(userId, recipeId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        UserFavoriteRecipeDTO userFavoriteRecipeDTO = userService.getFavoriteRecipes(userId);
+        return ResponseUtil.wrapResponse(userFavoriteRecipeDTO, HttpStatus.OK, "Favorited recipe successfully");
     }
 
-    @DeleteMapping("/users/{userId}/favorites/{recipeId}")
-    public ResponseEntity<Void> removeFavorite(@PathVariable Integer userId, @PathVariable Integer recipeId) {
+    @DeleteMapping("/{userId}/favorites/{recipeId}")
+    public ResponseEntity<ResponseWrapper<UserFavoriteRecipeDTO>> removeFavorite(@PathVariable Integer userId, @PathVariable Integer recipeId) {
+        System.out.println("Unfavorite Recipe Request Received");
         userService.removeFavorite(userId, recipeId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        UserFavoriteRecipeDTO userFavoriteRecipeDTO = userService.getFavoriteRecipes(userId);
+        return ResponseUtil.wrapResponse(userFavoriteRecipeDTO, HttpStatus.OK, "Removed favorite recipe correctly");
     }
+
+    @GetMapping("/{userId}/favorites")
+    public ResponseEntity<ResponseWrapper<List<Recipe>>> getFavorites(@PathVariable Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return ResponseUtil.wrapResponse(user.getFavoriteRecipes(), HttpStatus.OK, "Favorite Recipes retrieved successfully.");
+    }
+
+
 }

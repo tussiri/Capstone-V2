@@ -11,11 +11,13 @@ import IconButton from '@mui/material/IconButton';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import {useParams} from "react-router-dom";
 import authAxios from "../utility/authAxios";
+import {ThumbDown, ThumbUp} from "@mui/icons-material";
 
-function FoodCard({recipe, onClick, user, }) {
+function FoodCard({recipe, onClick, user, token}) {
+    console.log('FoodCard render');
     const [isClicked, setIsClicked] = useState(false);
     const [isFavorite, setIsFavorite] = useState(false);
-    const recipeDetails = recipe.recipe ? recipe.recipe : recipe;
+    const recipeDetails = recipe ? recipe : recipe;
     const userId = localStorage.getItem("userId")
     const {recipeId} = useParams();
     // const userId = localStorage.getItem("userId")
@@ -27,22 +29,50 @@ function FoodCard({recipe, onClick, user, }) {
         onClick();
     }
 
-    const fetchFavoriteStatus = async (recipeId) => {
+    const onFavorite = async (event) => {
+        event.stopPropagation();
         try {
-            const response = await authAxios.post(
-                "/favorites",
-                { recipeId },
-                {
-                    headers: {
-                        userId: userId,
-                    },
-                }
-            );
-            console.log(response.data);
+            console.log("Before favorite API request");
+            const response = await authAxios.post(`http://localhost:8080/users/${userId}/favorites/${recipeDetails.id}`);
+            console.log("Heart clicked: ", response.data.data);
+            setIsFavorite(true);
+
         } catch (error) {
             console.error(error);
         }
     };
+
+    const onUnfavorite = async (event) => {
+        event.stopPropagation();
+        try {
+            console.log("Before unfavorite API request");
+            const response = await authAxios.delete(`http://localhost:8080/users/${userId}/favorites/${recipeDetails.id}`);
+            console.log(response.data.data);
+            setIsFavorite(false);
+            console.log('After unlike:', isFavorite);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    useEffect(() => {
+        console.log('isFavorite changed:', isFavorite);
+    }, [isFavorite]);
+
+    useEffect(() => {
+        const checkIfFavorited = async () => {
+            try {
+                const response = await authAxios.get(`http://localhost:8080/users/${userId}/favorites`);
+                const favoritedRecipes = response.data.data;
+                const isFavorited = favoritedRecipes.some(favoritedRecipe => favoritedRecipe.id === recipeDetails.id);
+                setIsFavorite(isFavorited);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        checkIfFavorited();
+    }, [userId, recipeDetails.id]);
+
 
 
     return (
@@ -68,9 +98,12 @@ function FoodCard({recipe, onClick, user, }) {
                     <Typography variant="body2" color="text.secondary">
                         Preparation Time: {recipe.time} minutes
                     </Typography>
-                    {/*<IconButton aria-label="add to favorites" onClick={handleFavoriteClick}>*/}
-                    {/*    <FavoriteIcon color={isFavorite ? "primary" : "action"} />*/}
-                    {/*</IconButton>*/}
+                    <IconButton aria-label="add to favorites" onClick={onFavorite}>
+                        <ThumbUp color={isFavorite ? "primary" : "action"} />
+                    </IconButton>
+                    <IconButton aria-label="remove from favorites" onClick={onUnfavorite}>
+                        <ThumbDown color={isFavorite ? "primary":"action"}/>
+                    </IconButton>
                 </CardContent>
             </CardActionArea>
         </Card>

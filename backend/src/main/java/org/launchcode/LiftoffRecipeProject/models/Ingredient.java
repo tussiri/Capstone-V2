@@ -1,5 +1,6 @@
 package org.launchcode.LiftoffRecipeProject.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class Ingredient extends AbstractEntity{
 
     private String quantity;
 
+    @JsonBackReference
     @ManyToMany(mappedBy="ingredients")
     private List<Recipe> recipes;
 
