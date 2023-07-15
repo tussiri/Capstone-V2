@@ -54,8 +54,10 @@ public class SecurityConfig {
                         new AntPathRequestMatcher("/recipes/random", "GET"),
                         new AntPathRequestMatcher("/review", "GET"),
                         new AntPathRequestMatcher("/review/recipe/{recipeId}", "GET"),
-//                        new AntPathRequestMatcher("/recipes/{recipeId}", "PUT"),
-                        new AntPathRequestMatcher("/review/{id}", "GET"))
+                        new AntPathRequestMatcher("/review/{id}", "GET"),
+                        new AntPathRequestMatcher("/users/{userId}/favorites", "GET"),
+                        new AntPathRequestMatcher("/users/{userId}/favorites/{recipeId}", "POST"),
+                        new AntPathRequestMatcher("/users/{userId}/favorites/{recipeId}", "DELETE"))
                 .permitAll()
                 .anyRequest().authenticated()
                 .and()

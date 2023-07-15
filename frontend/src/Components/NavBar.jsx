@@ -27,8 +27,8 @@ const pages = ['Home', 'All Recipes', 'Random Recipe'];
 const settings = ['Account', 'My Recipes', 'Logout'];
 
 function NavBar() {
-    const [anchorElNav, setAnchorElNav] = React.useState(null);
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const [anchorElNav, setAnchorElNav] = useState(null);
+    const [anchorElUser, setAnchorElUser] = useState(null);
     const [isSearching, setIsSearching] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
     const [searchQuery, setSearchQuery] = useState('')
@@ -46,7 +46,8 @@ function NavBar() {
     const handleLogout = () => {
         logout();
         localStorage.removeItem("token");
-        navigate("/")
+        handleCloseUserMenu();
+        navigate("/allrecipes")
     }
 
     const handleOpenNavMenu = (event) => {
@@ -58,13 +59,20 @@ function NavBar() {
 
     const handleCloseNavMenu = () => {
         setAnchorElNav(null);
+        setAnchorElUser(null);
         navigate('/dashboard')
     };
 
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
+        setAnchorElNav(null)
     };
 
+    useEffect(()=>{
+        setAnchorElNav(null);
+        setAnchorElUser(null);
+    },[user])
+;
     const handlePageClick = (page) => {
         switch (page) {
             case 'Home':
@@ -77,6 +85,7 @@ function NavBar() {
                 navigate('/recipes/random');
                 break;
         }
+        handleCloseNavMenu();
     };
 
     const handleSettingClick = (setting) => {

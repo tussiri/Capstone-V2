@@ -1,9 +1,6 @@
 package org.launchcode.LiftoffRecipeProject.services;
 
-import org.launchcode.LiftoffRecipeProject.DTO.LoginDTO;
-import org.launchcode.LiftoffRecipeProject.DTO.UpdateUserDTO;
-import org.launchcode.LiftoffRecipeProject.DTO.UserDTO;
-import org.launchcode.LiftoffRecipeProject.DTO.UserWithRecipesDTO;
+import org.launchcode.LiftoffRecipeProject.DTO.*;
 import org.launchcode.LiftoffRecipeProject.data.RecipeRepository;
 import org.launchcode.LiftoffRecipeProject.data.ReviewRepository;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
@@ -187,7 +184,22 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
 
         user.getFavoriteRecipes().add(recipe);
+        userRepository.save(user);
+
+        UserFavoriteRecipeDTO userFavoriteRecipeDTO = new UserFavoriteRecipeDTO();
+        userFavoriteRecipeDTO.setUser(user);
+        userFavoriteRecipeDTO.setFavoriteRecipes(user.getFavoriteRecipes());
+
         return userRepository.save(user);
+    }
+
+    public UserFavoriteRecipeDTO getFavoriteRecipes(Integer userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new ResourceNotFoundException("User not found"));
+        UserFavoriteRecipeDTO userFavoriteRecipeDTO = new UserFavoriteRecipeDTO();
+        userFavoriteRecipeDTO.setUser(user);
+        userFavoriteRecipeDTO.setFavoriteRecipes(user.getFavoriteRecipes());
+        return userFavoriteRecipeDTO;
     }
 
 

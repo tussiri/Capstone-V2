@@ -1,9 +1,6 @@
 package org.launchcode.LiftoffRecipeProject.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -20,9 +17,10 @@ public class Recipe extends AbstractEntity {
 
     private String name;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch=FetchType.EAGER)
     @JoinTable(name="recipe_ingredients", joinColumns =@JoinColumn(name="recipe_id"),
     inverseJoinColumns =@JoinColumn(name="ingredient_id"))
+    @JsonManagedReference
     private List<Ingredient> ingredients;
 
     @Column(name="directions", columnDefinition="MEDIUMTEXT")
@@ -55,6 +53,10 @@ public class Recipe extends AbstractEntity {
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
+
+    @ManyToMany(mappedBy = "favoriteRecipes")
+    @JsonIgnoreProperties("favoriteRecipes")
+    private List<User> favoritedByUser = new ArrayList<>();
 
     public Recipe() {
     }
@@ -167,5 +169,13 @@ public class Recipe extends AbstractEntity {
 
     public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
+    }
+
+    public List<User> getFavoritedByUser() {
+        return favoritedByUser;
+    }
+
+    public void setFavoritedByUser(List<User> favoritedByUser) {
+        this.favoritedByUser = favoritedByUser;
     }
 }

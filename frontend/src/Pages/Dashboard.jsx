@@ -23,7 +23,7 @@ function Dashboard() {
     const {user, logout, login} = useContext(UserContext);
     const [likedRecipes, setLikedRecipes] = useState([]);
     const {recipeId} = useParams();
-
+    const [isFavorite, setIsFavorite] = useState();
 
 
     const handleSearch = (query) => {
@@ -55,74 +55,98 @@ function Dashboard() {
         fetchRecipes();
     }, [userId]);
 
-    const handleCardClick = (recipeId) => {
-        navigate(`/recipes/${recipeId}`);
+    const onFavorite = async (recipeId) => {
+        const userId = localStorage.getItem('userId');
+        try {
+            console.log("Before favorite API request");
+            const response = await authAxios.post(`http://localhost:8080/users/${userId}/favorites/${recipeId}`);
+            console.log("Heart clicked: ", response.data.data);
+            setIsFavorite(true);
+        } catch (error) {
+            console.error(error);
+        }
     };
+
+    const onUnfavorite = async (recipeId) => {
+        try {
+            console.log("Before unfavorite API request");
+            const response = await authAxios.delete(`http://localhost:8080/users/${userId}/favorites/${recipeId}`);
+            console.log(response.data.data);
+            setIsFavorite(false);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    useEffect(() => {
+        const fetchLikedRecipes = async () => {
+            if (userId) {
+                const response = await authAxios.get(`http://localhost:8080/users/${userId}/favorites`);
+                console.log("Fetched liked recipes: ", response.data.data);
+                setLikedRecipes(response.data.data);
+            } else {
+                console.log("User ID not found. Skipping liked Recipes fetching.");
+            }
+        };
+        fetchLikedRecipes();
+        console.log('useEffect run');
+    }, [userId, isFavorite]);
+
+    useEffect(() => {
+        console.log("Updated liked recipes:", likedRecipes);
+    }, [likedRecipes]);
+
+    const handleCardClick = (recipe) => {
+        navigate(`/recipes/${recipe.id}`);
+    };
+
     return (
         <>
-            <div>
-
-                <div>
-                    {user ? (
-                          <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column'}} justifyContent='center' alignItems="center">
-                            <h2>Your Recipes</h2>
-                            <Box sx={{
-                                maxWidth:'100%',
-                                display: 'flex',
-                                flexDirection: 'row',
-                                flexWrap: 'wrap',
-                                alignContent: 'start'
-                                }}
-                                justifyContent='center'
-                                alignItems="center">
-                            {recipes && recipes.length > 0 && recipes.map((recipe) => (
-                                <Box sx={{ maxWidth:'23%' }}>
+            <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                {user ? (
+                    <>
+                        <h2>Your Recipes</h2>
+                        <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
+                            {recipes && recipes.length > 0 && recipes.map((recipeId) => (
+                                <Box sx={{ maxWidth: '23%', margin: '1%' }}>
                                     <FoodCard
-                                        key={recipe.id}
-                                        recipe={recipe}
-                                        onClick={() => handleCardClick(recipe.id)}
-                                        // onFavorite={() => handleFavorite(recipe.id)}
+                                        key={recipeId}
+                                        recipe={recipeId}
+                                        onClick={() => handleCardClick(recipeId)}
                                     />
                                 </Box>
                             ))}
-                            </Box>
-                            <Box sx={{
-                                maxWidth:'100%',
-                                display: 'flex',
-                                flexDirection: 'row',
-                                flexWrap: 'wrap',
-                                }}
-                                justifyContent='center'
-                                alignItems="center">
-                            <h2>Liked Recipes</h2>
-                                {likedRecipes && likedRecipes.length > 0 && likedRecipes.map((favorite) => (
-                                    <Box sx={{ maxWidth:'23%' }}>
-                                        <FoodCard
-                                            key={favorite.recipe.id}
-                                            recipe={favorite.recipe}
-                                            onClick={() => handleCardClick(favorite.recipe.id)}
-                                        />
-                                    </Box>
-                                ))}
-                            </Box>
                         </Box>
-                    ) : (
-                        <>
-                            {
-                                isSearching && hasSearched ? (
-                                    <LoadingScreen/>
-                                ) : (
-                                    <SearchResults query={searchQuery} onSearchComplete={handleSearchComplete}/>
-                                )
-                            }
-                        </>
-                    )
-                    }
-                </div>
-            </div>
+                        <h2>Liked Recipes</h2>
+                        <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            {likedRecipes && likedRecipes.length > 0 && likedRecipes.map((recipeId) => (
+                                <Box sx={{ maxWidth: '100%', margin: '1%' }}>
+                                    <FoodCard
+                                        key={recipeId}
+                                        recipe={recipeId}
+                                        onClick={() => handleCardClick(recipeId)}
+                                        onFavorite={() => onFavorite(recipeId)}
+                                        onUnfavorite={() => onUnfavorite(recipeId)}
+                                    />
+                                </Box>
+                            ))}
+                        </Box>
+                    </>
+                ) : (
+                    <>
+                        {
+                            isSearching && hasSearched ? (
+                                <LoadingScreen/>
+                            ) : (
+                                <SearchResults query={searchQuery} onSearchComplete={handleSearchComplete}/>
+                            )
+                        }
+                    </>
+                )}
+            </Box>
         </>
-    )
-        ;
+    );
+
 }
 
 export default Dashboard;

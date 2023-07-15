@@ -116,7 +116,12 @@ function RecipePage({match}) {
                 <p>{recipe.description}</p>
                 <p>Category: {recipe.category}</p>
                 <p>Preparation time: {recipe.time} minutes</p>
-                <p>Ingredients: {recipe.ingredients.join(", ")}</p>
+                <p>Ingredients:</p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    {recipe.ingredients.map((ingredient, index) => (
+                        <span key={index}>{ingredient.name}</span>
+                    ))}
+                </div>
                 <p>Directions: {recipe.directions}</p>
                 <p>Allergens: {recipe.allergens.join(", ")}</p>
             </Box>

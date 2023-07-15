@@ -24,7 +24,7 @@ public class RecipeDTO {
 
     @NotEmpty(message = "Ingredients required")
     @Size(min=1, message = "Ingredients must have at least 1 item")
-    private List<String> ingredients;
+    private List<IngredientDTO> ingredients;
 
     @NotBlank(message = "Directions required")
     @Size(min=1, message = "Directions must have at least 1 step")
@@ -73,11 +73,11 @@ public class RecipeDTO {
         this.category = category;
     }
 
-    public List<String> getIngredients() {
+    public List<IngredientDTO> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(List<String> ingredients) {
+    public void setIngredients(List<IngredientDTO> ingredients) {
         this.ingredients = ingredients;
     }
 
