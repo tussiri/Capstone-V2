@@ -55,7 +55,8 @@ public class Recipe extends AbstractEntity {
     private User user;
 
     @ManyToMany(mappedBy = "favoriteRecipes")
-    @JsonIgnoreProperties("favoriteRecipes")
+//    @JsonIgnoreProperties("favoriteRecipes")
+    @JsonIdentityReference(alwaysAsId=true)
     private List<User> favoritedByUser = new ArrayList<>();
 
     public Recipe() {
@@ -177,5 +178,15 @@ public class Recipe extends AbstractEntity {
 
     public void setFavoritedByUser(List<User> favoritedByUser) {
         this.favoritedByUser = favoritedByUser;
+    }
+
+    public void addFavoritedByUser(User user) {
+        this.favoritedByUser.add(user);
+        user.getFavoriteRecipes().add(this);
+    }
+
+    public void removeFavoritedByUser(User user) {
+        this.favoritedByUser.remove(user);
+        user.getFavoriteRecipes().remove(this);
     }
 }

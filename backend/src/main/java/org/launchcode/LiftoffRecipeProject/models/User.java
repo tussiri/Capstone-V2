@@ -1,6 +1,7 @@
 package org.launchcode.LiftoffRecipeProject.models;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
@@ -33,7 +34,10 @@ public class User extends AbstractEntity implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "recipe_id")
     )
-    private List<Recipe> favoriteRecipes;
+    private List<Recipe> favoriteRecipes= new ArrayList<>();
+
+    @JsonIdentityReference(alwaysAsId = true)
+    private List<User> favoritedByUser = new ArrayList<>();
 
 
     @PreRemove
@@ -159,4 +163,16 @@ public class User extends AbstractEntity implements UserDetails {
     public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
     }
+
+    public void addFavoriteRecipe(Recipe recipe) {
+        this.favoriteRecipes.add(recipe);
+        recipe.getFavoritedByUser().add(this);
+    }
+
+    public void removeFavoriteRecipe(Recipe recipe) {
+        this.favoriteRecipes.remove(recipe);
+        recipe.getFavoritedByUser().remove(this);
+    }
+
+
 }
