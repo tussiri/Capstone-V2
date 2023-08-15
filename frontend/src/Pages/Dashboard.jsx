@@ -24,6 +24,7 @@ function Dashboard() {
     const [likedRecipes, setLikedRecipes] = useState([]);
     const {recipeId} = useParams();
     const [isFavorite, setIsFavorite] = useState();
+    const [forceUpdate, setForceUpdate] = useState(0);
 
 
     const handleSearch = (query) => {
@@ -70,13 +71,19 @@ function Dashboard() {
     const onUnfavorite = async (recipeId) => {
         try {
             console.log("Before unfavorite API request");
-            const response = await authAxios.delete(`http://localhost:8080/users/${userId}/favorites/${recipeId}`);
-            console.log(response.data.data);
+            await authAxios.delete(`http://localhost:8080/users/${userId}/favorites/${recipeId}`);
+            console.log("Unfavorited recipe with ID:", recipeId);
+
+            const response = await authAxios.get(`http://localhost:8080/users/${userId}/favorites`);
+            console.log("Fetched liked recipes after unfavoriting: ", response.data.data);
+            setLikedRecipes(response.data.data);
+
             setIsFavorite(false);
         } catch (error) {
-            console.error(error);
+            console.error("Error unfavoriting recipe:", error);
         }
     };
+
 
     useEffect(() => {
         const fetchLikedRecipes = async () => {
@@ -118,7 +125,7 @@ function Dashboard() {
                             ))}
                         </Box>
                         <h2>Liked Recipes</h2>
-                        <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                             {likedRecipes && likedRecipes.length > 0 && likedRecipes.map((recipeId) => (
                                 <Box sx={{ maxWidth: '100%', margin: '1%' }}>
                                     <FoodCard

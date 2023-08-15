@@ -1,15 +1,21 @@
 package org.launchcode.LiftoffRecipeProject.DTO;
 
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.launchcode.LiftoffRecipeProject.models.Recipe;
 import org.launchcode.LiftoffRecipeProject.models.User;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.List;
 
-public class UserDTO extends User {
+public class UserDTO {
 
     private Integer id;
 
@@ -32,6 +38,11 @@ public class UserDTO extends User {
     @NotNull(message="Birthdate is required")
     @DateTimeFormat(pattern="MM/dd/yyyy")
     private LocalDate dateOfBirth;
+
+//    private List<Recipe> favoriteRecipes;
+    @JsonIdentityReference(alwaysAsId = true) // instead of the entire object, just output the ID
+    private List<Recipe> favoriteRecipes;
+
 
     private String token;
 //    private String sessionToken;
@@ -92,7 +103,15 @@ public class UserDTO extends User {
         this.token = token;
     }
 
-//    public String getSessionToken() {
+    public List<Recipe> getFavoriteRecipes() {
+        return favoriteRecipes;
+    }
+
+    public void setFavoriteRecipes(List<Recipe> favoriteRecipes) {
+        this.favoriteRecipes = favoriteRecipes;
+    }
+
+    //    public String getSessionToken() {
 //        return sessionToken;
 //    }
 //
