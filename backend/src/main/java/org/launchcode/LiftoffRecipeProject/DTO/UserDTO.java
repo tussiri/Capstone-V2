@@ -102,13 +102,9 @@ public class UserDTO {
         this.token = token;
     }
 
-    public List<RecipeDTO> getFavoriteRecipes() {
-        return favoriteRecipes;
-    }
 
-    public void setFavoriteRecipes(List<RecipeDTO> favoriteRecipes) {
-        this.favoriteRecipes = favoriteRecipes;
-    }
+
+
 
     //    public String getSessionToken() {
 //        return sessionToken;

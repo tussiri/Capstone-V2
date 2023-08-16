@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import {Link, useNavigate, useParams} from "react-router-dom";
-import RandomRecipes from './RandomRecipes'
 import FoodCard from "../Components/FoodCard";
 import "../Styles/Dashboard.css";
 import authAxios from "../utility/authAxios";
@@ -13,6 +12,7 @@ import LoadingScreen from "./LoadingPage";
 import SearchResults from "./SearchResults";
 import {UserContext} from "../stores/UserStore";
 import Box from '@mui/material/Box';
+import {Button} from "@mui/material";
 
 function Dashboard() {
     const [recipes, setRecipes] = useState([]);
@@ -25,7 +25,7 @@ function Dashboard() {
     const [likedRecipes, setLikedRecipes] = useState([]);
     const {recipeId} = useParams();
     const [isFavorite, setIsFavorite] = useState();
-    const [forceUpdate, setForceUpdate] = useState(0);
+    const [isLoading, setIsLoading] = useState(true);
 
 
     const handleSearch = (query) => {
@@ -72,29 +72,24 @@ function Dashboard() {
     const onUnfavorite = async (recipeId) => {
         try {
             console.log("Before unfavorite API request");
-            await authAxios.delete(`http://localhost:8080/users/${userId}/favorites/${recipeId}`);
-            console.log("Unfavorited recipe with ID:", recipeId);
-
-            const response = await authAxios.get(`http://localhost:8080/users/${userId}/favorites`);
-            console.log("Fetched liked recipes after unfavoriting: ", response.data.data);
-            setLikedRecipes(response.data.data);
-
+            const response = await authAxios.delete(`http://localhost:8080/users/${userId}/favorites/${recipeId}`);
+            console.log(response.data.data);
             setIsFavorite(false);
         } catch (error) {
-            console.error("Error unfavoriting recipe:", error);
+            console.error(error);
         }
     };
 
-
     useEffect(() => {
         const fetchLikedRecipes = async () => {
-            const userId = localStorage.getItem('userId');
-            if (userId && recipes.length > 0) {
+            if (userId) {
                 const response = await authAxios.get(`http://localhost:8080/users/${userId}/favorites`);
                 console.log("Fetched liked recipes: ", response.data.data);
                 setLikedRecipes(response.data.data);
+                setIsLoading(false);
             } else {
                 console.log("User ID not found. Skipping liked Recipes fetching.");
+                setIsLoading(false);
             }
         };
         fetchLikedRecipes();
@@ -109,21 +104,28 @@ function Dashboard() {
         navigate(`/recipes/${recipe.id}`);
     };
 
+    const handleRandomRecipe = () => {
+        // Logic to navigate to the random recipe component
+        navigate('/randomrecipe');  // Assuming the route for random recipes is '/random-recipe'
+    };
+
     return (
         <>
             <Box sx={{maxWidth: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                {user ? (
-                    <>
-                        {recipes && recipes.length > 0 ? (
-                            <>
-                                <h2>Your Recipes</h2>
+                {isLoading ? (
+                    <LoadingScreen />
+                ) : (
+                    user ? (
+                        <>
+                            <h2>Your Recipes</h2>
+                            {recipes && recipes.length > 0 ? (
                                 <Box sx={{
                                     display: 'flex',
                                     flexDirection: 'row',
                                     flexWrap: 'wrap',
                                     justifyContent: 'center'
                                 }}>
-                                    {recipes && recipes.length > 0 && recipes.map((recipeId) => (
+                                    {recipes.map((recipeId) => (
                                         <Box sx={{maxWidth: '23%', margin: '1%'}}>
                                             <FoodCard
                                                 key={recipeId}
@@ -133,28 +135,23 @@ function Dashboard() {
                                         </Box>
                                     ))}
                                 </Box>
-                            </>
-                        ) : (
-                            <>
-                                <h2>Welcome to the Dashboard!</h2>
-                                <p>Looks like you haven't added any recipes yet. <Link to="/add-recipe">Add your first
-                                    recipe now!</Link></p>
-                                <p>Or try making one of the random recipes below:</p>
-                                <RandomRecipes/>
+                            ) : (
+                                <>
+                                    <h2>Welcome to Mealify!</h2>
+                                    <p>Looks like you haven't added any recipes yet.</p>
+                                    <Link to="/add-recipe">Add your first recipe now!</Link>
+                                </>
+                            )}
 
-                            </>
-                        )}
-
-                        {likedRecipes && likedRecipes.length > 0 && (
-                            <>
-                                <h2>Liked Recipes</h2>
+                            <h2>Liked Recipes</h2>
+                            {likedRecipes && likedRecipes.length > 0 ? (
                                 <Box sx={{
                                     maxWidth: '100%',
                                     display: 'flex',
                                     flexDirection: 'row',
                                     alignItems: 'center'
                                 }}>
-                                    {likedRecipes && likedRecipes.length > 0 && likedRecipes.map((recipeId) => (
+                                    {likedRecipes.map((recipeId) => (
                                         <Box sx={{maxWidth: '100%', margin: '1%'}}>
                                             <FoodCard
                                                 key={recipeId}
@@ -166,24 +163,79 @@ function Dashboard() {
                                         </Box>
                                     ))}
                                 </Box>
-                            </>
-                        )}
-                    </>
-                ) : (
-                    <>
-                        {
-                            isSearching && hasSearched ? (
-                                <LoadingScreen/>
                             ) : (
-                                <SearchResults query={searchQuery} onSearchComplete={handleSearchComplete}/>
-                            )
-                        }
-                    </>
+                                <>
+                                    <p>Or...</p>
+                                    <Button variant="contained" color="primary" onClick={handleRandomRecipe}>
+                                        I'm feeling lucky
+                                    </Button>
+                                </>
+                            )}
+                        </>
+                    ) : (
+                        <>
+                            {
+                                isSearching && hasSearched ? (
+                                    <LoadingScreen/>
+                                ) : (
+                                    <SearchResults query={searchQuery} onSearchComplete={handleSearchComplete}/>
+                                )
+                            }
+                        </>
+                    )
                 )}
             </Box>
         </>
     );
-
 }
+
+//     return (
+//         <>
+//             <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+//                 {user ? (
+//                     <>
+//                         <h2>Your Recipes</h2>
+//                         <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
+//                             {recipes && recipes.length > 0 && recipes.map((recipeId) => (
+//                                 <Box sx={{ maxWidth: '23%', margin: '1%' }}>
+//                                     <FoodCard
+//                                         key={recipeId}
+//                                         recipe={recipeId}
+//                                         onClick={() => handleCardClick(recipeId)}
+//                                     />
+//                                 </Box>
+//                             ))}
+//                         </Box>
+//                         <h2>Liked Recipes</h2>
+//                         <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+//                             {likedRecipes && likedRecipes.length > 0 && likedRecipes.map((recipeId) => (
+//                                 <Box sx={{ maxWidth: '100%', margin: '1%' }}>
+//                                     <FoodCard
+//                                         key={recipeId}
+//                                         recipe={recipeId}
+//                                         onClick={() => handleCardClick(recipeId)}
+//                                         onFavorite={() => onFavorite(recipeId)}
+//                                         onUnfavorite={() => onUnfavorite(recipeId)}
+//                                     />
+//                                 </Box>
+//                             ))}
+//                         </Box>
+//                     </>
+//                 ) : (
+//                     <>
+//                         {
+//                             isSearching && hasSearched ? (
+//                                 <LoadingScreen/>
+//                             ) : (
+//                                 <SearchResults query={searchQuery} onSearchComplete={handleSearchComplete}/>
+//                             )
+//                         }
+//                     </>
+//                 )}
+//             </Box>
+//         </>
+//     );
+//
+// }
 
 export default Dashboard;

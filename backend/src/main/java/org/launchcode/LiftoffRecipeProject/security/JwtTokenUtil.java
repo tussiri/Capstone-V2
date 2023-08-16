@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * JwtUtil
@@ -21,6 +22,7 @@ public class JwtTokenUtil {
 
     @Value("${app.jwtExpirationInMs}")
     private Long jwtExpirationInMs;
+
 
     public String generateToken(UserDetails userDetails, Integer userId) {
         // Get the current date and calculate the expiration date
@@ -82,5 +84,41 @@ public class JwtTokenUtil {
         }
         return claims;
     }
+
+    public boolean canRefreshToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            return true;
+        } catch (ExpiredJwtException e) {
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public String generateTokenFromExpiredToken(String expiredToken) {
+        Claims claims = getClaimsFromExpiredToken(expiredToken);
+        return generateTokenFromClaims(claims);
+    }
+
+    private Claims getClaimsFromExpiredToken(String token) {
+        try {
+            return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
+    }
+
+    private String generateTokenFromClaims(Claims claims) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(SignatureAlgorithm.HS256, jwtSecret)
+                .compact();
+    }
+
 
 }

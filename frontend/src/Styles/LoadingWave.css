@@ -1,0 +1,62 @@
+/* LoadingWave.css */
+body {
+    background: rgb(237,201,81);
+}
+
+.loading-wave-container {
+    position: absolute;
+    width: 400px;
+    height: 300px;
+    top: 50%;
+    left: 50%;
+    margin: -150px 0 0 -200px;
+    text-align: center;
+}
+
+.loading-wave-container span {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin: 145px 3px 0;
+    background: red;
+    border-radius: 50%;
+    transform: translateY(0);
+    animation: wave 2s infinite ease-in-out;
+}
+
+@keyframes wave {
+    0%, 60%, 100% {
+        background: #CC333F;
+        transform: translateY(0);
+    }
+
+    20% {
+        background: #EB6841;
+        transform: translateY(33px);
+    }
+
+    40% {
+        background: #CC333F;
+        transform: translateY(-13px);
+    }
+}
+
+.loading-wave-container span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.loading-wave-container span:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.loading-wave-container span:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.loading-wave-container span:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+.loading-wave-container span:nth-child(5) {
+    animation-delay: 0.4s;
+}

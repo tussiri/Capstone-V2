@@ -46,6 +46,8 @@ function NavBar() {
     const handleLogout = () => {
         logout();
         localStorage.removeItem("token");
+        // localStorage.removeItem("token");
+        localStorage.removeItem("tokenExpiry");
         handleCloseUserMenu();
         navigate("/allrecipes")
     }
@@ -102,6 +104,34 @@ function NavBar() {
                 break;
         }
     };
+
+    const tokenExpiry = localStorage.getItem("tokenExpiry");
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (localStorage.getItem("token") && new Date().getTime() > tokenExpiry) {
+                handleLogout();
+            }
+        }, 60000);
+
+        return () => clearInterval(interval);
+    }, [tokenExpiry]);
+
+    useEffect(() => {
+        const handleActivity = () => {
+            if (new Date().getTime() > tokenExpiry - 5 * 60000) {
+                // Refresh token logic here (if implemented)
+            }
+        };
+
+        window.addEventListener("mousemove", handleActivity);
+        window.addEventListener("keydown", handleActivity);
+
+        return () => {
+            window.removeEventListener("mousemove", handleActivity);
+            window.removeEventListener("keydown", handleActivity);
+        };
+    }, [tokenExpiry]);
 
     return (
         <AppBar position="fixed">
