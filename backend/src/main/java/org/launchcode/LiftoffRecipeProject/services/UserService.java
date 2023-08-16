@@ -101,6 +101,7 @@ public class UserService {
     public UpdateUserDTO updateUser(Integer userId, UpdateUserDTO updatedUserDTO) {
         Optional<User> optionalUser = userRepository.findById(userId);
 
+
         if (!optionalUser.isPresent()) {
             throw new ResourceNotFoundException("User not found");
         }
@@ -110,13 +111,23 @@ public class UserService {
         user.setFirstName(updatedUserDTO.getFirstName());
         user.setLastName(updatedUserDTO.getLastName());
 
+        // Debugging: Print the password inside updateUser method
+        System.out.println("Password inside updateUser method: " + updatedUserDTO.getPassword());
+
         if(updatedUserDTO.getPassword() != null && !updatedUserDTO.getPassword().isEmpty()){
-            user.setPassword(bCryptPasswordEncoder.encode(updatedUserDTO.getPassword()));
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            user.setPassword(encoder.encode(updatedUserDTO.getPassword()));
+
+//            user.setPassword(bCryptPasswordEncoder.encode(updatedUserDTO.getPassword()));
         }
+
+        // Debugging: Print the encoded password inside updateUser method
+        System.out.println("Encoded password inside updateUser method: " + user.getPassword());
 
         userRepository.save(user);
         return mapUserToUpdateUserDTO(user);
     }
+
 
     public UserDTO loginUser(LoginDTO loginDTO) throws Exception {
         authenticate(loginDTO.getEmail(), loginDTO.getPassword());
