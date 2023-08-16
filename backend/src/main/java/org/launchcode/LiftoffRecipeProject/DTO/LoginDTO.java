@@ -2,7 +2,10 @@ package org.launchcode.LiftoffRecipeProject.DTO;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-
+/**
+ * Data Transfer Object representing a user attempting to login.
+ * This DTO is used to transfer login data between the application layers.
+ */
 public class LoginDTO {
 
     @Email(message = "Invalid email address")

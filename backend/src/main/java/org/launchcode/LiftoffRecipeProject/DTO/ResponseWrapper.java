@@ -2,6 +2,14 @@ package org.launchcode.LiftoffRecipeProject.DTO;
 
 import java.util.List;
 
+ /*
+ * A generic wrapper for API responses to provide a consistent structure for all responses.
+ * Fields:
+ * status: The HTTP status code of the response.
+ * message: A descriptive message associated with the response.
+ * data: The actual data payload of the response, of type T.
+ * token: A token that might be used for session management or authentication purposes.
+ * */
 public class ResponseWrapper<T> {
 
     private int status;

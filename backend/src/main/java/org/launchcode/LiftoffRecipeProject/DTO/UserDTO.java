@@ -15,6 +15,20 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * UserDTO
+ * Purpose: Represents a user with all their associated details.
+ *
+ * Fields:
+ *
+ * id: Unique identifier for the user.
+ * email: The email address of the user.
+ * password: The password for the user.
+ * firstName: The first name of the user.
+ * lastName: The last name of the user.
+ * dateOfBirth: The date of birth of the user.
+ * token: A token that might be used for session management or authentication purposes.
+ */
 public class UserDTO {
 
     private Integer id;

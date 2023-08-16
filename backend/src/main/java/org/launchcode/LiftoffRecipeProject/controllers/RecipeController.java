@@ -7,6 +7,7 @@ import org.launchcode.LiftoffRecipeProject.DTO.RecipeDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.ResponseWrapper;
 import org.launchcode.LiftoffRecipeProject.data.ReviewRepository;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
+import org.launchcode.LiftoffRecipeProject.exception.RecipeNotFoundException;
 import org.launchcode.LiftoffRecipeProject.exception.ResourceNotFoundException;
 import org.launchcode.LiftoffRecipeProject.models.Recipe;
 import org.launchcode.LiftoffRecipeProject.models.SearchCriteria;
@@ -34,15 +35,10 @@ import java.util.stream.Collectors;
 public class RecipeController {
 
     public static final Logger logger = LoggerFactory.getLogger(RecipeController.class);
-
     private final RecipeService recipeService;
-
     private final UserService userService;
-
     private final UserRepository userRepository;
-
     private IngredientService ingredientService;
-
     private final ReviewRepository reviewRepository;
 
     @Autowired
@@ -81,7 +77,7 @@ public class RecipeController {
     @GetMapping("/{recipeId}")
     public ResponseEntity<ResponseWrapper<RecipeDTO>> getRecipe(@PathVariable Integer recipeId) {
         RecipeDTO recipeDTO = recipeService.findById(recipeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
+                .orElseThrow(() -> new RecipeNotFoundException("Recipe not found"));
 
         return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Recipe retrieved successfully", recipeDTO), HttpStatus.OK);
     }

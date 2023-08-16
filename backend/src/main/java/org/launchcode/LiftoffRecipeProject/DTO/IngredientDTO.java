@@ -1,5 +1,10 @@
 package org.launchcode.LiftoffRecipeProject.DTO;
 
+
+/**
+ * Data Transfer Object representing an ingredient.
+ * This DTO is used to transfer ingredient data between the application layers.
+ */
 public class IngredientDTO {
 
     private Integer id;
