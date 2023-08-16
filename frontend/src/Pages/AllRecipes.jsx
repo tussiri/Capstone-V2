@@ -26,7 +26,7 @@ function AllRecipes() {
 
     useEffect(() => {
         setIsLoading(true);
-        axios.get(`http://localhost:8080/recipes?page=${page - 1}&size=10`)
+        authAxios.get(`http://localhost:8080/recipes?page=${page - 1}&size=10`)
             .then((response) => {
                 console.log("API response:", response.data);
                 if (response.status === 200) {
@@ -100,7 +100,7 @@ function AllRecipes() {
                     ))}
 
                 </Box>
-                <Box sx={{maxWidth: '23%', m: 5}}>
+                <Box sx={{maxWidth: '23%', m: 5, display:'flex', gap: '2rem'}}>
                     {page > 1 && (
                         <Button sx={{color: 'white'}} variant="contained" fullWidth onClick={handlePreviousPage}>Previous
                             Page</Button>

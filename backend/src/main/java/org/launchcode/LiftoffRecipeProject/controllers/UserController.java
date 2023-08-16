@@ -97,12 +97,12 @@ public class UserController {
         return ResponseUtil.wrapResponse(userFavoriteRecipeDTO, HttpStatus.OK, "Removed favorite recipe correctly");
     }
 
-//    @GetMapping("/{userId}/favorites")
-//    public ResponseEntity<ResponseWrapper<List<Recipe>>> getFavorites(@PathVariable Integer userId) {
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-//        return ResponseUtil.wrapResponse(user.getFavoriteRecipes(), HttpStatus.OK, "Favorite Recipes retrieved successfully.");
-//    }
+    @GetMapping("/{userId}/favorites")
+    public ResponseEntity<ResponseWrapper<List<Recipe>>> getFavorites(@PathVariable Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return ResponseUtil.wrapResponse(user.getFavoriteRecipes(), HttpStatus.OK, "Favorite Recipes retrieved successfully.");
+    }
 
 
 }

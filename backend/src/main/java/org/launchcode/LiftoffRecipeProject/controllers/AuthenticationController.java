@@ -51,4 +51,20 @@ public class AuthenticationController {
         return ResponseUtil.wrapResponse(userDTO, HttpStatus.OK, "Login successful. JWT is: " + userDTO.getToken());
     }
 
+    @PostMapping("/refresh-token")
+    public ResponseEntity<ResponseWrapper<String>> refreshToken(@RequestHeader("Authorization") String expiredToken) {
+        if (expiredToken != null && expiredToken.startsWith("Bearer ")) {
+            expiredToken = expiredToken.substring(7);
+            if (jwtTokenUtil.canRefreshToken(expiredToken)) {
+                String newToken = jwtTokenUtil.generateTokenFromExpiredToken(expiredToken);
+                return ResponseUtil.wrapResponse(newToken, HttpStatus.OK, "Token refreshed successfully.");
+            } else {
+                return ResponseUtil.wrapResponse(null, HttpStatus.UNAUTHORIZED, "Unable to refresh token.");
+            }
+        } else {
+            return ResponseUtil.wrapResponse(null, HttpStatus.BAD_REQUEST, "Invalid token format.");
+        }
+    }
+
+
 }

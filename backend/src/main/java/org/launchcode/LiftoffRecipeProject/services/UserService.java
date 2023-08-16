@@ -183,12 +183,12 @@ public class UserService {
         Recipe recipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
 
-//        user.getFavoriteRecipes().add(recipe);
+        user.getFavoriteRecipes().add(recipe);
         userRepository.save(user);
 
         UserFavoriteRecipeDTO userFavoriteRecipeDTO = new UserFavoriteRecipeDTO();
         userFavoriteRecipeDTO.setUser(user);
-//        userFavoriteRecipeDTO.setFavoriteRecipes(user.getFavoriteRecipes());
+        userFavoriteRecipeDTO.setFavoriteRecipes(user.getFavoriteRecipes());
 
         return userRepository.save(user);
     }
@@ -198,14 +198,14 @@ public class UserService {
                 .orElseThrow(()-> new ResourceNotFoundException("User not found"));
         UserFavoriteRecipeDTO userFavoriteRecipeDTO = new UserFavoriteRecipeDTO();
         userFavoriteRecipeDTO.setUser(user);
-//        userFavoriteRecipeDTO.setFavoriteRecipes(user.getFavoriteRecipes());
+        userFavoriteRecipeDTO.setFavoriteRecipes(user.getFavoriteRecipes());
         return userFavoriteRecipeDTO;
     }
 
     public void removeFavorite(Integer userId, Integer recipeId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
-//        user.getFavoriteRecipes().remove(recipe);
+        user.getFavoriteRecipes().remove(recipe);
         userRepository.save(user);
     }
 
