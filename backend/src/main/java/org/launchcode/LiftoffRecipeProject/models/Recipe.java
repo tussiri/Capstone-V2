@@ -12,18 +12,19 @@ import java.util.Set;
 @Table(name = "recipes")
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
+        property = "id",
+        scope = Recipe.class)
 public class Recipe extends AbstractEntity {
 
     private String name;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch=FetchType.EAGER)
-    @JoinTable(name="recipe_ingredients", joinColumns =@JoinColumn(name="recipe_id"),
-    inverseJoinColumns =@JoinColumn(name="ingredient_id"))
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER)
+    @JoinTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "recipe_id"),
+            inverseJoinColumns = @JoinColumn(name = "ingredient_id"))
     @JsonManagedReference
     private List<Ingredient> ingredients;
 
-    @Column(name="directions", columnDefinition="MEDIUMTEXT")
+    @Column(name = "directions", columnDefinition = "MEDIUMTEXT")
     private String directions;
 
     @Column(nullable = false)
@@ -32,7 +33,7 @@ public class Recipe extends AbstractEntity {
     @Column(nullable = true)
     private Boolean favorite;
 
-    @Column(columnDefinition="MEDIUMTEXT")
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String description;
 
     @Column(nullable = false)
@@ -46,7 +47,7 @@ public class Recipe extends AbstractEntity {
     private Double rating;
 
     @JsonIgnore
-    @OneToMany(mappedBy="recipe", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.REMOVE)
     private List<Review> reviews;
 
     @ManyToOne
@@ -55,7 +56,7 @@ public class Recipe extends AbstractEntity {
     private User user;
 
     @ManyToMany(mappedBy = "favoriteRecipes")
-    @JsonIgnoreProperties("favoriteRecipes")
+    @JsonBackReference(value= "user-favoriteRecipes")
     private List<User> favoritedByUser = new ArrayList<>();
 
     public Recipe() {
@@ -177,5 +178,15 @@ public class Recipe extends AbstractEntity {
 
     public void setFavoritedByUser(List<User> favoritedByUser) {
         this.favoritedByUser = favoritedByUser;
+    }
+
+    public void addFavoritedByUser(User user) {
+        this.favoritedByUser.add(user);
+        user.getFavoriteRecipes().add(this);
+    }
+
+    public void removeFavoritedByUser(User user) {
+        this.favoritedByUser.remove(user);
+        user.getFavoriteRecipes().remove(this);
     }
 }

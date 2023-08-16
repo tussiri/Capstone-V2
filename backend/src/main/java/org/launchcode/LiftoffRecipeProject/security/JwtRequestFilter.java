@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -25,26 +27,35 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+
+    private static final List<String> PUBLIC_ROUTES = Arrays.asList(
+            "/",
+            "/auth/register",
+            "/auth/login",
+            "/recipes",
+            "/recipes/search",
+            "/recipes/user/{userId}"
+    );
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        System.out.println("Executing JwtRequestFilter");
+
+
+
+//        System.out.println("Executing JwtRequestFilter");
 
         final String requestTokenHeader = request.getHeader("Authorization");
-        System.out.println("Request token header: "+ requestTokenHeader);
+//        System.out.println("Request token header: "+ requestTokenHeader);
 
         String username = null;
         String jwtToken = null;
 
-//        if (request.getRequestURI().equals("/auth/register") ||(request.getRequestURI().equals("/auth/login")) ||request.getRequestURI().equals("/")) {
-//            chain.doFilter(request, response);
-//            return;
-//        }
-//        if (request.getRequestURI().equals("/auth/login")) {
-//            chain.doFilter(request, response);
-//            return;
-//        }
+        if (PUBLIC_ROUTES.contains(request.getRequestURI())) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
@@ -60,19 +71,26 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 return;
             }
         } else {
-            if (!request.getRequestURI().equals("/") &&
-                    !request.getRequestURI().startsWith("/auth") &&
-                    !request.getRequestURI().startsWith("/recipes") &&
-                    !request.getRequestURI().startsWith("/recipes/search") &&
-                    !request.getRequestURI().startsWith("/review/recipes/{recipeId}/reviews")) {
+            if (requestTokenHeader == null || requestTokenHeader.isEmpty()) {
+                // Handle cases where there's no Authorization header at all
+                // For example, you might want to log a different message or skip logging
+            } else if (!PUBLIC_ROUTES.contains(request.getRequestURI())) {
                 logger.warn("JWT Token does not begin with Bearer String");
             }
+//            if (!request.getRequestURI().equals("/") &&
+//                    !request.getRequestURI().startsWith("/auth") &&
+//                    !request.getRequestURI().startsWith("/recipes") &&
+//                    !request.getRequestURI().startsWith("/recipes/user/{userId}") &&
+//                    !request.getRequestURI().startsWith("/recipes/search") &&
+//                    !request.getRequestURI().startsWith("/review/recipes/{recipeId}/reviews")) {
+//                logger.warn("JWT Token does not begin with Bearer String");
+//            }
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
             if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
-                
+
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken
@@ -80,7 +98,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
-        System.out.println("Authentication: " + SecurityContextHolder.getContext().getAuthentication());
+//        System.out.println("Authentication: " + SecurityContextHolder.getContext().getAuthentication());
         chain.doFilter(request, response);
     }
+
+
 }

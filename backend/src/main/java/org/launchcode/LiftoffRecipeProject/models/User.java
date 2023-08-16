@@ -1,8 +1,6 @@
 package org.launchcode.LiftoffRecipeProject.models;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,7 +13,8 @@ import java.util.*;
 @Table(name = "users")
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
+        property = "id",
+        scope = User.class)
 public class User extends AbstractEntity implements UserDetails {
 
     private String firstName;
@@ -33,7 +32,8 @@ public class User extends AbstractEntity implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "recipe_id")
     )
-    private List<Recipe> favoriteRecipes;
+    @JsonManagedReference(value="user-favoriteRecipes")
+    private List<Recipe> favoriteRecipes = new ArrayList<>();
 
 
     @PreRemove
@@ -43,7 +43,7 @@ public class User extends AbstractEntity implements UserDetails {
         }
     }
 
-    @OneToMany(mappedBy="user")
+    @OneToMany(mappedBy = "user")
     @JsonManagedReference
     private List<Review> reviews;
 
@@ -61,8 +61,8 @@ public class User extends AbstractEntity implements UserDetails {
     }
 
 
-
-    public User(){}
+    public User() {
+    }
 
     // Getters and setters
 
@@ -159,4 +159,16 @@ public class User extends AbstractEntity implements UserDetails {
     public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
     }
+
+    public void addFavoriteRecipe(Recipe recipe) {
+        this.favoriteRecipes.add(recipe);
+        recipe.getFavoritedByUser().add(this);
+    }
+
+    public void removeFavoriteRecipe(Recipe recipe) {
+        this.favoriteRecipes.remove(recipe);
+        recipe.getFavoritedByUser().remove(this);
+    }
+
+
 }

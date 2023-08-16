@@ -6,12 +6,12 @@ const authAxios = axios.create(
 
 authAxios.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
-    console.log("Interceptor Token: ", token)
+    // console.log("Interceptor Token: ", token)
 
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
-    console.log("Interceptor token: ", config.headers)
+    // console.log("Interceptor token: ", config.headers)
     return config
 }, (error) => {
     return Promise.reject(error);

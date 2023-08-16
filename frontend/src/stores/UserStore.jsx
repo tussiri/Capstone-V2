@@ -57,9 +57,11 @@ export function UserProvider({children}) {
                 email,
                 password
             });
-            const {token, id} = response.data.data;
+            const {token, id, expiry} = response.data.data;
             localStorage.setItem('token', token);
             localStorage.setItem('userId', id);
+            localStorage.setItem("tokenExpiry", expiry);
+
 
             // const user = response.data.data;
             const user = parseJwt(token)

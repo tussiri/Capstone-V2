@@ -36,7 +36,6 @@ function FoodCard({recipe, onClick, user, token}) {
             const response = await authAxios.post(`http://localhost:8080/users/${userId}/favorites/${recipeDetails.id}`);
             console.log("Heart clicked: ", response.data.data);
             setIsFavorite(true);
-
         } catch (error) {
             console.error(error);
         }
@@ -64,6 +63,7 @@ function FoodCard({recipe, onClick, user, token}) {
             try {
                 const response = await authAxios.get(`http://localhost:8080/users/${userId}/favorites`);
                 const favoritedRecipes = response.data.data;
+
                 const isFavorited = favoritedRecipes.some(favoritedRecipe => favoritedRecipe.id === recipeDetails.id);
                 setIsFavorite(isFavorited);
             } catch (error) {

@@ -202,10 +202,10 @@ public class UserService {
         return userFavoriteRecipeDTO;
     }
 
-
     public void removeFavorite(Integer userId, Integer recipeId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        user.getFavoriteRecipes().remove(recipeId);
+        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
+        user.getFavoriteRecipes().remove(recipe);
         userRepository.save(user);
     }
 
