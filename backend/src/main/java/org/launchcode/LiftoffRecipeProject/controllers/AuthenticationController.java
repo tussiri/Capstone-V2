@@ -37,8 +37,9 @@ public class AuthenticationController {
         this.userService = userService;
     }
 
-    @PostMapping("/register")
+    @PostMapping(value="/register")
     public ResponseEntity<ResponseWrapper<UserDTO>> register(@Valid @RequestBody UserDTO userDTO) {
+        System.out.println(userDTO);
         UserDTO registeredUserDTO = userService.registerUser(userDTO);
         return ResponseUtil.wrapResponse(registeredUserDTO, HttpStatus.CREATED, "User created successfully. JWT is: " + registeredUserDTO.getToken());
 
@@ -50,13 +51,4 @@ public class AuthenticationController {
         return ResponseUtil.wrapResponse(userDTO, HttpStatus.OK, "Login successful. JWT is: " + userDTO.getToken());
     }
 
-//    private void authenticate(String username, String password) throws Exception {
-//        try {
-//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-//        } catch (DisabledException e) {
-//            throw new Exception("USER_DISABLED", e);
-//        } catch (BadCredentialsException e) {
-//            throw new Exception("INVALID_CREDENTIALS", e);
-//        }
-//    }
 }

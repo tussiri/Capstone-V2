@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import {Link, useNavigate, useParams} from "react-router-dom";
+import RandomRecipes from './RandomRecipes'
 import FoodCard from "../Components/FoodCard";
 import "../Styles/Dashboard.css";
 import authAxios from "../utility/authAxios";
@@ -87,7 +88,8 @@ function Dashboard() {
 
     useEffect(() => {
         const fetchLikedRecipes = async () => {
-            if (userId) {
+            const userId = localStorage.getItem('userId');
+            if (userId && recipes.length > 0) {
                 const response = await authAxios.get(`http://localhost:8080/users/${userId}/favorites`);
                 console.log("Fetched liked recipes: ", response.data.data);
                 setLikedRecipes(response.data.data);
@@ -109,35 +111,63 @@ function Dashboard() {
 
     return (
         <>
-            <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Box sx={{maxWidth: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 {user ? (
                     <>
-                        <h2>Your Recipes</h2>
-                        <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
-                            {recipes && recipes.length > 0 && recipes.map((recipeId) => (
-                                <Box sx={{ maxWidth: '23%', margin: '1%' }}>
-                                    <FoodCard
-                                        key={recipeId}
-                                        recipe={recipeId}
-                                        onClick={() => handleCardClick(recipeId)}
-                                    />
+                        {recipes && recipes.length > 0 ? (
+                            <>
+                                <h2>Your Recipes</h2>
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    flexWrap: 'wrap',
+                                    justifyContent: 'center'
+                                }}>
+                                    {recipes && recipes.length > 0 && recipes.map((recipeId) => (
+                                        <Box sx={{maxWidth: '23%', margin: '1%'}}>
+                                            <FoodCard
+                                                key={recipeId}
+                                                recipe={recipeId}
+                                                onClick={() => handleCardClick(recipeId)}
+                                            />
+                                        </Box>
+                                    ))}
                                 </Box>
-                            ))}
-                        </Box>
-                        <h2>Liked Recipes</h2>
-                        <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                            {likedRecipes && likedRecipes.length > 0 && likedRecipes.map((recipeId) => (
-                                <Box sx={{ maxWidth: '100%', margin: '1%' }}>
-                                    <FoodCard
-                                        key={recipeId}
-                                        recipe={recipeId}
-                                        onClick={() => handleCardClick(recipeId)}
-                                        onFavorite={() => onFavorite(recipeId)}
-                                        onUnfavorite={() => onUnfavorite(recipeId)}
-                                    />
+                            </>
+                        ) : (
+                            <>
+                                <h2>Welcome to the Dashboard!</h2>
+                                <p>Looks like you haven't added any recipes yet. <Link to="/add-recipe">Add your first
+                                    recipe now!</Link></p>
+                                <p>Or try making one of the random recipes below:</p>
+                                <RandomRecipes/>
+
+                            </>
+                        )}
+
+                        {likedRecipes && likedRecipes.length > 0 && (
+                            <>
+                                <h2>Liked Recipes</h2>
+                                <Box sx={{
+                                    maxWidth: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center'
+                                }}>
+                                    {likedRecipes && likedRecipes.length > 0 && likedRecipes.map((recipeId) => (
+                                        <Box sx={{maxWidth: '100%', margin: '1%'}}>
+                                            <FoodCard
+                                                key={recipeId}
+                                                recipe={recipeId}
+                                                onClick={() => handleCardClick(recipeId)}
+                                                onFavorite={() => onFavorite(recipeId)}
+                                                onUnfavorite={() => onUnfavorite(recipeId)}
+                                            />
+                                        </Box>
+                                    ))}
                                 </Box>
-                            ))}
-                        </Box>
+                            </>
+                        )}
                     </>
                 ) : (
                     <>
