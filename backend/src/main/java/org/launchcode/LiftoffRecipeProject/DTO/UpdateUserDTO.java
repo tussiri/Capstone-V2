@@ -1,7 +1,16 @@
 package org.launchcode.LiftoffRecipeProject.DTO;
 
 import jakarta.validation.constraints.Size;
+/*
+* UpdateUserDTO
+Purpose: Represents the information required to update a user's details.
 
+Fields:
+
+firstName: The first name of the user.
+lastName: The last name of the user.
+password: The updated password for the user.
+* */
 public class UpdateUserDTO {
 
     @Size(min=1, max=30, message="First name must be between 1 and 30 characters")

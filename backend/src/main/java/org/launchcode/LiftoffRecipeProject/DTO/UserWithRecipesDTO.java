@@ -8,6 +8,18 @@ import org.launchcode.LiftoffRecipeProject.models.Recipe;
 import java.time.LocalDate;
 import java.util.List;
 
+/*
+* UserWithRecipesDTO
+Purpose: Represents a user and their associated recipes.
+
+Fields:
+
+id: Unique identifier for the user.
+firstName: The first name of the user.
+lastName: The last name of the user.
+email: The email address of the user.
+dateOfBirth: The date of birth of the user.
+recipes: A list of recipes associated with the user.*/
 public class UserWithRecipesDTO {
 
     private Integer id;

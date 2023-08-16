@@ -4,7 +4,14 @@ import org.launchcode.LiftoffRecipeProject.models.Recipe;
 import org.launchcode.LiftoffRecipeProject.models.User;
 
 import java.util.List;
+/*
+* UserFavoriteRecipeDTO
+Purpose: Represents a user and their list of favorite recipes.
 
+Fields:
+
+user: The user object.
+favoriteRecipes: A list of recipes marked as favorite by the user.*/
 public class UserFavoriteRecipeDTO {
     private User user;
     private List<Recipe> favoriteRecipes;

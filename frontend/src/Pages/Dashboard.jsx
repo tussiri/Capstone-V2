@@ -49,14 +49,9 @@ function Dashboard() {
                     setRecipes(data.content);
                 } else {
                     console.log("User ID not found. Skipping recipe fetching.");
-                    navigate("/")
                 }
             } catch (error) {
                 console.error("Error fetching recipes:", error);
-                if(error.response && error.response.data ===401){
-                    console.log("Token expired or user no longer authenticated. Redirecting to homepage.")
-                    navigate("/")
-                }
             }
         };
         fetchRecipes();
@@ -88,15 +83,10 @@ function Dashboard() {
     useEffect(() => {
         const fetchLikedRecipes = async () => {
             if (userId) {
-                try {
-                    const response = await authAxios.get(`http://localhost:8080/users/${userId}/favorites`);
-                    console.log("Fetched liked recipes: ", response.data.data);
-                    setLikedRecipes(response.data.data);
-                    setIsLoading(false);
-                } catch (error) {
-                    console.error("Error fetching liked recipes: ", error);
-                    setIsLoading(false);
-                }
+                const response = await authAxios.get(`http://localhost:8080/users/${userId}/favorites`);
+                console.log("Fetched liked recipes: ", response.data.data);
+                setLikedRecipes(response.data.data);
+                setIsLoading(false);
             } else {
                 console.log("User ID not found. Skipping liked Recipes fetching.");
                 setIsLoading(false);
@@ -198,5 +188,54 @@ function Dashboard() {
         </>
     );
 }
+
+//     return (
+//         <>
+//             <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+//                 {user ? (
+//                     <>
+//                         <h2>Your Recipes</h2>
+//                         <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
+//                             {recipes && recipes.length > 0 && recipes.map((recipeId) => (
+//                                 <Box sx={{ maxWidth: '23%', margin: '1%' }}>
+//                                     <FoodCard
+//                                         key={recipeId}
+//                                         recipe={recipeId}
+//                                         onClick={() => handleCardClick(recipeId)}
+//                                     />
+//                                 </Box>
+//                             ))}
+//                         </Box>
+//                         <h2>Liked Recipes</h2>
+//                         <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+//                             {likedRecipes && likedRecipes.length > 0 && likedRecipes.map((recipeId) => (
+//                                 <Box sx={{ maxWidth: '100%', margin: '1%' }}>
+//                                     <FoodCard
+//                                         key={recipeId}
+//                                         recipe={recipeId}
+//                                         onClick={() => handleCardClick(recipeId)}
+//                                         onFavorite={() => onFavorite(recipeId)}
+//                                         onUnfavorite={() => onUnfavorite(recipeId)}
+//                                     />
+//                                 </Box>
+//                             ))}
+//                         </Box>
+//                     </>
+//                 ) : (
+//                     <>
+//                         {
+//                             isSearching && hasSearched ? (
+//                                 <LoadingScreen/>
+//                             ) : (
+//                                 <SearchResults query={searchQuery} onSearchComplete={handleSearchComplete}/>
+//                             )
+//                         }
+//                     </>
+//                 )}
+//             </Box>
+//         </>
+//     );
+//
+// }
 
 export default Dashboard;

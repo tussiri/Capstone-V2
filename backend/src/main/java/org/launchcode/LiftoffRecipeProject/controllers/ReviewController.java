@@ -19,15 +19,16 @@ import java.util.Optional;
 @RequestMapping("/review")
 public class ReviewController {
 
-    @Autowired
-    private ReviewRepository reviewRepository;
+    private final ReviewRepository reviewRepository;
+    private final RecipeRepository recipeRepository;
+    private final UserRepository userRepository;
 
-@Autowired
-    private RecipeRepository recipeRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
+    public ReviewController(ReviewRepository reviewRepository, RecipeRepository recipeRepository, UserRepository userRepository) {
+        this.reviewRepository = reviewRepository;
+        this.recipeRepository = recipeRepository;
+        this.userRepository = userRepository;
+    }
 
 //    @PostMapping("add")
 //    public String createReviews(@ModelAttribute Review newReview) {
@@ -55,8 +56,11 @@ public class ReviewController {
     }
 
     @GetMapping("/recipes/{recipeId}/reviews")
-    public ResponseEntity<List<Review>> getAllReviews(@PathVariable String recipeId) {
-        List<Review> reviews = (List<Review>) reviewRepository.findAll();
+    public ResponseEntity<List<Review>> getAllReviewsByRecipe(@PathVariable Integer recipeId) {
+        List<Review> reviews = reviewRepository.findByRecipeId(recipeId);
+        if (reviews.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 

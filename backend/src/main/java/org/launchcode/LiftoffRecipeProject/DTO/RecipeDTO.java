@@ -7,6 +7,24 @@ import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
+
+/**
+ * Data Transfer Object representing a recipe.
+ * This DTO is used to transfer recipe data between the application layers.
+ * Represents a recipe with all its associated details.
+ * Fields:
+ * id: Unique identifier for the recipe.
+ * name: Name of the recipe.
+ * description: A brief description or summary of the recipe.
+ * category: The category or type of the recipe (e.g., dessert, main course).
+ * ingredients: A list of ingredients required for the recipe.
+ * directions: Step-by-step directions to prepare the recipe.
+ * time: The time required to prepare and cook the recipe.
+ * favorite: A boolean indicating if the recipe is marked as favorite.
+ * picture: A link or path to the recipe's image.
+ * allergens: A list of potential allergens present in the recipe.
+ * rating: The average rating of the recipe.
+ */
 public class RecipeDTO {
 
     private Integer id;
