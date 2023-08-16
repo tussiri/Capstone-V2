@@ -171,12 +171,21 @@ public class UserServiceTests {
         updatedUserDTO.setFirstName("UpdatedFirstName");
         updatedUserDTO.setLastName("UpdatedLastName");
         updatedUserDTO.setPassword("NewPassword");
+
+        // Debugging: Print the password before calling updateUser
+        System.out.println("Password before calling updateUser: " + updatedUserDTO.getPassword());
+
         User existingUser = createUser(1, "John", "Doe", "johndoe@example.com");
         when(userRepository.findById(1)).thenReturn(Optional.of(existingUser));
-        when(userRepository.save(any(User.class))).thenReturn(existingUser);
+
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        when(userRepository.save(userCaptor.capture())).thenAnswer(invocation -> userCaptor.getValue());
 
         // Act
         UpdateUserDTO result = userService.updateUser(1, updatedUserDTO);
+
+        // Debugging: Print the password after calling save
+        System.out.println("Password after calling save: " + result.getPassword());
 
         // Assert
         assertNotNull(result);
@@ -185,13 +194,15 @@ public class UserServiceTests {
         assertEquals("NewPassword", result.getPassword());
 
         verify(userRepository).findById(1);
-        verify(userRepository).save(userCaptor.capture());
+        verify(userRepository).save(any(User.class));
 
         User capturedUser = userCaptor.getValue();
         assertEquals("UpdatedFirstName", capturedUser.getFirstName());
         assertEquals("UpdatedLastName", capturedUser.getLastName());
         assertTrue(bCryptPasswordEncoder.matches("NewPassword", capturedUser.getPassword()));
     }
+
+
 
     @Test
     public void testUpdateUser_UserNotFound() {
@@ -320,7 +331,7 @@ public class UserServiceTests {
         // Arrange
         User user = createUser(1, "John", "Doe", "johndoe@example.com");
         Recipe recipe = createRecipe(1, "Recipe 1");
-        user.getFavoriteRecipes().add(recipe.getId());
+        user.getFavoriteRecipes().add(recipe);
         when(userRepository.findById(1)).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenReturn(user);
 
@@ -354,8 +365,8 @@ public class UserServiceTests {
         User user = createUser(1, "John", "Doe", "johndoe@example.com");
         Recipe recipe1 = createRecipe(1, "Recipe 1");
         Recipe recipe2 = createRecipe(2, "Recipe 2");
-        user.getFavoriteRecipes().add(recipe1.getId());
-        user.getFavoriteRecipes().add(recipe2.getId());
+        user.getFavoriteRecipes().add(recipe1);
+        user.getFavoriteRecipes().add(recipe2);
 
         when(userRepository.findById(1)).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenReturn(user);
