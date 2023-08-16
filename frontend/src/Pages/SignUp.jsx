@@ -60,9 +60,15 @@ function SignUp() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:8080/auth/register", formData);
+            const response = await axios.post("http://localhost:8080/auth/register", formData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
             const {user, token} = response.data.data;
 
+            console.log("Form data being sent: ", formData)
             console.log("Registration successful:", response.data);
 
             localStorage.setItem("token", token);

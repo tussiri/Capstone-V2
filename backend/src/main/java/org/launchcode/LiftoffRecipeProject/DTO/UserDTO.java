@@ -40,8 +40,7 @@ public class UserDTO {
     private LocalDate dateOfBirth;
 
 //    private List<Recipe> favoriteRecipes;
-    @JsonIdentityReference(alwaysAsId = true) // instead of the entire object, just output the ID
-    private List<Recipe> favoriteRecipes;
+    private List<RecipeDTO> favoriteRecipes;
 
 
     private String token;
@@ -103,11 +102,11 @@ public class UserDTO {
         this.token = token;
     }
 
-    public List<Recipe> getFavoriteRecipes() {
+    public List<RecipeDTO> getFavoriteRecipes() {
         return favoriteRecipes;
     }
 
-    public void setFavoriteRecipes(List<Recipe> favoriteRecipes) {
+    public void setFavoriteRecipes(List<RecipeDTO> favoriteRecipes) {
         this.favoriteRecipes = favoriteRecipes;
     }
 
