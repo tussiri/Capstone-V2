@@ -3,17 +3,25 @@ package org.launchcode.LiftoffRecipeProject;
 import jakarta.validation.ValidationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.launchcode.LiftoffRecipeProject.DTO.IngredientDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.RecipeDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.ResponseWrapper;
 import org.launchcode.LiftoffRecipeProject.controllers.RecipeController;
+import org.launchcode.LiftoffRecipeProject.data.IngredientRepository;
+import org.launchcode.LiftoffRecipeProject.data.RecipeRepository;
 import org.launchcode.LiftoffRecipeProject.data.ReviewRepository;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
 import org.launchcode.LiftoffRecipeProject.exception.UnauthorizedException;
+import org.launchcode.LiftoffRecipeProject.models.Ingredient;
+import org.launchcode.LiftoffRecipeProject.models.Recipe;
+import org.launchcode.LiftoffRecipeProject.models.RecipeData;
+import org.launchcode.LiftoffRecipeProject.models.User;
 import org.launchcode.LiftoffRecipeProject.services.IngredientService;
 import org.launchcode.LiftoffRecipeProject.services.RecipeService;
 import org.launchcode.LiftoffRecipeProject.services.UserService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.data.domain.Page;
@@ -24,10 +32,9 @@ import org.springframework.http.ResponseEntity;
 
 
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.launchcode.LiftoffRecipeProject.controllers.RecipeController.logger;
 import static org.mockito.Mockito.*;
@@ -53,6 +60,15 @@ public class RecipeControllerTest {
     @InjectMocks
     private RecipeController recipeController;
 
+    @Mock
+    private RecipeRepository recipeRepository;
+
+    @Mock
+    private IngredientRepository ingredientRepository;
+
+
+
+
     @Test
     public void testGetAllRecipes() {
         // Mock input data
@@ -65,15 +81,15 @@ public class RecipeControllerTest {
     }
 
     @Test
-    public void testGetRecipeByUser(){
+    public void testGetRecipeByUser() {
         Integer userId = 1;
-        Pageable pageable=mock(Pageable.class);
+        Pageable pageable = mock(Pageable.class);
         Page<RecipeDTO> recipeDTOs = mock(Page.class);
         when(recipeService.getRecipesByUser(userId, pageable)).thenReturn(recipeDTOs);
 
-        ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> response=recipeController.getRecipesByUser(userId, pageable);
+        ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> response = recipeController.getRecipesByUser(userId, pageable);
 
-        verify(recipeService, times(1)).getRecipesByUser(userId,pageable);
+        verify(recipeService, times(1)).getRecipesByUser(userId, pageable);
 
         assert response.getStatusCode() == HttpStatus.OK;
     }
