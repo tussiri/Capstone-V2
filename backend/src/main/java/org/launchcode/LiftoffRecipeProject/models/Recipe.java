@@ -31,7 +31,7 @@ public class Recipe extends AbstractEntity {
     private int time;
 
     @Column(nullable = true)
-    private Boolean favorite;
+    private Boolean favorite=false;
 
     @Column(columnDefinition = "MEDIUMTEXT")
     private String description;
