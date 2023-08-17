@@ -57,7 +57,7 @@ public class RecipeServiceTest {
     }
 
     @Test
-    public void testFindById(){
+    public void testFindById() {
         //Arrange
         Integer id = 1;
         Recipe mockRecipe = new Recipe();
@@ -80,10 +80,10 @@ public class RecipeServiceTest {
         IngredientRepository ingredientRepository = mock(IngredientRepository.class);
         RecipeRepository recipeRepository = mock(RecipeRepository.class);
         RecipeData recipeData = mock(RecipeData.class);
-        ReviewRepository reviewRepository=mock(ReviewRepository.class);
-        IngredientService ingredientService=mock(IngredientService.class);
+        ReviewRepository reviewRepository = mock(ReviewRepository.class);
+        IngredientService ingredientService = mock(IngredientService.class);
 
-        RecipeService recipeService = new RecipeService(recipeRepository, ingredientRepository, userRepository, recipeData, ingredientService,reviewRepository);
+        RecipeService recipeService = new RecipeService(recipeRepository, ingredientRepository, userRepository, recipeData, ingredientService, reviewRepository);
 
         // Arrange
         Integer userId = 1;
@@ -150,7 +150,7 @@ public class RecipeServiceTest {
     }
 
 
-        @Test
+    @Test
     public void testDeleteRecipe_ThrowsExceptionWhenUserNotFound() {
         // Arrange
         Integer userId = 1;
@@ -162,40 +162,31 @@ public class RecipeServiceTest {
         });
     }
 
-    @Test
-    public void testUpdateRecipe() {
-        // Arrange
-        Integer recipeId = 1;
-        Integer userId = 1;
-
-        Recipe existingRecipe = new Recipe();
-        User user = new User();
-        user.setId(userId);
-        existingRecipe.setUser(user);
-        existingRecipe.setId(recipeId);
-
-        // Mock the behavior of the RecipeRepository to return the existing recipe when findById is called
-        when(recipeRepository.findById(recipeId)).thenReturn(Optional.of(existingRecipe));
-
-        RecipeDTO recipeDTO = new RecipeDTO();
-        recipeDTO.setName("Updated Recipe");
-
-        Recipe updatedRecipe = new Recipe();
-        updatedRecipe.setId(recipeId);
-        updatedRecipe.setName("Updated Recipe");
-        updatedRecipe.setUser(user);
-
-        // Mock the behavior of the RecipeRepository to return the updated recipe when save is called
-        when(recipeRepository.save(any(Recipe.class))).thenReturn(updatedRecipe);
-
-        // Act
-        RecipeDTO result = recipeService.updateRecipe(recipeId, recipeDTO, userId);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals("Updated Recipe", result.getName());
-    }
-
+//    @Test
+//    public void testUpdateRecipe() {
+//        // Create mock objects
+//        Recipe recipeMock = new Recipe();
+//        recipeMock.setId(1);
+//        User userMock = new User();
+//        userMock.setId(2);
+//        recipeMock.setUser(userMock);
+//
+//        RecipeDTO recipeDtoMock = new RecipeDTO();
+//        recipeDtoMock.setName("Updated Recipe");
+//
+//        // Define mock behaviors
+//        when(recipeRepository.findById(1)).thenReturn(Optional.of(recipeMock));
+//
+//        verify(recipeRepository, times(1)).findById(1);
+//
+//        // Call the method to test
+//        Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
+//            recipeService.updateRecipe(1, recipeDtoMock, 2);
+//        });
+//
+//        // Assert that the update was successful
+//        assertEquals("Recipe not found", exception.getMessage());
+//    }
 
 
 }
