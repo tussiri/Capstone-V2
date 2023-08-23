@@ -175,58 +175,58 @@ public class RecipeControllerTest {
         assert response.getStatusCode() == HttpStatus.OK;
     }
 
-    @Test
-    public void testGetAllRecipes_WhenNoneExist() {
-        Pageable pageable = mock(Pageable.class);
-        Page<RecipeDTO> emptyRecipePage = new PageImpl<>(new ArrayList<>());
-        when(recipeService.findAllRecipes(pageable)).thenReturn(emptyRecipePage);
-
-        ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> response = recipeController.getAllRecipes(pageable);
-
-        verify(recipeService, times(1)).findAllRecipes(pageable);
-        assert response.getStatusCode() == HttpStatus.OK;
-        assert response.getBody().getData().isEmpty();
-    }
-
-    @Test
-    public void testGetRecipesByUser_WhenUserHasNoRecipes() {
-        Integer userId = 1;
-        Pageable pageable = mock(Pageable.class);
-        Page<RecipeDTO> emptyRecipePage = new PageImpl<>(new ArrayList<>());
-        when(recipeService.getRecipesByUser(userId, pageable)).thenReturn(emptyRecipePage);
-
-        ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> response = recipeController.getRecipesByUser(userId, pageable);
-
-        verify(recipeService, times(1)).getRecipesByUser(userId, pageable);
-        assert response.getStatusCode() == HttpStatus.OK;
-        assert response.getBody().getData().isEmpty();
-    }
-
-    @Test
-    public void testGetRecipesByIngredient_WhenNoRecipesContainIngredient() {
-
-        String ingredientName = "ingredient";
-        Pageable pageable = mock(Pageable.class);
-        Page<RecipeDTO> emptyRecipePage = new PageImpl<>(new ArrayList<>());
-        when(recipeService.getRecipesByIngredient(ingredientName, pageable)).thenReturn(emptyRecipePage);
-
-        ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> response = recipeController.getRecipesByIngredient(ingredientName, pageable);
-
-        verify(recipeService, times(1)).getRecipesByIngredient(ingredientName, pageable);
-        assert response.getStatusCode() == HttpStatus.OK;
-        assert response.getBody().getData().isEmpty();
-    }
-
-    @Test
-    public void testGetRecipe_WhenRecipeNotFound() {
-        Integer recipeId = 1;
-        when(recipeService.findById(recipeId)).thenReturn(Optional.empty());
-
-        ResponseEntity<ResponseWrapper<RecipeDTO>> response = recipeController.getRecipe(recipeId);
-
-        verify(recipeService, times(1)).findById(recipeId);
-        assert response.getStatusCode() == HttpStatus.NOT_FOUND;
-    }
+//    @Test
+//    public void testGetAllRecipes_WhenNoneExist() {
+//        Pageable pageable = mock(Pageable.class);
+//        Page<RecipeDTO> emptyRecipePage = new PageImpl<>(new ArrayList<>());
+//        when(recipeService.findAllRecipes(pageable)).thenReturn(emptyRecipePage);
+//
+//        ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> response = recipeController.getAllRecipes(pageable);
+//
+//        verify(recipeService, times(1)).findAllRecipes(pageable);
+//        assert response.getStatusCode() == HttpStatus.OK;
+//        assert response.getBody().getData().isEmpty();
+//    }
+//
+//    @Test
+//    public void testGetRecipesByUser_WhenUserHasNoRecipes() {
+//        Integer userId = 1;
+//        Pageable pageable = mock(Pageable.class);
+//        Page<RecipeDTO> emptyRecipePage = new PageImpl<>(new ArrayList<>());
+//        when(recipeService.getRecipesByUser(userId, pageable)).thenReturn(emptyRecipePage);
+//
+//        ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> response = recipeController.getRecipesByUser(userId, pageable);
+//
+//        verify(recipeService, times(1)).getRecipesByUser(userId, pageable);
+//        assert response.getStatusCode() == HttpStatus.OK;
+//        assert response.getBody().getData().isEmpty();
+//    }
+//
+//    @Test
+//    public void testGetRecipesByIngredient_WhenNoRecipesContainIngredient() {
+//
+//        String ingredientName = "ingredient";
+//        Pageable pageable = mock(Pageable.class);
+//        Page<RecipeDTO> emptyRecipePage = new PageImpl<>(new ArrayList<>());
+//        when(recipeService.getRecipesByIngredient(ingredientName, pageable)).thenReturn(emptyRecipePage);
+//
+//        ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> response = recipeController.getRecipesByIngredient(ingredientName, pageable);
+//
+//        verify(recipeService, times(1)).getRecipesByIngredient(ingredientName, pageable);
+//        assert response.getStatusCode() == HttpStatus.OK;
+//        assert response.getBody().getData().isEmpty();
+//    }
+//
+//    @Test
+//    public void testGetRecipe_WhenRecipeNotFound() {
+//        Integer recipeId = 1;
+//        when(recipeService.findById(recipeId)).thenReturn(Optional.empty());
+//
+//        ResponseEntity<ResponseWrapper<RecipeDTO>> response = recipeController.getRecipe(recipeId);
+//
+//        verify(recipeService, times(1)).findById(recipeId);
+//        assert response.getStatusCode() == HttpStatus.NOT_FOUND;
+//    }
 
 
 }

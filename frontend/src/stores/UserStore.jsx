@@ -49,6 +49,13 @@ export function UserProvider({children}) {
         }
     }
 
+    function isTokenExpired() {
+        const expiry = localStorage.getItem("tokenExpiry");
+        if (!expiry) return true;
+        return new Date().getTime() > new Date(expiry).getTime();
+    }
+
+
 
     async function login(email, password) {
         navigate('/login')
@@ -66,6 +73,10 @@ export function UserProvider({children}) {
             // const user = response.data.data;
             const user = parseJwt(token)
             setUser(user);
+
+            const expiryDate = new Date();
+            expiryDate.setSeconds(expiryDate.getSeconds() + expiry);
+            localStorage.setItem("tokenExpiry", expiryDate);
 
             // const user = parseJwt(token);
             // setUser(user);

@@ -9,22 +9,25 @@ import org.launchcode.LiftoffRecipeProject.data.IngredientRepository;
 import org.launchcode.LiftoffRecipeProject.data.RecipeRepository;
 import org.launchcode.LiftoffRecipeProject.data.ReviewRepository;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
+import org.launchcode.LiftoffRecipeProject.exception.RecipeNotFoundException;
 import org.launchcode.LiftoffRecipeProject.exception.ResourceNotFoundException;
-import org.launchcode.LiftoffRecipeProject.models.Ingredient;
-import org.launchcode.LiftoffRecipeProject.models.Recipe;
-import org.launchcode.LiftoffRecipeProject.models.RecipeData;
-import org.launchcode.LiftoffRecipeProject.models.User;
+import org.launchcode.LiftoffRecipeProject.models.*;
 import org.launchcode.LiftoffRecipeProject.services.IngredientService;
 import org.launchcode.LiftoffRecipeProject.services.RecipeService;
+import org.launchcode.LiftoffRecipeProject.specification.RecipeSpecification;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,6 +36,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class RecipeServiceTest {
 
+    @InjectMocks
+    private RecipeService recipeService;
     @Mock
     private RecipeRepository recipeRepository;
 
@@ -47,9 +52,8 @@ public class RecipeServiceTest {
 
     @Mock
     private IngredientService ingredientService;
-
-    @InjectMocks
-    private RecipeService recipeService;
+    @Mock
+    private RecipeData recipeData ;
 
     @BeforeEach
     public void setup() {
@@ -57,20 +61,96 @@ public class RecipeServiceTest {
     }
 
     @Test
-    public void testFindById() {
-        //Arrange
-        Integer id = 1;
-        Recipe mockRecipe = new Recipe();
-        mockRecipe.setId(1);
-        when(recipeRepository.findById(id)).thenReturn(Optional.of(mockRecipe));
+    public void testFindByIdNotFound() {
+        // Mock the RecipeRepository and its dependencies
+        RecipeRepository mockRecipeRepository = mock(RecipeRepository.class);
+        IngredientRepository mockIngredientRepository = mock(IngredientRepository.class);
+        UserRepository mockUserRepository = mock(UserRepository.class);
+        RecipeData mockRecipeData = mock(RecipeData.class);
+        IngredientService mockIngredientService = mock(IngredientService.class);
+        ReviewRepository mockReviewRepository = mock(ReviewRepository.class);
 
-        //Act
-        Optional<RecipeDTO> foundRecipe = recipeService.findById(id);
+        // Sample data
+        int sampleRecipeId = 123;
 
-        //Assert
-        assertTrue(foundRecipe.isPresent());
-        assertEquals(id, foundRecipe.get().getId());
-        verify(recipeRepository, times(1)).findById(id);
+        // Stubbing the behavior of the mockRecipeRepository to return an empty Optional for the given ID
+        when(mockRecipeRepository.findById(sampleRecipeId)).thenReturn(Optional.empty());
+
+        // Initialize the service with the mock repository
+        RecipeService serviceUnderTest = new RecipeService(mockRecipeRepository, mockIngredientRepository, mockUserRepository, mockRecipeData, mockIngredientService, mockReviewRepository);
+
+        // Call findById on the real service
+        Optional<Recipe> result = serviceUnderTest.findById(sampleRecipeId);
+
+        // Assert that the result does not contain a Recipe
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    public void testDeleteRecipe_ThrowsExceptionWhenUserNotFound() {
+
+        // Arrange
+        Integer userId = 1;
+        lenient().when(userRepository.existsById(userId)).thenReturn(false);
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> {
+            recipeService.deleteRecipe(1, userId, true);
+        });
+    }
+
+    @Test
+    public void testFindByIdFound() {
+        // Mock the RecipeRepository and its dependencies
+        RecipeRepository mockRecipeRepository = mock(RecipeRepository.class);
+        IngredientRepository mockIngredientRepository = mock(IngredientRepository.class);
+        UserRepository mockUserRepository = mock(UserRepository.class);
+        RecipeData mockRecipeData = mock(RecipeData.class);
+        IngredientService mockIngredientService = mock(IngredientService.class);
+        ReviewRepository mockReviewRepository = mock(ReviewRepository.class);
+
+        // Sample data
+        int sampleRecipeId = 123;
+        Recipe mockRecipe = mock(Recipe.class);
+
+        // Stubbing the behavior of the mockRecipeRepository to return mockRecipe for the given ID
+        when(mockRecipeRepository.findById(sampleRecipeId)).thenReturn(Optional.of(mockRecipe));
+
+        // Initialize the service with the mock repository
+        RecipeService serviceUnderTest = new RecipeService(mockRecipeRepository, mockIngredientRepository, mockUserRepository, mockRecipeData, mockIngredientService, mockReviewRepository);
+
+        // Call findById on the real service
+        Optional<Recipe> result = serviceUnderTest.findById(sampleRecipeId);
+
+        // Assert that the result matches the mockRecipe
+        assertTrue(result.isPresent());
+        assertEquals(mockRecipe, result.get());
+    }
+    @Test
+    public void testFindPaginated() {
+        // Mock the RecipeRepository
+        RecipeRepository mockRecipeRepository = mock(RecipeRepository.class);
+        IngredientRepository mockIngredientRepository = mock(IngredientRepository.class);
+        UserRepository mockUserRepository = mock(UserRepository.class);
+        RecipeData mockRecipeData = mock(RecipeData.class);
+        IngredientService mockIngredientService = mock(IngredientService.class);
+        ReviewRepository mockReviewRepository = mock(ReviewRepository.class);
+
+        // Mock the Pageable and Page
+        Pageable mockPageable = mock(Pageable.class);
+        Page<Recipe> mockPage = mock(Page.class);
+
+        // When findAll is called on the mock repository, return the mock page.
+        when(mockRecipeRepository.findAll(any(Pageable.class))).thenReturn(mockPage);
+
+        // Initialize the service with the mock repository
+        RecipeService serviceUnderTest = new RecipeService(mockRecipeRepository, mockIngredientRepository, mockUserRepository, mockRecipeData, mockIngredientService, mockReviewRepository); // Fill in other dependencies
+
+        // Call findPaginated on the real service
+        Page<Recipe> result = serviceUnderTest.findPaginated(mockPageable);
+
+        // Assert that the result matches the mock page
+        assertEquals(mockPage, result);
     }
 
     @Test
@@ -141,52 +221,245 @@ public class RecipeServiceTest {
     }
 
     @Test
-    public void testFindByIdNotFound() {
-        lenient().when(recipeRepository.findById(anyInt())).thenReturn(Optional.empty());
+    public void testUpdateRecipe_SuccessfulUpdate() {
 
-        Optional<Recipe> result = recipeService.findById(1);
+        RecipeRepository mockRecipeRepository = mock(RecipeRepository.class);
+        IngredientRepository mockIngredientRepository = mock(IngredientRepository.class);
+        UserRepository mockUserRepository = mock(UserRepository.class);
+        RecipeData mockRecipeData = mock(RecipeData.class);
+        IngredientService mockIngredientService = mock(IngredientService.class);
+        ReviewRepository mockReviewRepository = mock(ReviewRepository.class);
 
-        assertFalse(result.isPresent());
+        RecipeService serviceUnderTest = new RecipeService(mockRecipeRepository, mockIngredientRepository, mockUserRepository, mockRecipeData, mockIngredientService, mockReviewRepository);
+
+
+        // Given
+        Integer recipeId = 1;
+        Integer userId = 1;
+        RecipeDTO updateRecipeDTO = new RecipeDTO();
+        updateRecipeDTO.setName("Updated Test Recipe");
+        updateRecipeDTO.setDescription("Updated description");
+        updateRecipeDTO.setCategory("Updated Category");
+        updateRecipeDTO.setDirections("Updated directions");
+        updateRecipeDTO.setTime(45);
+        updateRecipeDTO.setFavorite(false);
+        updateRecipeDTO.setPicture("path/to/updated_image.jpg");
+        updateRecipeDTO.setAllergens(Arrays.asList("Updated Allergen1", "Updated Allergen2"));
+        updateRecipeDTO.setRating(5.0);
+        IngredientDTO updatedIngredientDTO = new IngredientDTO();
+        updatedIngredientDTO.setName("Updated Ingredient");
+        updateRecipeDTO.setIngredients(Collections.singletonList(updatedIngredientDTO));
+
+        User mockUser = new User();
+        mockUser.setId(userId);
+
+        Recipe existingRecipe = new Recipe();
+        existingRecipe.setUser(mockUser);
+
+        System.out.println("In test method, existingRecipe object: " + existingRecipe);
+
+
+        Ingredient existingIngredient = new Ingredient();
+        existingIngredient.setName("Existing Ingredient");
+
+        Ingredient updatedIngredient = new Ingredient();
+        updatedIngredient.setName(updatedIngredientDTO.getName());
+
+        // When findById is called, return the existing recipe
+        when(mockRecipeRepository.findById(recipeId)).thenReturn(Optional.of(existingRecipe));
+        when(mockRecipeRepository.save(any(Recipe.class))).thenReturn(existingRecipe);
+
+        // When save is called on the ingredientRepository, return the updated ingredient
+        when(mockIngredientRepository.save(any(Ingredient.class))).thenReturn(updatedIngredient);
+
+        // Call updateRecipe on the real service
+        RecipeDTO resultRecipeDTO = serviceUnderTest.updateRecipe(recipeId, updateRecipeDTO, userId);
+
+        // Verify interactions
+        verify(mockRecipeRepository).findById(recipeId);
+        verify(mockIngredientRepository).save(any(Ingredient.class));
+
+        // Assert that the result matches the updated values
+        assertEquals(updateRecipeDTO.getName(), resultRecipeDTO.getName());
+        assertEquals(updateRecipeDTO.getDescription(), resultRecipeDTO.getDescription());
+        assertEquals(updateRecipeDTO.getCategory(), resultRecipeDTO.getCategory());
+        assertEquals(updateRecipeDTO.getDirections(), resultRecipeDTO.getDirections());
+        assertEquals(updateRecipeDTO.getTime(), resultRecipeDTO.getTime());
+        assertEquals(updateRecipeDTO.isFavorite(), resultRecipeDTO.isFavorite());
+        assertEquals(updateRecipeDTO.getPicture(), resultRecipeDTO.getPicture());
+        assertEquals(updateRecipeDTO.getAllergens(), resultRecipeDTO.getAllergens());
+        assertEquals(updateRecipeDTO.getRating(), resultRecipeDTO.getRating());
+        assertEquals(updateRecipeDTO.getIngredients().get(0).getName(), resultRecipeDTO.getIngredients().get(0).getName());
     }
-
 
     @Test
-    public void testDeleteRecipe_ThrowsExceptionWhenUserNotFound() {
-        // Arrange
-        Integer userId = 1;
-        lenient().when(userRepository.existsById(userId)).thenReturn(false);
+    public void testUpdateRecipe_UnsuccessfulUpdate_RecipeNotFound(){
 
-        // Act & Assert
-        assertThrows(ResourceNotFoundException.class, () -> {
-            recipeService.deleteRecipe(1, userId, true);
+        RecipeRepository mockRecipeRepository = mock(RecipeRepository.class);
+        IngredientRepository mockIngredientRepository = mock(IngredientRepository.class);
+        UserRepository mockUserRepository = mock(UserRepository.class);
+        RecipeData mockRecipeData = mock(RecipeData.class);
+        IngredientService mockIngredientService = mock(IngredientService.class);
+        ReviewRepository mockReviewRepository = mock(ReviewRepository.class);
+
+        RecipeService serviceUnderTest = new RecipeService(mockRecipeRepository, mockIngredientRepository, mockUserRepository, mockRecipeData, mockIngredientService, mockReviewRepository);
+
+        // Given
+        Integer recipeId = 1;
+        Integer userId = 1;
+        RecipeDTO updateRecipeDTO = new RecipeDTO();
+        updateRecipeDTO.setName("Updated Test Recipe");
+        updateRecipeDTO.setDescription("Updated description");
+        updateRecipeDTO.setCategory("Updated Category");
+        updateRecipeDTO.setDirections("Updated directions");
+        updateRecipeDTO.setTime(45);
+        updateRecipeDTO.setFavorite(false);
+        updateRecipeDTO.setPicture("path/to/updated_image.jpg");
+        updateRecipeDTO.setAllergens(Arrays.asList("Updated Allergen1", "Updated Allergen2"));
+        updateRecipeDTO.setRating(5.0);
+        IngredientDTO updatedIngredientDTO = new IngredientDTO();
+        updatedIngredientDTO.setName("Updated Ingredient");
+        updateRecipeDTO.setIngredients(Collections.singletonList(updatedIngredientDTO));
+
+        // Mock behavior: Recipe doesn't exist in the repository
+        when(mockRecipeRepository.findById(recipeId)).thenReturn(Optional.empty());
+
+        // Call the method and expect an exception (adjust this part based on your actual implementation)
+        assertThrows(RecipeNotFoundException.class, () -> {
+            serviceUnderTest.updateRecipe(recipeId, updateRecipeDTO, userId);
         });
+
+        // Optionally: Verify that save() was never called, because the update should have failed before reaching that point
+        verify(mockRecipeRepository, never()).save(any(Recipe.class));
     }
 
-//    @Test
-//    public void testUpdateRecipe() {
-//        // Create mock objects
-//        Recipe recipeMock = new Recipe();
-//        recipeMock.setId(1);
-//        User userMock = new User();
-//        userMock.setId(2);
-//        recipeMock.setUser(userMock);
-//
-//        RecipeDTO recipeDtoMock = new RecipeDTO();
-//        recipeDtoMock.setName("Updated Recipe");
-//
-//        // Define mock behaviors
-//        when(recipeRepository.findById(1)).thenReturn(Optional.of(recipeMock));
-//
-//        verify(recipeRepository, times(1)).findById(1);
-//
-//        // Call the method to test
-//        Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
-//            recipeService.updateRecipe(1, recipeDtoMock, 2);
-//        });
-//
-//        // Assert that the update was successful
-//        assertEquals("Recipe not found", exception.getMessage());
-//    }
+    @Test
+    public void testDeleteUser(){
+        RecipeRepository mockRecipeRepository = mock(RecipeRepository.class);
+        IngredientRepository mockIngredientRepository = mock(IngredientRepository.class);
+        UserRepository mockUserRepository = mock(UserRepository.class);
+        RecipeData mockRecipeData = mock(RecipeData.class);
+        IngredientService mockIngredientService = mock(IngredientService.class);
+        ReviewRepository mockReviewRepository = mock(ReviewRepository.class);
 
+        RecipeService serviceUnderTest = new RecipeService(mockRecipeRepository, mockIngredientRepository, mockUserRepository, mockRecipeData, mockIngredientService, mockReviewRepository);
+
+        Integer userId = 1;
+        User existingUser = new User();
+        existingUser.setId(userId);
+        existingUser.setRecipes(new ArrayList<>());
+
+        when(mockUserRepository.existsById(userId)).thenReturn(true);
+
+        serviceUnderTest.deleteUser(userId, true);
+
+        verify(mockUserRepository).deleteById(userId);
+    }
+
+    @Test
+    public void testSearchRecipes() {
+
+        RecipeRepository mockRecipeRepository = mock(RecipeRepository.class);
+        IngredientRepository mockIngredientRepository = mock(IngredientRepository.class);
+        UserRepository mockUserRepository = mock(UserRepository.class);
+        RecipeData mockRecipeData = mock(RecipeData.class);
+        IngredientService mockIngredientService = mock(IngredientService.class);
+        ReviewRepository mockReviewRepository = mock(ReviewRepository.class);
+
+        RecipeService serviceUnderTest = new RecipeService(mockRecipeRepository, mockIngredientRepository, mockUserRepository, mockRecipeData, mockIngredientService, mockReviewRepository);
+
+        // Given
+        Recipe recipe1 = new Recipe();
+        recipe1.setName("Recipe 1");
+        Recipe recipe2 = new Recipe();
+        recipe2.setName("Recipe 2");
+
+        List<Recipe> recipes = Arrays.asList(recipe1, recipe2);
+        Page<Recipe> pagedRecipes = new PageImpl<>(recipes);
+
+        Specification<Recipe> spec = mock(Specification.class);
+        Pageable pageable = mock(Pageable.class);
+
+        when(mockRecipeRepository.findAll(spec, pageable)).thenReturn(pagedRecipes);
+
+        // When
+        Page<RecipeDTO> result = serviceUnderTest.searchRecipes(spec, pageable);
+
+        // Then
+        assertEquals(2, result.getContent().size());
+        assertEquals("Recipe 1", result.getContent().get(0).getName());
+        assertEquals("Recipe 2", result.getContent().get(1).getName());
+
+        verify(mockRecipeRepository).findAll(spec, pageable);
+    }
+
+    @Test
+    public void testSearchRecipesByIngredient(){
+        // Mock the RecipeRepository and its dependencies
+        RecipeRepository mockRecipeRepository = mock(RecipeRepository.class);
+        IngredientRepository mockIngredientRepository = mock(IngredientRepository.class);
+        UserRepository mockUserRepository = mock(UserRepository.class);
+        RecipeData mockRecipeData = mock(RecipeData.class);
+        IngredientService mockIngredientService = mock(IngredientService.class);
+        ReviewRepository mockReviewRepository = mock(ReviewRepository.class);
+        Pageable pageable = mock(Pageable.class);
+
+        // Initialize the service with the mock repository
+        RecipeService serviceUnderTest = new RecipeService(mockRecipeRepository, mockIngredientRepository, mockUserRepository, mockRecipeData, mockIngredientService, mockReviewRepository);
+
+        //Given
+        Recipe recipeWithCheese = new Recipe();
+        recipeWithCheese.setName("Margherita Pizza");
+
+        List<Recipe> recipesWithCheese = Arrays.asList(recipeWithCheese);
+        Page<Recipe> pagedRecipesWithCheese = new PageImpl<>(recipesWithCheese);
+
+        SearchCriteria ingredientCriteria = new SearchCriteria("ingredients", ":", "Cheese");
+        RecipeSpecification ingredientSpec = new RecipeSpecification(ingredientCriteria);
+
+        when(mockRecipeRepository.findAll(ingredientSpec, pageable)).thenReturn(pagedRecipesWithCheese);
+
+        //When
+        Page<RecipeDTO> result = serviceUnderTest.searchRecipes(ingredientSpec, pageable);
+
+        //Then
+        assertEquals(1, result.getContent().size());
+        assertEquals("Margherita Pizza", result.getContent().get(0).getName());
+    }
+
+    @Test
+    public void testSearchRecipesByTime() {
+
+        RecipeRepository mockRecipeRepository = mock(RecipeRepository.class);
+        IngredientRepository mockIngredientRepository = mock(IngredientRepository.class);
+        UserRepository mockUserRepository = mock(UserRepository.class);
+        RecipeData mockRecipeData = mock(RecipeData.class);
+        IngredientService mockIngredientService = mock(IngredientService.class);
+        ReviewRepository mockReviewRepository = mock(ReviewRepository.class);
+        Pageable pageable = mock(Pageable.class);
+
+        // Initialize the service with the mock repository
+        RecipeService serviceUnderTest = new RecipeService(mockRecipeRepository, mockIngredientRepository, mockUserRepository, mockRecipeData, mockIngredientService, mockReviewRepository);
+
+        // Given
+        Recipe quickRecipe = new Recipe();
+        quickRecipe.setName("Quick Salad");
+        quickRecipe.setTime(10);
+
+        List<Recipe> quickRecipes = Arrays.asList(quickRecipe);
+        Page<Recipe> pagedQuickRecipes = new PageImpl<>(quickRecipes);
+
+        SearchCriteria timeCriteria = new SearchCriteria("time", "<", "15");
+        RecipeSpecification timeSpec = new RecipeSpecification(timeCriteria);
+
+        when(mockRecipeRepository.findAll(timeSpec, pageable)).thenReturn(pagedQuickRecipes);
+
+        // When
+        Page<RecipeDTO> result = serviceUnderTest.searchRecipes(timeSpec, pageable);
+
+        // Then
+        assertEquals(1, result.getContent().size());
+        assertEquals("Quick Salad", result.getContent().get(0).getName());
+    }
 
 }

@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import authAxios from "../utility/authAxios";
 import {UserContext} from "../stores/UserStore";
@@ -23,24 +23,36 @@ import CssBaseline from '@mui/material/CssBaseline';
 
 function AccountEdit() {
     const {user, logout} = useContext(UserContext)
-    const [firstName, setFirstName] = useState(user.firstName);
-    const [lastName, setLastName] = useState(user.lastName);
-    const [email, setEmail] = useState(user.email);
-    const [password, setPassword] = useState("");
-    const [newPassword, setNewPassword] = useState("");
+    const userId = localStorage.getItem('userId');
+
+    const [formData, setFormData] = useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        oldPassword: "",
+        password: "",
+        confirmPassword: "",
+    });
 
     const [showPassword, setShowPassword] = useState(false);
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const handleMouseDownPassword = (event) => {
-            event.preventDefault();
-        };
+        event.preventDefault();
+    };
 
-    const [formData, setFormData] = useState({
-            firstName: "",
-            lastName: "",
-            password: "",
-            confirmPassword: "",
-        });
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                ...formData,
+                firstName: user.firstName || "",
+                lastName: user.lastName || "",
+                email: user.email || "",
+                oldPassword: "",
+                password: "",
+                confirmPassword: "",
+            })
+        }
+    }, [user]);
 
     const handleChange = (event) => {
         const {name, value} = event.target;
@@ -50,220 +62,211 @@ function AccountEdit() {
         }));
     };
 
-    const handleSave = async () => {
+    const handleSave = async (event) => {
+        event.preventDefault();
+        if (formData.password && (formData.password.length < 8 || formData.password.length > 50)) {
+            alert("Password must be between 8 and 50 characters!");
+            return;
+        }
         try {
-            const updatedUser = {
-                firstName: firstName,
-                lastName: lastName,
-                email: email,
-                password: password === "" ? undefined : password,
-                // dateOfBirth:'',
-            };
+            let updatedUser = {};
+
+            if (formData.firstName) updatedUser.firstName = formData.firstName;
+            if (formData.lastName) updatedUser.lastName = formData.lastName;
+            if (formData.email) updatedUser.email = formData.email;
+            if (formData.password) updatedUser.password = formData.password;
+
             console.log("Updated user: ", updatedUser)
 
-            const response = await authAxios.put(`http://localhost:8080/users/${user.id}`, updatedUser);
+            const response = await authAxios.put(`http://localhost:8080/users/${userId}`, updatedUser);
             console.log("Server response: ", response)
-            setPassword("");
-
+            setFormData(prevFormData => ({
+                ...prevFormData,
+                password: "",
+            }));
         } catch (error) {
             console.log("There was an error updating the user's information: ", error)
         }
     };
 
     const handleChangePassword = async () => {
+        if (formData.password !== formData.confirmPassword) {
+            alert("Passwords do not match!");
+            return;
+        }
+        if (formData.password && (formData.password.length < 8 || formData.password.length > 50)) {
+            alert("New password must be between 8 and 50 characters!");
+            return;
+        }
         try {
             const updatedUser = {
-                password: newPassword
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                email: formData.email,
+                password: formData.password
             };
 
-            const response = await authAxios.put(`http://localhost:8080/users/${user.id}`, updatedUser);
+            const response = await authAxios.put(`http://localhost:8080/users/${userId}`, updatedUser);
             console.log("Server response for password: ", response)
-            setNewPassword("");
-            setPassword("");
+            setFormData(prevFormData => ({
+                ...prevFormData,
+                password: "",
+                confirmPassword: "",
+            }));
         } catch (error) {
             console.error(error);
         }
     };
 
     return (
-    <div>
-         <Container component="main" maxWidth="xs">
-                <CssBaseline />
+        <div>
+            <Container component="main" maxWidth="xs">
+                <CssBaseline/>
                 <Box
-                  sx={{
-                    marginTop: 4,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                  }}
+                    sx={{
+                        marginTop: 4,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
                 >
-                <img src={Logo}/>
-                  <Typography component="h1" variant="h5">
-                    Edit Account Info
-                  </Typography>
-                  <Box
-                    component="form"
-                    noValidate
-//                     onSubmit={handleSubmit}
-                    sx={{ mt: 3 }}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          autoComplete="given-name"
-                          name="firstName"
-                          fullWidth
-                          id="firstName"
-                          label="First Name"
-                          value={formData.firstName}
-                          onChange={handleChange}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          id="lastName"
-                          label="Last Name"
-                          name="lastName"
-                          autoComplete="family-name"
-                          value={formData.lastName}
-                          onChange={handleChange}
-                        />
-                      </Grid>
-                    </Grid>
-                      <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        sx={{ mt: 2, mb: 5, color: 'white' }}
-                      >
-                      Change Name
-                      </Button>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12}>
-                        <FormControl fullWidth>
-                        <InputLabel htmlFor="passwordField">Old Password</InputLabel>
-                        <OutlinedInput
-                          fullWidth
-                          name="oldPassword"
-                          label="Old Password"
-                          type={showPassword ? 'text' : 'password'}
-                          id="oldPassword"
-                          onChange={handleChange}
-                          endAdornment={
-                             <InputAdornment position="end">
-                                <IconButton
-                                   aria-label="toggle password visibility"
-                                   onClick={handleClickShowPassword}
-                                   onMouseDown={handleMouseDownPassword}
-                                   edge="end">
-                                {showPassword ? <VisibilityOff/> : <Visibility/>}
-                                </IconButton>
-                             </InputAdornment>
-                          }
-                        />
-                        </FormControl>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <FormControl fullWidth>
-                        <InputLabel htmlFor="passwordField"> New Password</InputLabel>
-                        <OutlinedInput
-                          fullWidth
-                          name="newPassword"
-                          label="New Password"
-                          type={showPassword ? 'text' : 'password'}
-                          id="newPassword"
-                          onChange={handleChange}
-                          endAdornment={
-                             <InputAdornment position="end">
-                                <IconButton
-                                   aria-label="toggle password visibility"
-                                   onClick={handleClickShowPassword}
-                                   onMouseDown={handleMouseDownPassword}
-                                   edge="end">
-                                {showPassword ? <VisibilityOff/> : <Visibility/>}
-                                </IconButton>
-                             </InputAdornment>
-                          }
-                        />
-                        </FormControl>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <FormControl fullWidth>
-                        <InputLabel htmlFor="confirmPasswordField">Confirm New Password</InputLabel>
-                        <OutlinedInput
-                          name="confirmNewPassword"
-                          label="Confirm New Password"
-                          type={showPassword ? 'text' : 'password'}
-                          id="confirmNewPassword"
-                          value={formData.password}
-                          onChange={handleChange}
-                          endAdornment={
-                             <InputAdornment position="end">
-                                <IconButton
-                                   aria-label="toggle password visibility"
-                                   onClick={handleClickShowPassword}
-                                   onMouseDown={handleMouseDownPassword}
-                                   edge="end">
-                                {showPassword ? <VisibilityOff/> : <Visibility/>}
-                                </IconButton>
-                             </InputAdornment>
-                          }
-                        />
-                        </FormControl>
-                      </Grid>
-                    </Grid>
-                    <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      sx={{ mt: 3, mb: 2, color: 'white' }}
-                    >
-                      Change Password
-                    </Button>
-                    <Grid container justifyContent="center">
-                      <Grid item>
-                        <Link to='/account' variant="body2">
-                           <Button>Back to Account Info</Button>
-                        </Link>
-                      </Grid>
-                    </Grid>
-                  </Box>
+                    <img src={Logo}/>
+                    <Typography component="h1" variant="h5">
+                        Edit Account Info
+                    </Typography>
+                    <Box
+                        component="form"
+                        noValidate
+                        onSubmit={handleSave}
+                        //                     onSubmit={handleSubmit}
+                        sx={{mt: 3}}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    autoComplete="given-name"
+                                    name="firstName"
+                                    fullWidth
+                                    id="firstName"
+                                    label="First Name"
+                                    value={formData.firstName}
+                                    onChange={handleChange}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    fullWidth
+                                    id="lastName"
+                                    label="Last Name"
+                                    name="lastName"
+                                    autoComplete="family-name"
+                                    value={formData.lastName}
+                                    onChange={handleChange}
+                                />
+                            </Grid>
+                        </Grid>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{mt: 2, mb: 5, color: 'white'}}
+                        >
+                            Change Name
+                        </Button>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <FormControl fullWidth>
+                                    <InputLabel htmlFor="passwordField">Old Password</InputLabel>
+                                    <OutlinedInput
+                                        fullWidth
+                                        name="oldPassword"
+                                        label="Old Password"
+                                        type={showPassword ? 'text' : 'password'}
+                                        id="oldPassword"
+                                        onChange={handleChange}
+                                        endAdornment={
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    aria-label="toggle password visibility"
+                                                    onClick={handleClickShowPassword}
+                                                    onMouseDown={handleMouseDownPassword}
+                                                    edge="end">
+                                                    {showPassword ? <VisibilityOff/> : <Visibility/>}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        }
+                                    />
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl fullWidth>
+                                    <InputLabel htmlFor="passwordField"> New Password</InputLabel>
+                                    <OutlinedInput
+                                        fullWidth
+                                        name="password"
+                                        label="New Password"
+                                        type={showPassword ? 'text' : 'password'}
+                                        id="newPassword"
+                                        onChange={handleChange}
+                                        endAdornment={
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    aria-label="toggle password visibility"
+                                                    onClick={handleClickShowPassword}
+                                                    onMouseDown={handleMouseDownPassword}
+                                                    edge="end">
+                                                    {showPassword ? <VisibilityOff/> : <Visibility/>}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        }
+                                    />
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl fullWidth>
+                                    <InputLabel htmlFor="confirmPasswordField">Confirm New Password</InputLabel>
+                                    <OutlinedInput
+                                        name="confirmPassword"
+                                        label="Confirm New Password"
+                                        type={showPassword ? 'text' : 'password'}
+                                        id="confirmPassword"
+                                        value={formData.confirmPassword}
+                                        onChange={handleChange}
+                                        endAdornment={
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    aria-label="toggle password visibility"
+                                                    onClick={handleClickShowPassword}
+                                                    onMouseDown={handleMouseDownPassword}
+                                                    edge="end">
+                                                    {showPassword ? <VisibilityOff/> : <Visibility/>}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        }
+                                    />
+                                </FormControl>
+                            </Grid>
+                        </Grid>
+                        <Button
+                            onClick={handleChangePassword}
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{mt: 3, mb: 2, color: 'white'}}
+                        >
+                            Change Password
+                        </Button>
+                        <Grid container justifyContent="center">
+                            <Grid item>
+                                <Link to='/account' variant="body2">
+                                    <Button>Back to Account Info</Button>
+                                </Link>
+                            </Grid>
+                        </Grid>
+                    </Box>
                 </Box>
-              </Container>
-    </div>
+            </Container>
+        </div>
     );
 }
 
 export default AccountEdit;
-
-{/*         <div> */}
-{/*             <h1>Edit Account Information</h1> */}
-{/*             <label>First Name:</label> */}
-{/*             <input */}
-{/*                 type="text" */}
-{/*                 value={firstName} */}
-{/*                 onChange={(e) => setFirstName(e.target.value)} */}
-{/*             /> */}
-{/*             <label>Last Name:</label> */}
-{/*             <input */}
-{/*                 type="text" */}
-{/*                 value={lastName} */}
-{/*                 onChange={(e) => setLastName(e.target.value)} */}
-{/*             /> */}
-{/*             <button onClick={handleSave}>Save</button> */}
-{/*             <h2>Change Password</h2> */}
-{/*             <label>Old Password:</label> */}
-{/*             <input */}
-{/*                 type="password" */}
-{/*                 value={password} */}
-{/*                 onChange={(e) => setPassword(e.target.value)} */}
-{/*             /> */}
-{/*             <label>New Password:</label> */}
-{/*             <input */}
-{/*                 type="password" */}
-{/*                 value={newPassword} */}
-{/*                 onChange={(e) => setNewPassword(e.target.value)} */}
-{/*             /> */}
-{/*             <button onClick={handleChangePassword}>Change Password</button> */}
-{/*             <button onClick={logout}>Logout</button> */}
-{/*         </div> */}
