@@ -8,6 +8,7 @@ import org.launchcode.LiftoffRecipeProject.data.IngredientRepository;
 import org.launchcode.LiftoffRecipeProject.data.RecipeRepository;
 import org.launchcode.LiftoffRecipeProject.data.ReviewRepository;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
+import org.launchcode.LiftoffRecipeProject.exception.RecipeNotFoundException;
 import org.launchcode.LiftoffRecipeProject.exception.ResourceNotFoundException;
 import org.launchcode.LiftoffRecipeProject.exception.UnauthorizedException;
 import org.launchcode.LiftoffRecipeProject.models.Ingredient;
@@ -131,6 +132,7 @@ public class RecipeService {
             IngredientDTO ingredientDTO = new IngredientDTO();
             ingredientDTO.setId(ingredient.getId());
             ingredientDTO.setName(ingredient.getName());
+            ingredientDTO.setQuantity(ingredient.getQuantity());
             return ingredientDTO;
         }
 
@@ -189,9 +191,12 @@ public class RecipeService {
                     .map(this::mapToDTO);
         }
 
-        public RecipeDTO updateRecipe (Integer id, RecipeDTO recipeDTO, Integer userId){
-            Recipe recipe = recipeRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
+        public RecipeDTO updateRecipe (Integer recipeId, RecipeDTO recipeDTO, Integer userId){
+            Recipe recipe = recipeRepository.findById(recipeId)
+                    .orElseThrow(() -> new RecipeNotFoundException("Recipe not found"));
+
+            System.out.println("In updateRecipe method, Recipe object: " + recipe);
+
 
             if (!recipe.getUser().getId().equals(userId)) {
                 throw new UnauthorizedException("You are not allowed to update this recipe");
@@ -223,6 +228,7 @@ public class RecipeService {
 
             return mapToDTO(recipeRepository.save(recipe));
         }
+
 
 //    public void deleteRecipe(Integer id, Integer userId) {
 //        Recipe recipe = recipeRepository.findById(id)

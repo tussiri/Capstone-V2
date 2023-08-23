@@ -7,16 +7,18 @@ import org.launchcode.LiftoffRecipeProject.DTO.LoginDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.UpdateUserDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.UserDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.UserWithRecipesDTO;
+import org.launchcode.LiftoffRecipeProject.data.IngredientRepository;
 import org.launchcode.LiftoffRecipeProject.data.RecipeRepository;
 import org.launchcode.LiftoffRecipeProject.data.ReviewRepository;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
-import org.launchcode.LiftoffRecipeProject.exception.BadRequestException;
-import org.launchcode.LiftoffRecipeProject.exception.ResourceNotFoundException;
-import org.launchcode.LiftoffRecipeProject.exception.UnauthorizedException;
+import org.launchcode.LiftoffRecipeProject.exception.*;
 import org.launchcode.LiftoffRecipeProject.models.Recipe;
+import org.launchcode.LiftoffRecipeProject.models.RecipeData;
 import org.launchcode.LiftoffRecipeProject.models.User;
 import org.launchcode.LiftoffRecipeProject.security.JwtTokenUtil;
 import org.launchcode.LiftoffRecipeProject.services.CustomUserDetailsService;
+import org.launchcode.LiftoffRecipeProject.services.IngredientService;
+import org.launchcode.LiftoffRecipeProject.services.RecipeService;
 import org.launchcode.LiftoffRecipeProject.services.UserService;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -42,6 +44,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -74,6 +77,7 @@ public class UserServiceTests {
     @Captor
     private ArgumentCaptor<User> userCaptor;
 
+
     @BeforeEach
     public void setUp() {
         SecurityContextHolder.clearContext();
@@ -104,7 +108,7 @@ public class UserServiceTests {
         when(userRepository.findById(1)).thenReturn(Optional.empty());
 
         // Act
-        assertThrows(ResourceNotFoundException.class, () -> userService.getUser(1));
+        assertThrows(UserNotFoundException.class, () -> userService.getUser(1));
 
         // Assert
         verify(userRepository).findById(1);
@@ -165,15 +169,52 @@ public class UserServiceTests {
     }
 
     @Test
+    public void testRegisterUser() {
+
+        // Arrange
+        UserDTO newUserDTO = new UserDTO();
+        newUserDTO.setFirstName("New");
+        newUserDTO.setLastName("User");
+        newUserDTO.setEmail("newuser@example.com");
+        newUserDTO.setPassword("password");
+        newUserDTO.setDateOfBirth(LocalDate.now());
+
+        User newUser = createUser(1, "New", "User", "newuser@example.com");
+        when(userRepository.findByEmail("newuser@example.com")).thenReturn(null);
+        when(userRepository.save(any(User.class))).thenReturn(newUser);
+        when(userDetailsService.loadUserByUsername("newuser@example.com")).thenReturn(mock(UserDetails.class));
+        when(jwtTokenUtil.generateToken(any(UserDetails.class), eq(1))).thenReturn("jwtToken");
+
+        // Act
+        UserDTO result = userService.registerUser(newUserDTO);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.getId());
+        assertEquals("New", result.getFirstName());
+        assertEquals("User", result.getLastName());
+        assertEquals("newuser@example.com", result.getEmail());
+        assertEquals("jwtToken", result.getToken());
+
+        verify(userRepository).findByEmail("newuser@example.com");
+        verify(userRepository).save(userCaptor.capture());
+        verify(userDetailsService).loadUserByUsername("newuser@example.com");
+        verify(jwtTokenUtil).generateToken(any(UserDetails.class), eq(1));
+
+        User capturedUser = userCaptor.getValue();
+        assertEquals("New", capturedUser.getFirstName());
+        assertEquals("User", capturedUser.getLastName());
+        assertEquals("newuser@example.com", capturedUser.getEmail());
+        assertTrue(new BCryptPasswordEncoder().matches("password", capturedUser.getPassword()));
+    }
+
+    @Test
     public void testUpdateUser() {
         // Arrange
         UpdateUserDTO updatedUserDTO = new UpdateUserDTO();
         updatedUserDTO.setFirstName("UpdatedFirstName");
         updatedUserDTO.setLastName("UpdatedLastName");
         updatedUserDTO.setPassword("NewPassword");
-
-        // Debugging: Print the password before calling updateUser
-        System.out.println("Password before calling updateUser: " + updatedUserDTO.getPassword());
 
         User existingUser = createUser(1, "John", "Doe", "johndoe@example.com");
         when(userRepository.findById(1)).thenReturn(Optional.of(existingUser));
@@ -184,25 +225,17 @@ public class UserServiceTests {
         // Act
         UpdateUserDTO result = userService.updateUser(1, updatedUserDTO);
 
-        // Debugging: Print the password after calling save
-        System.out.println("Password after calling save: " + result.getPassword());
-
         // Assert
         assertNotNull(result);
         assertEquals("UpdatedFirstName", result.getFirstName());
         assertEquals("UpdatedLastName", result.getLastName());
-        assertEquals("NewPassword", result.getPassword());
+
+        User savedUser = userCaptor.getValue();
+        assertTrue(new BCryptPasswordEncoder().matches("NewPassword", savedUser.getPassword()));
 
         verify(userRepository).findById(1);
         verify(userRepository).save(any(User.class));
-
-        User capturedUser = userCaptor.getValue();
-        assertEquals("UpdatedFirstName", capturedUser.getFirstName());
-        assertEquals("UpdatedLastName", capturedUser.getLastName());
-        assertTrue(bCryptPasswordEncoder.matches("NewPassword", capturedUser.getPassword()));
     }
-
-
 
     @Test
     public void testUpdateUser_UserNotFound() {
@@ -215,7 +248,7 @@ public class UserServiceTests {
         when(userRepository.findById(1)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(ResourceNotFoundException.class, () -> userService.updateUser(1, updatedUserDTO));
+        assertThrows(UserNotFoundException.class, () -> userService.updateUser(1, updatedUserDTO));
 
         verify(userRepository).findById(1);
         verify(userRepository, never()).save(any(User.class));
@@ -258,64 +291,68 @@ public class UserServiceTests {
         loginDTO.setEmail("johndoe@example.com");
         loginDTO.setPassword("wrongpassword");
 
-        User existingUser = createUser(1, "John", "Doe", "johndoe@example.com");
-        when(userRepository.findByEmail("johndoe@example.com")).thenReturn(existingUser);
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenThrow(BadCredentialsException.class);
+        // Mock the AuthenticationManager to throw a BadCredentialsException when authenticate is called
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenThrow(new BadCredentialsException("Bad Credentials"));
 
         // Act & Assert
-        assertThrows(UnauthorizedException.class, () -> userService.loginUser(loginDTO));
+        UnauthorizedException unauthorizedException = assertThrows(UnauthorizedException.class,
+                () -> userService.loginUser(loginDTO));
 
-        verify(userRepository).findByEmail("johndoe@example.com");
-        verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        // Assert
+        assertEquals("INVALID_CREDENTIALS", unauthorizedException.getMessage());
+
+        // Verify method calls
+        verify(authenticationManager, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
         verify(userDetailsService, never()).loadUserByUsername(anyString());
         verify(jwtTokenUtil, never()).generateToken(any(UserDetails.class), anyInt());
     }
 
     @Test
-    public void testRegisterUser() {
+    public void testLoginUser_NonExistentUser() throws Exception {
         // Arrange
-        UserDTO newUserDTO = new UserDTO();
-        newUserDTO.setFirstName("New");
-        newUserDTO.setLastName("User");
-        newUserDTO.setEmail("newuser@example.com");
-        newUserDTO.setPassword("password");
-        newUserDTO.setDateOfBirth(LocalDate.now());
+        LoginDTO loginDTO = new LoginDTO();
+        loginDTO.setEmail("nonexistentuser@example.com");
+        loginDTO.setPassword("somepassword");
 
-        User newUser = createUser(1, "New", "User", "newuser@example.com");
-        when(userRepository.findByEmail("newuser@example.com")).thenReturn(null);
-        when(userRepository.save(any(User.class))).thenReturn(newUser);
-        when(userDetailsService.loadUserByUsername("newuser@example.com")).thenReturn(mock(UserDetails.class));
-        when(jwtTokenUtil.generateToken(any(UserDetails.class), eq(1))).thenReturn("jwtToken");
+        // Mock the AuthenticationManager to authenticate successfully
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenReturn(mock(Authentication.class));
 
-        // Act
-        UserDTO result = userService.registerUser(newUserDTO);
+        // Mock the UserRepository to return null when findByEmail is called
+        when(userRepository.findByEmail("nonexistentuser@example.com")).thenReturn(null);
+
+        // Act & Assert
+        UnauthorizedException unauthorizedException = assertThrows(UnauthorizedException.class,
+                () -> userService.loginUser(loginDTO));
 
         // Assert
-        assertNotNull(result);
-        assertEquals(1, result.getId());
-        assertEquals("New", result.getFirstName());
-        assertEquals("User", result.getLastName());
-        assertEquals("newuser@example.com", result.getEmail());
-        assertEquals("jwtToken", result.getToken());
+        assertEquals("Invalid email or password", unauthorizedException.getMessage());
 
-        verify(userRepository).findByEmail("newuser@example.com");
-        verify(userRepository).save(userCaptor.capture());
-        verify(userDetailsService).loadUserByUsername("newuser@example.com");
-        verify(jwtTokenUtil).generateToken(any(UserDetails.class), eq(1));
-
-        User capturedUser = userCaptor.getValue();
-        assertEquals("New", capturedUser.getFirstName());
-        assertEquals("User", capturedUser.getLastName());
-        assertEquals("newuser@example.com", capturedUser.getEmail());
-        System.out.println("Matches: " + bCryptPasswordEncoder.matches("password", capturedUser.getPassword()));
-        assertTrue(bCryptPasswordEncoder.matches("password", capturedUser.getPassword()));
+        // Verify method calls
+        verify(authenticationManager, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        verify(userRepository, times(1)).findByEmail("nonexistentuser@example.com");
+        verify(userDetailsService, never()).loadUserByUsername(anyString());
+        verify(jwtTokenUtil, never()).generateToken(any(UserDetails.class), anyInt());
     }
+
 
     @Test
     public void testRegisterUser_UserAlreadyExists() {
         // Arrange
-        UserDTO userDTO = createUserDTO("John", "Doe", "johndoe@example.com", "password");
-        when(userRepository.findByEmail("johndoe@example.com")).thenReturn(createUser(1, "John", "Doe", "johndoe@example.com"));
+        UserDTO userDTO = new UserDTO();
+        userDTO.setFirstName("John");
+        userDTO.setLastName("Doe");
+        userDTO.setEmail("johndoe@example.com");
+        userDTO.setPassword("password");
+
+        User existingUser = new User();
+        existingUser.setId(1);
+        existingUser.setFirstName("John");
+        existingUser.setLastName("Doe");
+        existingUser.setEmail("johndoe@example.com");
+
+        given(userRepository.findByEmail("johndoe@example.com")).willReturn(existingUser);
 
         // Act & Assert
         assertThrows(BadRequestException.class, () -> userService.registerUser(userDTO));
@@ -326,26 +363,34 @@ public class UserServiceTests {
         verify(jwtTokenUtil, never()).generateToken(any(UserDetails.class), anyInt());
     }
 
-    @Test
-    public void testAddFavorite() {
-        // Arrange
-        User user = createUser(1, "John", "Doe", "johndoe@example.com");
-        Recipe recipe = createRecipe(1, "Recipe 1");
-        user.getFavoriteRecipes().add(recipe);
-        when(userRepository.findById(1)).thenReturn(Optional.of(user));
-        when(userRepository.save(any(User.class))).thenReturn(user);
+@Test
+public void testAddFavorite() {
 
-        // Act
-        userService.addFavorite(1, 2);
 
-        // Assert
-        assertEquals(2, user.getFavoriteRecipes().size());
-        assertTrue(user.getFavoriteRecipes().contains(1));
-        assertTrue(user.getFavoriteRecipes().contains(2));
+    // Arrange
+    User user = createUser(1, "John", "Doe", "johndoe@example.com");
+    Recipe recipe1 = createRecipe(1, "Recipe 1");
+    Recipe recipe2 = createRecipe(2, "Recipe 2");
 
-        verify(userRepository).findById(1);
-        verify(userRepository).save(user);
-    }
+    user.getFavoriteRecipes().add(recipe1);
+
+    when(userRepository.findById(1)).thenReturn(Optional.of(user));
+    when(recipeRepository.findById(2)).thenReturn(Optional.of(recipe2));
+    when(userRepository.save(any(User.class))).thenReturn(user);
+
+    // Act
+    userService.addFavorite(1, 2);
+
+    // Assert
+    assertEquals(2, user.getFavoriteRecipes().size());
+    assertTrue(user.getFavoriteRecipes().stream().anyMatch(r -> r.getId() == 1));
+    assertTrue(user.getFavoriteRecipes().stream().anyMatch(r -> r.getId() == 2));
+
+    verify(userRepository).findById(1);
+    verify(recipeRepository).findById(2);
+    verify(userRepository).save(user);
+}
+
 
     @Test
     public void testAddFavorite_UserNotFound() {
@@ -353,7 +398,7 @@ public class UserServiceTests {
         when(userRepository.findById(1)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(ResourceNotFoundException.class, () -> userService.addFavorite(1, 2));
+        assertThrows(UserNotFoundException.class, () -> userService.addFavorite(1, 2));
 
         verify(userRepository).findById(1);
         verify(userRepository, never()).save(any(User.class));
@@ -369,6 +414,8 @@ public class UserServiceTests {
         user.getFavoriteRecipes().add(recipe2);
 
         when(userRepository.findById(1)).thenReturn(Optional.of(user));
+        when(recipeRepository.findById(1)).thenReturn(Optional.of(recipe1));
+        when(recipeRepository.findById(2)).thenReturn(Optional.of(recipe2));
         when(userRepository.save(any(User.class))).thenReturn(user);
 
         // Act
@@ -389,7 +436,7 @@ public class UserServiceTests {
         when(userRepository.findById(1)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(ResourceNotFoundException.class, () -> userService.removeFavorite(1, 1));
+        assertThrows(UserNotFoundException.class, () -> userService.removeFavorite(1, 1));
 
         verify(userRepository).findById(1);
         verify(userRepository, never()).save(any(User.class));

@@ -18,4 +18,13 @@ authAxios.interceptors.request.use((config) => {
 })
 
 
+authAxios.interceptors.response.use((response) => {
+    return response;
+}, (error) => {
+    if (error.response && error.response.status === 401) {
+        console.error("Token is invalid or expired. Redirecting to login.");
+    }
+    return Promise.reject(error);
+});
+
 export default authAxios;

@@ -21,9 +21,13 @@ function Login() {
         e.preventDefault();
 
         login(email, password)
-            .then(() => navigate("/dashboard"))
-            .catch((error) => console.log("Error:", error));
+            .then(()=> {
+                navigate("/dashboard");
+                setError("");
+            })
+            .catch((error) => {console.log("Error:", error);
         setError("Invalid email or password.")
+        });
     };
 
     return (

@@ -37,5 +37,5 @@ public interface RecipeRepository extends PagingAndSortingRepository<Recipe, Int
 
     List<Recipe> findByUserAndFavorite(User user, boolean favorite);
 
-    Optional<Object> findById(Recipe recipeId);
+    Optional<Recipe> findById(Integer recipeId);
 }

@@ -13,6 +13,7 @@ import SearchResults from "./SearchResults";
 import {UserContext} from "../stores/UserStore";
 import Box from '@mui/material/Box';
 import {Button} from "@mui/material";
+import {isTokenExpired} from "../stores/UserStore";
 
 function Dashboard() {
     const [recipes, setRecipes] = useState([]);
@@ -83,7 +84,7 @@ function Dashboard() {
     useEffect(() => {
         const fetchLikedRecipes = async () => {
             if (userId) {
-                const response = await authAxios.get(`http://localhost:8080/users/${userId}/favorites`);
+                const response = await authAxios.get(`http://localhost:8080/users/${userId}/recipes/favorites`);
                 console.log("Fetched liked recipes: ", response.data.data);
                 setLikedRecipes(response.data.data);
                 setIsLoading(false);
