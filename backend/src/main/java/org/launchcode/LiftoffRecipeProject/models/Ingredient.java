@@ -15,11 +15,11 @@ public class Ingredient extends AbstractEntity{
     @Column(unique = false)
     private String name;
 
-    private String quantity;
+//    private String quantity;
 
-    @JsonBackReference
-    @ManyToMany(mappedBy="ingredients")
-    private List<Recipe> recipes;
+//    @JsonBackReference
+//    @ManyToMany(mappedBy="ingredients")
+//    private List<Recipe> recipes;
 
     public Ingredient(){}
 
@@ -36,19 +36,19 @@ public class Ingredient extends AbstractEntity{
         this.name = name;
     }
 
-    public String getQuantity() {
-        return quantity;
-    }
+//    public String getQuantity() {
+//        return quantity;
+//    }
+//
+//    public void setQuantity(String quantity) {
+//        this.quantity = quantity;
+//    }
 
-    public void setQuantity(String quantity) {
-        this.quantity = quantity;
-    }
-
-    public List<Recipe> getRecipes() {
-        return recipes;
-    }
-
-    public void setRecipes(List<Recipe> recipes) {
-        this.recipes = recipes;
-    }
+//    public List<Recipe> getRecipes() {
+//        return recipes;
+//    }
+//
+//    public void setRecipes(List<Recipe> recipes) {
+//        this.recipes = recipes;
+//    }
 }

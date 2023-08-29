@@ -391,6 +391,31 @@ public void testAddFavorite() {
     verify(userRepository).save(user);
 }
 
+    @Test
+    public void testRemoveFavorite() {
+        // Arrange
+        User user = createUser(1, "John", "Doe", "johndoe@example.com");
+        Recipe recipe1 = createRecipe(1, "Recipe 1");
+        Recipe recipe2 = createRecipe(2, "Recipe 2");
+        user.getFavoriteRecipes().add(recipe1);
+        user.getFavoriteRecipes().add(recipe2);
+
+        when(userRepository.findById(1)).thenReturn(Optional.of(user));
+        when(recipeRepository.findById(1)).thenReturn(Optional.of(recipe1));
+        when(userRepository.save(any(User.class))).thenReturn(user);
+
+        // Act
+        userService.removeFavorite(1, 1);
+
+        // Assert
+        assertEquals(1, user.getFavoriteRecipes().size());
+        assertFalse(user.getFavoriteRecipes().stream().anyMatch(r->r.getId()==1));
+        assertTrue(user.getFavoriteRecipes().stream().anyMatch(r->r.getId()==2));
+
+        verify(userRepository).findById(1);
+        verify(userRepository).save(user);
+    }
+
 
     @Test
     public void testAddFavorite_UserNotFound() {
@@ -404,31 +429,7 @@ public void testAddFavorite() {
         verify(userRepository, never()).save(any(User.class));
     }
 
-    @Test
-    public void testRemoveFavorite() {
-        // Arrange
-        User user = createUser(1, "John", "Doe", "johndoe@example.com");
-        Recipe recipe1 = createRecipe(1, "Recipe 1");
-        Recipe recipe2 = createRecipe(2, "Recipe 2");
-        user.getFavoriteRecipes().add(recipe1);
-        user.getFavoriteRecipes().add(recipe2);
 
-        when(userRepository.findById(1)).thenReturn(Optional.of(user));
-        when(recipeRepository.findById(1)).thenReturn(Optional.of(recipe1));
-        when(recipeRepository.findById(2)).thenReturn(Optional.of(recipe2));
-        when(userRepository.save(any(User.class))).thenReturn(user);
-
-        // Act
-        userService.removeFavorite(1, 1);
-
-        // Assert
-        assertEquals(1, user.getFavoriteRecipes().size());
-        assertFalse(user.getFavoriteRecipes().contains(1));
-        assertTrue(user.getFavoriteRecipes().contains(2));
-
-        verify(userRepository).findById(1);
-        verify(userRepository).save(user);
-    }
 
     @Test
     public void testRemoveFavorite_UserNotFound() {

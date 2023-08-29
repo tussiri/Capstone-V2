@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -42,7 +43,11 @@ public class RecipeDTO {
 
     @NotEmpty(message = "Ingredients required")
     @Size(min=1, message = "Ingredients must have at least 1 item")
-    private List<IngredientDTO> ingredients;
+    private List<IngredientDTO> ingredients = new ArrayList<>();
+
+
+
+    private List<RecipeIngredientDTO> recipeIngredients;
 
     @NotBlank(message = "Directions required")
     @Size(min=1, message = "Directions must have at least 1 step")
@@ -153,5 +158,13 @@ public class RecipeDTO {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public List<RecipeIngredientDTO> getRecipeIngredients() {
+        return recipeIngredients;
+    }
+
+    public void setRecipeIngredients(List<RecipeIngredientDTO> recipeIngredients) {
+        this.recipeIngredients = recipeIngredients;
     }
 }
