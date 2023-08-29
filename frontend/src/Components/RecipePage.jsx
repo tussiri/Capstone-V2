@@ -119,7 +119,7 @@ function RecipePage({match}) {
                 <p>Ingredients:</p>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                     {recipe.ingredients.map((ingredient, index) => (
-                        <span key={index}>{ingredient.name} ({ingredient.quantity})</span>
+                        <span key={index}>{ingredient.quantity} {ingredient.name} </span>
                     ))}
                 </div>
                 <p>Directions: {recipe.directions}</p>

@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -67,11 +68,26 @@ public class RecipeController {
     }
 
     // GET /recipes/ingredient/{ingredientName} -return all recipes with this {ingredientName}
-    @GetMapping("/ingredient/{ingredientName}")
-    public ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> getRecipesByIngredient(@PathVariable String ingredientName, Pageable pageable) {
-        Page<RecipeDTO> recipeDTOs = recipeService.getRecipesByIngredient(ingredientName, pageable);
-        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Recipes returned successfully", recipeDTOs), HttpStatus.OK);
+//    @GetMapping("/ingredient/{ingredientName}")
+//    public ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> getRecipesByIngredient(@PathVariable String ingredientName, Pageable pageable) {
+//        Page<RecipeDTO> recipeDTOs = recipeService.getRecipesByIngredient(ingredientName, pageable);
+//        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Recipes returned successfully", recipeDTOs), HttpStatus.OK);
+//    }
+
+    @GetMapping("/ingredients")
+    public ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> searchRecipesByIngredient(
+            @RequestParam(value = "ingredients") String ingredients,
+            Pageable pageable) {
+        List<Recipe> recipes = recipeService.searchByIngredient(ingredients);
+        // Wrap it into a page to match the front-end expectation
+        Page<Recipe> recipePage = new PageImpl<>(recipes, pageable, recipes.size());
+        // Convert to DTO
+        Page<RecipeDTO> recipeDTOPage = recipePage.map(recipeService::mapToDTO);
+        // Wrap it into a response wrapper
+        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Recipes returned successfully", recipeDTOPage), HttpStatus.OK);
     }
+
+
 
     //GET /recipes/{id} return specific recipes by their {id}
     @GetMapping("/{recipeId}")
@@ -99,13 +115,20 @@ public class RecipeController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> searchRecipes(
+    public ResponseEntity<?> searchRecipes(
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "category", required = false) String category,
             @RequestParam(value = "ingredients", required = false) String ingredients,
             @RequestParam(value = "time", required = false) String time,
             @RequestParam(value = "rating", required = false) String rating,
             Pageable pageable) {
+
+        if (ingredients != null && name == null && category == null && time == null && rating == null) {
+            // If only 'ingredients' is provided, return a simple list
+            SearchCriteria criteria = new SearchCriteria("ingredients", ":", ingredients);
+            List<Recipe> recipes = recipeService.searchByCriteria(criteria);
+            return new ResponseEntity<>(recipes, HttpStatus.OK);
+        }
 
         Specification<Recipe> spec = Specification.where(null);
 
@@ -149,6 +172,12 @@ public class RecipeController {
     public ResponseEntity<ResponseWrapper<RecipeDTO>> getRandomRecipe() {
         RecipeDTO randomRecipe = recipeService.getRandomRecipe();
         return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Random recipe retrieved successfully", randomRecipe), HttpStatus.OK);
+    }
+
+    @DeleteMapping("delete/{recipeId}")
+    public ResponseEntity<ResponseWrapper<String>> deleteRecipe(@PathVariable Integer recipeId, @RequestHeader("userId") Integer userId) {
+        recipeService.deleteRecipe(recipeId, userId, true);
+        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Recipe deleted successfully", "Recipe deleted"), HttpStatus.OK);
     }
 
 

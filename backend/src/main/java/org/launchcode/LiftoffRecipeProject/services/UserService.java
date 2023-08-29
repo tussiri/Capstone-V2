@@ -199,9 +199,10 @@ public class UserService {
     public void removeFavorite(Integer userId, Integer recipeId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new RecipeNotFoundException("Recipe not found"));
-        user.getFavoriteRecipes().remove(recipe);
+        user.getFavoriteRecipes().remove(recipe);  // Make sure this line actually removes the recipe
         userRepository.save(user);
     }
+
 
 
     private User getOrphanUser() {

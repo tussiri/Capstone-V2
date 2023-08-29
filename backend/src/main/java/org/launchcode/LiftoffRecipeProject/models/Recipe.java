@@ -18,11 +18,16 @@ public class Recipe extends AbstractEntity {
 
     private String name;
 
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RecipeIngredient> recipeIngredients = new ArrayList<>();
+
+
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER)
-    @JoinTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "recipe_id"),
+    @JoinTable(name = "recipe_ingredients",
+            joinColumns = @JoinColumn(name = "recipe_id"),
             inverseJoinColumns = @JoinColumn(name = "ingredient_id"))
     @JsonManagedReference
-    private List<Ingredient> ingredients;
+    private List<Ingredient> ingredients = new ArrayList<>();
 
     @Column(name = "directions", columnDefinition = "MEDIUMTEXT")
     private String directions;
@@ -188,5 +193,13 @@ public class Recipe extends AbstractEntity {
     public void removeFavoritedByUser(User user) {
         this.favoritedByUser.remove(user);
         user.getFavoriteRecipes().remove(this);
+    }
+
+    public List<RecipeIngredient> getRecipeIngredients() {
+        return recipeIngredients;
+    }
+
+    public void setRecipeIngredients(List<RecipeIngredient> recipeIngredients) {
+        this.recipeIngredients = recipeIngredients;
     }
 }

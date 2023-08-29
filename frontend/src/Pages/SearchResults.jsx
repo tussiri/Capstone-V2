@@ -28,14 +28,14 @@ function SearchResults() {
                 })
                 .catch(error => {
                     console.error(error);
-                    navigate('/login')
+                    navigate('/searchresults');
                 })
                 .finally(() => {
                     setIsLoading(false);
-                })
-            ;
+                });
         }
     }, [query, navigate]);
+
 
     if (isLoading) {
         return <LoadingScreen/>

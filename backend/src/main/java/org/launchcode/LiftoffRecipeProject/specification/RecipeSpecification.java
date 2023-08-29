@@ -22,8 +22,12 @@ public class RecipeSpecification implements Specification<Recipe> {
 
     @Override
     public Predicate toPredicate(Root<Recipe> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+        logger.info("Generating predicate for criteria: {}", criteria);
+
+
         logger.info("Processing SearchCriteria: key={}, operation={}, value={}",
                 criteria.getKey(), criteria.getOperation(), criteria.getValues());
+
 
         if (criteria.getKey().equalsIgnoreCase("ingredients")) {
             List<Predicate> predicates = new ArrayList<>();
