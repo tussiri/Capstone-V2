@@ -53,7 +53,8 @@ const SearchBar = ({onSearch}) => {
                 url += `name=${searchTerm}`
                 break;
             case 'By Ingredient':
-                url = `http://localhost:8080/recipes/ingredients/${searchTerm}`
+                const encodedSearchTerm = encodeURIComponent(searchTerm);
+                url += `ingredients=${encodedSearchTerm}`;
                 break;
             case 'By Time to Prepare':
                 url += `time=<${searchTerm}`
