@@ -9,7 +9,6 @@ import org.launchcode.LiftoffRecipeProject.exception.RecipeNotFoundException;
 import org.launchcode.LiftoffRecipeProject.exception.ResourceNotFoundException;
 import org.launchcode.LiftoffRecipeProject.exception.UnauthorizedException;
 import org.launchcode.LiftoffRecipeProject.models.*;
-import org.launchcode.LiftoffRecipeProject.specification.RecipeSpecification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -175,6 +174,7 @@ public class RecipeService {
 //            savedIngredients.add(ingredientRepository.save(ingredient));
 //        }
 
+
             recipe.setUser(user);
             recipe = recipeRepository.save(recipe);
 
@@ -196,7 +196,39 @@ public class RecipeService {
             return mapToDTO(recipe);  // Return the saved recipe as DTO
         }
 
-        public Optional<RecipeDTO> findById (Integer id){
+    public List<RecipeDTO> createRecipes(Integer userId, List<RecipeDTO> recipeDTOs) {
+        List<RecipeDTO> savedRecipeDTOs = new ArrayList<>();
+        for (RecipeDTO recipeDTO : recipeDTOs) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+            Recipe recipe = mapToEntity(recipeDTO);
+            recipe.setUser(user);
+            recipe = recipeRepository.save(recipe);
+
+            for (IngredientDTO ingredientDto : recipeDTO.getIngredients()) {
+                Ingredient ingredient = ingredientRepository.findByName(ingredientDto.getName())
+                        .orElseGet(() -> {
+                            Ingredient newIngredient = new Ingredient();
+                            newIngredient.setName(ingredientDto.getName());
+                            return ingredientRepository.save(newIngredient);
+                        });
+
+                RecipeIngredient recipeIngredient = new RecipeIngredient();
+                recipeIngredient.setRecipe(recipe);
+                recipeIngredient.setIngredient(ingredient);
+                recipeIngredient.setQuantity(ingredientDto.getQuantity());
+                recipeIngredientRepository.save(recipeIngredient);
+            }
+
+            RecipeDTO savedRecipeDTO = mapToDTO(recipe);
+            savedRecipeDTOs.add(savedRecipeDTO);
+        }
+        return savedRecipeDTOs;
+    }
+
+
+    public Optional<RecipeDTO> findById (Integer id){
             Optional<Recipe> recipe = recipeRepository.findById(id);
             return recipe.map(this::mapToDTO);
         }
@@ -299,44 +331,16 @@ public class RecipeService {
             }
         }
 
-
-
-
-        public Page<RecipeDTO> searchRecipes (Specification <Recipe> spec, Pageable pageable){
+        public Page<RecipeDTO> searchRecipes (Specification < Recipe > spec, Pageable pageable){
             return recipeRepository.findAll(spec, pageable).map(this::mapToDTO);
-
         }
-
-    public List<Recipe> searchRecipes() {
-        Specification<Recipe> spec = new RecipeSpecification(new SearchCriteria("ingredients", ":", "sugar"));
-        return recipeRepository.findAll(spec);
-    }
 
         public Page<RecipeDTO> getRecipesByName (String name, Pageable pageable){
             return recipeRepository.findByNameContaining(name, pageable).map(this::mapToDTO);
         }
 
-    public Page<RecipeDTO> getRecipesByIngredient(String ingredientName, Pageable pageable) {
-        Ingredient ingredient = ingredientRepository.findByName(ingredientName)
-                .orElseThrow(() -> new ResourceNotFoundException("Ingredient not found"));
-        Page<RecipeDTO> recipeDTOs = recipeRepository.findByIngredientsNameContaining(ingredient, pageable).map(this::mapToDTO);
-        logger.info("Recipes found by ingredient {}: {}", ingredientName, recipeDTOs.getContent());
-        return recipeDTOs;
-    }
 
-    public List<Recipe> searchByCriteria(SearchCriteria criteria) {
-        Specification<Recipe> specification = new RecipeSpecification(criteria);
-        return recipeRepository.findAll(specification);
-    }
-
-    public List<Recipe> searchByIngredient(String ingredients) {
-        List<String> ingredientNames = Arrays.asList(ingredients.split(","));
-        return recipeRepository.findByIngredientsNames(ingredientNames);
-    }
-
-
-
-    public Page<RecipeDTO> getRecipesByUser (Integer userId, Pageable pageable){
+        public Page<RecipeDTO> getRecipesByUser (Integer userId, Pageable pageable){
             return recipeRepository.findByUserId(userId, pageable).map(this::mapToDTO);
         }
 

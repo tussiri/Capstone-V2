@@ -48,6 +48,7 @@ public class SecurityConfig {
                         new AntPathRequestMatcher("/recipes/{recipeId}", "GET"),
                         new AntPathRequestMatcher("/recipes/user/{userId}", "GET"),
                         new AntPathRequestMatcher("/recipes/ingredient/{ingredientName}", "GET"),
+                        new AntPathRequestMatcher("/recipes/{userId}/multiple", "POST"),  // Add this line for the new POST endpoint
                         new AntPathRequestMatcher("/recipes/{recipeId}", "GET"),
                         new AntPathRequestMatcher("/review/recipes/{recipeId}/reviews", "GET"),
                         new AntPathRequestMatcher("/recipes/search", "GET"),

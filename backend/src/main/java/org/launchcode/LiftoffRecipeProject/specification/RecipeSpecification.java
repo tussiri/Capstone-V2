@@ -3,6 +3,7 @@ package org.launchcode.LiftoffRecipeProject.specification;
 import jakarta.persistence.criteria.*;
 import org.launchcode.LiftoffRecipeProject.models.Ingredient;
 import org.launchcode.LiftoffRecipeProject.models.Recipe;
+import org.launchcode.LiftoffRecipeProject.models.RecipeIngredient;
 import org.launchcode.LiftoffRecipeProject.models.SearchCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +31,15 @@ public class RecipeSpecification implements Specification<Recipe> {
 
 
         if (criteria.getKey().equalsIgnoreCase("ingredients")) {
+            // Joining Recipe -> RecipeIngredient -> Ingredient
+            Join<Recipe, RecipeIngredient> recipeIngredientJoin = root.join("recipeIngredients");
+            Join<RecipeIngredient, Ingredient> ingredientJoin = recipeIngredientJoin.join("ingredient");
+
             List<Predicate> predicates = new ArrayList<>();
             for (Object value : criteria.getValues()) {
-                Join<Recipe, Ingredient> ingredientsJoin = root.join("ingredients");
-                predicates.add(builder.like(ingredientsJoin.get("name"), "%" + value + "%"));
+                predicates.add(builder.like(ingredientJoin.get("name"), "%" + value + "%"));
             }
-            return builder.and(predicates.toArray(new Predicate[0]));
+            return builder.or(predicates.toArray(new Predicate[0]));
         } else if (criteria.getKey().equalsIgnoreCase("quantity")) {
             return builder.equal(root.get("quantity"), criteria.getValues().get(0));
         } else if (criteria.getKey().equalsIgnoreCase("name")) {

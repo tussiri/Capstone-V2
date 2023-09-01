@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -74,21 +73,6 @@ public class RecipeController {
 //        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Recipes returned successfully", recipeDTOs), HttpStatus.OK);
 //    }
 
-    @GetMapping("/ingredients")
-    public ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> searchRecipesByIngredient(
-            @RequestParam(value = "ingredients") String ingredients,
-            Pageable pageable) {
-        List<Recipe> recipes = recipeService.searchByIngredient(ingredients);
-        // Wrap it into a page to match the front-end expectation
-        Page<Recipe> recipePage = new PageImpl<>(recipes, pageable, recipes.size());
-        // Convert to DTO
-        Page<RecipeDTO> recipeDTOPage = recipePage.map(recipeService::mapToDTO);
-        // Wrap it into a response wrapper
-        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Recipes returned successfully", recipeDTOPage), HttpStatus.OK);
-    }
-
-
-
     //GET /recipes/{id} return specific recipes by their {id}
     @GetMapping("/{recipeId}")
     public ResponseEntity<ResponseWrapper<RecipeDTO>> getRecipe(@PathVariable Integer recipeId) {
@@ -106,6 +90,14 @@ public class RecipeController {
         return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.CREATED.value(), "Recipe created successfully", savedRecipeDTO), HttpStatus.CREATED);
     }
 
+    // For multiple recipes
+    @Transactional
+    @PostMapping("/{userId}/multiple")
+    public ResponseEntity<ResponseWrapper<List<RecipeDTO>>> createMultipleRecipes(@PathVariable Integer userId, @Valid @RequestBody List<RecipeDTO> recipeDTOs) {
+        List<RecipeDTO> savedRecipeDTOs = recipeService.createRecipes(userId, recipeDTOs);
+        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.CREATED.value(), "Recipes created successfully", savedRecipeDTOs), HttpStatus.CREATED);
+    }
+
     //PUT /recipes/{id} updates the recipe with the matching {id}
     @Transactional
     @PutMapping("/update/{recipeId}")
@@ -115,20 +107,13 @@ public class RecipeController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> searchRecipes(
+    public ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> searchRecipes(
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "category", required = false) String category,
             @RequestParam(value = "ingredients", required = false) String ingredients,
             @RequestParam(value = "time", required = false) String time,
             @RequestParam(value = "rating", required = false) String rating,
             Pageable pageable) {
-
-        if (ingredients != null && name == null && category == null && time == null && rating == null) {
-            // If only 'ingredients' is provided, return a simple list
-            SearchCriteria criteria = new SearchCriteria("ingredients", ":", ingredients);
-            List<Recipe> recipes = recipeService.searchByCriteria(criteria);
-            return new ResponseEntity<>(recipes, HttpStatus.OK);
-        }
 
         Specification<Recipe> spec = Specification.where(null);
 

@@ -6,12 +6,10 @@ import jakarta.persistence.*;
 public class RecipeIngredient {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
 
-    //    @ManyToOne(fetch= FetchType.LAZY)
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-
+    @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;
 
