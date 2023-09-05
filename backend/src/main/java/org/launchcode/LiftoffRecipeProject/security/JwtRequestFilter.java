@@ -32,6 +32,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             "/",
             "/auth/register",
             "/auth/login",
+            "/auth/token/refresh",
             "/recipes",
             "/recipes/search",
             "/recipes/user/{userId}"
@@ -40,6 +41,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
+        response.setContentType("application/json");
 
         final String requestTokenHeader = request.getHeader("Authorization");
 
@@ -81,7 +83,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
+        System.out.println("Before Filter - Content-Type: " + response.getContentType());
         chain.doFilter(request, response);
+        System.out.println("After Filter - Content-Type: " + response.getContentType());
+//        chain.doFilter(request, response);
     }
 
 

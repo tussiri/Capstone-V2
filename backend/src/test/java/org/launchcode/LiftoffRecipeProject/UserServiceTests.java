@@ -363,33 +363,33 @@ public class UserServiceTests {
         verify(jwtTokenUtil, never()).generateToken(any(UserDetails.class), anyInt());
     }
 
-@Test
-public void testAddFavorite() {
+    @Test
+    public void testAddFavorite() {
 
 
-    // Arrange
-    User user = createUser(1, "John", "Doe", "johndoe@example.com");
-    Recipe recipe1 = createRecipe(1, "Recipe 1");
-    Recipe recipe2 = createRecipe(2, "Recipe 2");
+        // Arrange
+        User user = createUser(1, "John", "Doe", "johndoe@example.com");
+        Recipe recipe1 = createRecipe(1, "Recipe 1");
+        Recipe recipe2 = createRecipe(2, "Recipe 2");
 
-    user.getFavoriteRecipes().add(recipe1);
+        user.getFavoriteRecipes().add(recipe1);
 
-    when(userRepository.findById(1)).thenReturn(Optional.of(user));
-    when(recipeRepository.findById(2)).thenReturn(Optional.of(recipe2));
-    when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userRepository.findById(1)).thenReturn(Optional.of(user));
+        when(recipeRepository.findById(2)).thenReturn(Optional.of(recipe2));
+        when(userRepository.save(any(User.class))).thenReturn(user);
 
-    // Act
-    userService.addFavorite(1, 2);
+        // Act
+        userService.addFavorite(1, 2);
 
-    // Assert
-    assertEquals(2, user.getFavoriteRecipes().size());
-    assertTrue(user.getFavoriteRecipes().stream().anyMatch(r -> r.getId() == 1));
-    assertTrue(user.getFavoriteRecipes().stream().anyMatch(r -> r.getId() == 2));
+        // Assert
+        assertEquals(2, user.getFavoriteRecipes().size());
+        assertTrue(user.getFavoriteRecipes().stream().anyMatch(r -> r.getId() == 1));
+        assertTrue(user.getFavoriteRecipes().stream().anyMatch(r -> r.getId() == 2));
 
-    verify(userRepository).findById(1);
-    verify(recipeRepository).findById(2);
-    verify(userRepository).save(user);
-}
+        verify(userRepository).findById(1);
+        verify(recipeRepository).findById(2);
+        verify(userRepository).save(user);
+    }
 
     @Test
     public void testRemoveFavorite() {
@@ -409,8 +409,8 @@ public void testAddFavorite() {
 
         // Assert
         assertEquals(1, user.getFavoriteRecipes().size());
-        assertFalse(user.getFavoriteRecipes().stream().anyMatch(r->r.getId()==1));
-        assertTrue(user.getFavoriteRecipes().stream().anyMatch(r->r.getId()==2));
+        assertFalse(user.getFavoriteRecipes().stream().anyMatch(r -> r.getId() == 1));
+        assertTrue(user.getFavoriteRecipes().stream().anyMatch(r -> r.getId() == 2));
 
         verify(userRepository).findById(1);
         verify(userRepository).save(user);
@@ -428,7 +428,6 @@ public void testAddFavorite() {
         verify(userRepository).findById(1);
         verify(userRepository, never()).save(any(User.class));
     }
-
 
 
     @Test
