@@ -120,5 +120,6 @@ public class JwtTokenUtil {
                 .compact();
     }
 
-
+    public JwtTokenUtil() {
+    }
 }

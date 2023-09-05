@@ -14,13 +14,11 @@ import org.launchcode.LiftoffRecipeProject.data.UserRepository;
 import org.launchcode.LiftoffRecipeProject.exception.RecipeNotFoundException;
 import org.launchcode.LiftoffRecipeProject.exception.ResourceNotFoundException;
 import org.launchcode.LiftoffRecipeProject.exception.UnauthorizedException;
-import org.launchcode.LiftoffRecipeProject.models.Ingredient;
-import org.launchcode.LiftoffRecipeProject.models.Recipe;
-import org.launchcode.LiftoffRecipeProject.models.RecipeData;
-import org.launchcode.LiftoffRecipeProject.models.User;
+import org.launchcode.LiftoffRecipeProject.models.*;
 import org.launchcode.LiftoffRecipeProject.services.IngredientService;
 import org.launchcode.LiftoffRecipeProject.services.RecipeService;
 import org.launchcode.LiftoffRecipeProject.services.UserService;
+import org.launchcode.LiftoffRecipeProject.specification.RecipeSpecification;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -38,8 +36,7 @@ import java.security.InvalidParameterException;
 import java.util.*;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.launchcode.LiftoffRecipeProject.controllers.RecipeController.logger;
 import static org.mockito.Mockito.*;
@@ -96,20 +93,6 @@ public class RecipeControllerTest {
 
         verify(recipeService, times(1)).getRecipesByUser(userId, pageable);
 
-        assert response.getStatusCode() == HttpStatus.OK;
-    }
-
-    @Test
-    public void testGetRecipesByIngredient() {
-
-        String ingredientName = "flour";
-        Pageable pageable = mock(Pageable.class);
-        Page<RecipeDTO> recipeDTOs = mock(Page.class);
-        when(recipeService.getRecipesByIngredient(ingredientName, pageable)).thenReturn(recipeDTOs);
-
-        ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> response = recipeController.getRecipesByIngredient(ingredientName, pageable);
-
-        verify(recipeService, times(1)).getRecipesByIngredient(ingredientName, pageable);
         assert response.getStatusCode() == HttpStatus.OK;
     }
 
@@ -249,19 +232,35 @@ public class RecipeControllerTest {
     }
 
     @Test
-    public void testGetRecipesByIngredient_WhenNoRecipesContainIngredient() {
-
-        String ingredientName = "ingredient";
+    public void testSearchRecipesByIngredient() {
+        // Mocking Pageable
         Pageable pageable = mock(Pageable.class);
-        Page<RecipeDTO> emptyRecipePage = new PageImpl<>(new ArrayList<>());
-        when(recipeService.getRecipesByIngredient(ingredientName, pageable)).thenReturn(emptyRecipePage);
 
-        ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> response = recipeController.getRecipesByIngredient(ingredientName, pageable);
+        // Create an expected Specification based on the "ingredients" parameter
+        Specification<Recipe> expectedSpec = Specification.where(null);
+        String[] ingredientNames = {"flour", "sugar"};
+        for (String ingredientName : ingredientNames) {
+            expectedSpec = expectedSpec.and(new RecipeSpecification(new SearchCriteria("ingredients", ":", ingredientName.trim())));
+        }
 
-        verify(recipeService, times(1)).getRecipesByIngredient(ingredientName, pageable);
-        assert response.getStatusCode() == HttpStatus.OK;
-        assert response.getBody().getData().isEmpty();
+        // Mocking what the service should return
+        Page<RecipeDTO> mockedPage = new PageImpl<>(Arrays.asList(new RecipeDTO(), new RecipeDTO()));
+        when(recipeService.searchRecipes(any(Specification.class), eq(pageable))).thenReturn(mockedPage);
+
+        // Making the actual call
+        String ingredients = "flour,sugar";
+        ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> response = recipeController.searchRecipes(null, null, ingredients, null, null, pageable);
+
+        // Verifying the method was called with the expected Specification
+        verify(recipeService, times(1)).searchRecipes(any(Specification.class), eq(pageable));
+
+        // Verifying the response
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.OK.value(), response.getBody().getStatus());
+        assertFalse(response.getBody().getData().isEmpty());
     }
+
 
     @Test
     public void testUnauthorizedUserUpdateRecipe() {
@@ -371,6 +370,62 @@ public class RecipeControllerTest {
         });
 
         assertEquals("Invalid user ID", exception.getMessage());
+    }
+
+
+    @Test
+    public void testSearchRecipesByIngredient_NullIngredients() {
+        Pageable pageable = mock(Pageable.class);
+        when(recipeService.searchRecipes(any(), eq(pageable))).thenReturn(new PageImpl<>(Collections.emptyList()));
+
+        ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> response = recipeController.searchRecipes(null, null, null, null, null, pageable);
+
+        // Verify and assert
+        verify(recipeService, times(1)).searchRecipes(any(), eq(pageable));
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().getData().isEmpty());
+    }
+
+
+    @Test
+    public void testSearchRecipesByIngredient_EmptyIngredients() {
+        Pageable pageable = mock(Pageable.class);
+        when(recipeService.searchRecipes(any(), eq(pageable))).thenReturn(new PageImpl<>(Collections.emptyList()));
+
+        ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> response = recipeController.searchRecipes(null, null, "", null, null, pageable);
+
+        // Verify and assert
+        verify(recipeService, times(1)).searchRecipes(any(), eq(pageable));
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().getData().isEmpty());
+    }
+
+    @Test
+    public void testSearchRecipesByIngredient_WhitespaceIngredients() {
+        Pageable pageable = mock(Pageable.class);
+        when(recipeService.searchRecipes(any(), eq(pageable))).thenReturn(new PageImpl<>(Collections.emptyList()));
+
+        ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> response = recipeController.searchRecipes(null, null, "  ", null, null, pageable);
+
+        // Verify and assert
+        verify(recipeService, times(1)).searchRecipes(any(), eq(pageable));
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().getData().isEmpty());
+    }
+
+    @Test
+    public void testSearchRecipesByIngredient_NullPageable() {
+        // Make the mock more flexible
+        when(recipeService.searchRecipes(any(), any())).thenReturn(new PageImpl<>(Collections.emptyList()));
+
+        ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> response = recipeController.searchRecipes(null, null, "flour,sugar", null, null, null);
+
+        // Verify and assert
+        verify(recipeService, times(1)).searchRecipes(any(), isNull());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
 

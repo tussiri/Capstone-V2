@@ -14,6 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * UserDTO
@@ -116,9 +117,23 @@ public class UserDTO {
         this.token = token;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserDTO userDTO = (UserDTO) o;
+        return Objects.equals(email, userDTO.email) &&
+                Objects.equals(password, userDTO.password) &&
+                Objects.equals(firstName, userDTO.firstName) &&
+                Objects.equals(lastName, userDTO.lastName) &&
+                Objects.equals(dateOfBirth, userDTO.dateOfBirth) &&
+                Objects.equals(token, userDTO.token);
+    }
 
-
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(email, password, firstName, lastName, dateOfBirth, token);
+    }
 
     //    public String getSessionToken() {
 //        return sessionToken;

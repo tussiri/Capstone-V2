@@ -10,7 +10,9 @@ import org.launchcode.LiftoffRecipeProject.security.JwtTokenUtil;
 import org.launchcode.LiftoffRecipeProject.services.CustomUserDetailsService;
 import org.launchcode.LiftoffRecipeProject.services.UserService;
 import org.launchcode.LiftoffRecipeProject.util.ResponseUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,6 +27,7 @@ public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
 
+    @Autowired
     public AuthenticationController(JwtTokenUtil jwtTokenUtil, CustomUserDetailsService userDetailsService,
                                     AuthenticationManager authenticationManager, UserRepository userRepository,
                                     UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder, JwtTokenUtil jwtTokenUtil1) {
@@ -55,10 +58,9 @@ public class AuthenticationController {
     @PostMapping("/token/refresh")
     public ResponseEntity<ResponseWrapper<String>> refreshToken(@RequestHeader("Authorization") String expiredToken) {
         String token = extractToken(expiredToken);
-        if (expiredToken != null && expiredToken.startsWith("Bearer ")) {
-            expiredToken = expiredToken.substring(7);
-            if (jwtTokenUtil.canRefreshToken(expiredToken)) {
-                String newToken = jwtTokenUtil.generateTokenFromExpiredToken(expiredToken);
+        if (token != null) {
+            if (jwtTokenUtil.canRefreshToken(token)) {
+                String newToken = jwtTokenUtil.generateTokenFromExpiredToken(token);
                 return ResponseUtil.wrapResponse(newToken, HttpStatus.OK, "Token refreshed successfully.");
             } else {
                 return ResponseUtil.wrapResponse(null, HttpStatus.UNAUTHORIZED, "Unable to refresh token.");
