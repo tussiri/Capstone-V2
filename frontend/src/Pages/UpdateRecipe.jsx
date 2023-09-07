@@ -1,15 +1,17 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import axios from "axios"
 import authAxios from "../utility/authAxios";
 import {useNavigate, useParams} from "react-router-dom";
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
+import {UserContext} from "../stores/UserStore";
 
 function UpdateRecipe() {
     const navigate = useNavigate()
+    const {user, setUser, userId} = useContext(UserContext);
+
     const [recipe, setRecipe] = useState({
         // id: '',
         name: '',
@@ -44,7 +46,7 @@ function UpdateRecipe() {
             } else {
                 setRecipe({
                     ...recipe,
-                    [name]: value.split(',').map(item => item.trim()),
+                    [name]: parseIngredients(value),
                 });
             }
         } else {
@@ -54,12 +56,27 @@ function UpdateRecipe() {
             });
         }
     }
+
+    const parseIngredients = (input) => {
+        return input.split(',').map(item => {
+            const [name, quantity] = item.split('(');
+            return {
+                name: name.trim(),
+                quantity: quantity ? quantity.replace(')', '').trim() : ''
+            };
+        });
+    }
+
     const updateRecipe = async (e) => {
         e.preventDefault();
         console.log(recipeId)
 
         try {
-            await authAxios.put(`http://localhost:8080/recipes/update/${recipeId}`, recipe)
+            await authAxios.put(`http://localhost:8080/recipes/update/${recipeId}`, recipe, {
+                headers: {
+                    'userId': user.userId // Include the userId from the context
+                }
+            })
                 .then(() => {
                     alert("Recipe updated successfully.");
                     navigate(`/recipes/${recipeId}`);
@@ -82,7 +99,7 @@ function UpdateRecipe() {
                         alignItems: 'center',
                         }}
                 >
-                    <Box component="form" noValidate sx={{ mt: 3, maxWidth:'60%'}}>
+                    <Box component="form" noValidate sx={{ mt: 3, maxWidth:'60%'}} onSubmit={updateRecipe}>
                        <Grid container spacing={2}>
                            <Grid item xs={12}>
                               <TextField
@@ -92,6 +109,7 @@ function UpdateRecipe() {
                                 id="recipeName"
                                 fullWidth
                                 onChange={handleChange}
+                                value={recipe.name}
                                  />
                            </Grid>
 
@@ -103,6 +121,7 @@ function UpdateRecipe() {
                                 id="description"
                                 fullWidth
                                 onChange={handleChange}
+                                value={recipe.description}
                               />
                            </Grid>
 
@@ -114,6 +133,7 @@ function UpdateRecipe() {
                                 id="category"
                                 fullWidth
                                 onChange={handleChange}
+                                value={recipe.category}
                               />
                            </Grid>
                            <Grid item xs={12}>
@@ -124,6 +144,7 @@ function UpdateRecipe() {
                                  id="time"
                                  fullWidth
                                  onChange={handleChange}
+                                    value={recipe.time}
                                  />
                            </Grid>
 
@@ -137,6 +158,7 @@ function UpdateRecipe() {
                                 fullWidth
                                 multiline
                                 rows={3}
+                                value={recipe.ingredients.map(ing => ing.quantity ? `${ing.name} (${ing.quantity})` : ing.name).join(', ')}
                               />
                            </Grid>
 
@@ -150,6 +172,7 @@ function UpdateRecipe() {
                                 fullWidth
                                 multiline
                                 rows={4}
+                                value={recipe.directions}
                               />
                            </Grid>
                        </Grid>

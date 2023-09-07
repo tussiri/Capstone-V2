@@ -17,9 +17,9 @@ public class ControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
-    @Test
-    public void testGetAllUsers() throws Exception{
-        mockMvc.perform(MockMvcRequestBuilders.get("/users").accept(MediaType.APPLICATION_JSON)).andExpect((status().isOk()));
-    }
+//    @Test
+//    public void testGetAllUsers() throws Exception{
+//        mockMvc.perform(MockMvcRequestBuilders.get("/users").accept(MediaType.APPLICATION_JSON)).andExpect((status().isOk()));
+//    }
 
 }

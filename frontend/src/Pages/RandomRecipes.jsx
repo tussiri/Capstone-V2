@@ -62,7 +62,7 @@ const RandomRecipes = () => {
         <div>
             <Box sx={{maxWidth: '100%', display: 'flex', flexDirection: 'column'}} justifyContent='center'
                  alignItems="center">
-                <h2>Try this random recipe!</h2>
+                <h2 style={{ margin: '20px 0' }}>Try this random recipe!</h2>
                 <Box sx={{
                     maxWidth: '50%',
                     display: 'flex',

@@ -119,7 +119,7 @@ function RecipePage({match}) {
                 <p>Ingredients:</p>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                     {recipe.ingredients.map((ingredient, index) => (
-                        <span key={index}>{ingredient.name}</span>
+                        <span key={index}>{ingredient.quantity} {ingredient.name} </span>
                     ))}
                 </div>
                 <p>Directions: {recipe.directions}</p>
@@ -135,15 +135,6 @@ function RecipePage({match}) {
                         Recipe</Button>
                 </div>
             )}
-
-            {/*<p>*/}
-            {/*    Liked: {recipe.favorite ? "Yes" : "No"}{" "}*/}
-            {/*    {!isUserRecipeOwner &&*/}
-            {/*        <Button variant="contained" onClick={handleToggleFavorite}>*/}
-            {/*            {recipe.favorite ? "Unlike" : "Like"}*/}
-            {/*        </Button>*/}
-            {/*    }*/}
-            {/*</p>*/}
 
             <h3>Reviews:</h3>
             {reviews.length > 0 ? (

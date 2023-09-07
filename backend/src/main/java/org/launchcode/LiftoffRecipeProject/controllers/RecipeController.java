@@ -7,6 +7,7 @@ import org.launchcode.LiftoffRecipeProject.DTO.RecipeDTO;
 import org.launchcode.LiftoffRecipeProject.DTO.ResponseWrapper;
 import org.launchcode.LiftoffRecipeProject.data.ReviewRepository;
 import org.launchcode.LiftoffRecipeProject.data.UserRepository;
+import org.launchcode.LiftoffRecipeProject.exception.RecipeNotFoundException;
 import org.launchcode.LiftoffRecipeProject.exception.ResourceNotFoundException;
 import org.launchcode.LiftoffRecipeProject.models.Recipe;
 import org.launchcode.LiftoffRecipeProject.models.SearchCriteria;
@@ -34,15 +35,10 @@ import java.util.stream.Collectors;
 public class RecipeController {
 
     public static final Logger logger = LoggerFactory.getLogger(RecipeController.class);
-
     private final RecipeService recipeService;
-
     private final UserService userService;
-
     private final UserRepository userRepository;
-
     private IngredientService ingredientService;
-
     private final ReviewRepository reviewRepository;
 
     @Autowired
@@ -71,17 +67,17 @@ public class RecipeController {
     }
 
     // GET /recipes/ingredient/{ingredientName} -return all recipes with this {ingredientName}
-    @GetMapping("/ingredient/{ingredientName}")
-    public ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> getRecipesByIngredient(@PathVariable String ingredientName, Pageable pageable) {
-        Page<RecipeDTO> recipeDTOs = recipeService.getRecipesByIngredient(ingredientName, pageable);
-        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Recipes returned successfully", recipeDTOs), HttpStatus.OK);
-    }
+//    @GetMapping("/ingredient/{ingredientName}")
+//    public ResponseEntity<ResponseWrapper<Page<RecipeDTO>>> getRecipesByIngredient(@PathVariable String ingredientName, Pageable pageable) {
+//        Page<RecipeDTO> recipeDTOs = recipeService.getRecipesByIngredient(ingredientName, pageable);
+//        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Recipes returned successfully", recipeDTOs), HttpStatus.OK);
+//    }
 
     //GET /recipes/{id} return specific recipes by their {id}
     @GetMapping("/{recipeId}")
     public ResponseEntity<ResponseWrapper<RecipeDTO>> getRecipe(@PathVariable Integer recipeId) {
         RecipeDTO recipeDTO = recipeService.findById(recipeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
+                .orElseThrow(() -> new RecipeNotFoundException("Recipe not found"));
 
         return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Recipe retrieved successfully", recipeDTO), HttpStatus.OK);
     }
@@ -92,6 +88,14 @@ public class RecipeController {
     public ResponseEntity<ResponseWrapper<RecipeDTO>> createRecipe(@PathVariable Integer userId, @Valid @RequestBody RecipeDTO recipeDTO) {
         RecipeDTO savedRecipeDTO = recipeService.createRecipe(userId, recipeDTO);
         return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.CREATED.value(), "Recipe created successfully", savedRecipeDTO), HttpStatus.CREATED);
+    }
+
+    // For multiple recipes
+    @Transactional
+    @PostMapping("/{userId}/multiple")
+    public ResponseEntity<ResponseWrapper<List<RecipeDTO>>> createMultipleRecipes(@PathVariable Integer userId, @Valid @RequestBody List<RecipeDTO> recipeDTOs) {
+        List<RecipeDTO> savedRecipeDTOs = recipeService.createRecipes(userId, recipeDTOs);
+        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.CREATED.value(), "Recipes created successfully", savedRecipeDTOs), HttpStatus.CREATED);
     }
 
     //PUT /recipes/{id} updates the recipe with the matching {id}
@@ -153,6 +157,12 @@ public class RecipeController {
     public ResponseEntity<ResponseWrapper<RecipeDTO>> getRandomRecipe() {
         RecipeDTO randomRecipe = recipeService.getRandomRecipe();
         return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Random recipe retrieved successfully", randomRecipe), HttpStatus.OK);
+    }
+
+    @DeleteMapping("delete/{recipeId}")
+    public ResponseEntity<ResponseWrapper<String>> deleteRecipe(@PathVariable Integer recipeId, @RequestHeader("userId") Integer userId) {
+        recipeService.deleteRecipe(recipeId, userId, true);
+        return new ResponseEntity<>(new ResponseWrapper<>(HttpStatus.OK.value(), "Recipe deleted successfully", "Recipe deleted"), HttpStatus.OK);
     }
 
 

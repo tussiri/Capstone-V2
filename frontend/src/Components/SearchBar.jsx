@@ -44,13 +44,17 @@ const SearchBar = ({onSearch}) => {
     };
 
     const handleSearch = () => {
+
         let url = "http://localhost:8080/recipes/search?";
+        console.log(`Selected Option: ${selectedOption}, Search Term: ${searchTerm}`);
+
         switch (selectedOption) {
             case 'All':
                 url += `name=${searchTerm}`
                 break;
             case 'By Ingredient':
-                url += `ingredients=${searchTerm}`
+                const encodedSearchTerm = encodeURIComponent(searchTerm);
+                url += `ingredients=${encodedSearchTerm}`;
                 break;
             case 'By Time to Prepare':
                 url += `time=<${searchTerm}`

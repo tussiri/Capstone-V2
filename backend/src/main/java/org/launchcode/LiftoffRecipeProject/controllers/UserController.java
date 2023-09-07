@@ -25,17 +25,21 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
-    @Autowired
+
     private UserRepository userRepository;
 
-    @Autowired
     private RecipeRepository recipeRepository;
 
-    @Autowired
     private UserService userService;
 
 //    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
+
+    public UserController(UserRepository userRepository, RecipeRepository recipeRepository, UserService userService) {
+        this.userRepository = userRepository;
+        this.recipeRepository = recipeRepository;
+        this.userService = userService;
+    }
 
     @GetMapping
     public ResponseEntity<ResponseWrapper<Page<UserDTO>>> getAllUsers(Pageable pageable) {
@@ -97,7 +101,7 @@ public class UserController {
         return ResponseUtil.wrapResponse(userFavoriteRecipeDTO, HttpStatus.OK, "Removed favorite recipe correctly");
     }
 
-    @GetMapping("/{userId}/favorites")
+    @GetMapping("/{userId}/recipes/favorites")
     public ResponseEntity<ResponseWrapper<List<Recipe>>> getFavorites(@PathVariable Integer userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));

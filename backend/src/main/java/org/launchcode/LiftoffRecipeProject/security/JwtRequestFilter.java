@@ -32,6 +32,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             "/",
             "/auth/register",
             "/auth/login",
+            "/auth/token/refresh",
             "/recipes",
             "/recipes/search",
             "/recipes/user/{userId}"
@@ -40,14 +41,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-
-
-
-
-//        System.out.println("Executing JwtRequestFilter");
+        response.setContentType("application/json");
 
         final String requestTokenHeader = request.getHeader("Authorization");
-//        System.out.println("Request token header: "+ requestTokenHeader);
 
         String username = null;
         String jwtToken = null;
@@ -65,26 +61,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             } catch (IllegalArgumentException e) {
                 System.out.println("Unable to get JWT Token");
             } catch (ExpiredJwtException e) {
-//                System.out.println("JWT Token has expired");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Your session has expired. Please log in again.");
                 return;
             }
         } else {
             if (requestTokenHeader == null || requestTokenHeader.isEmpty()) {
-                // Handle cases where there's no Authorization header at all
-                // For example, you might want to log a different message or skip logging
             } else if (!PUBLIC_ROUTES.contains(request.getRequestURI())) {
                 logger.warn("JWT Token does not begin with Bearer String");
             }
-//            if (!request.getRequestURI().equals("/") &&
-//                    !request.getRequestURI().startsWith("/auth") &&
-//                    !request.getRequestURI().startsWith("/recipes") &&
-//                    !request.getRequestURI().startsWith("/recipes/user/{userId}") &&
-//                    !request.getRequestURI().startsWith("/recipes/search") &&
-//                    !request.getRequestURI().startsWith("/review/recipes/{recipeId}/reviews")) {
-//                logger.warn("JWT Token does not begin with Bearer String");
-//            }
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
@@ -98,8 +83,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
-//        System.out.println("Authentication: " + SecurityContextHolder.getContext().getAuthentication());
+        System.out.println("Before Filter - Content-Type: " + response.getContentType());
         chain.doFilter(request, response);
+        System.out.println("After Filter - Content-Type: " + response.getContentType());
+//        chain.doFilter(request, response);
     }
 
 
