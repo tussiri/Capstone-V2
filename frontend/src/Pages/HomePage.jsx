@@ -56,7 +56,7 @@ function HomePage() {
         setIsLoading(true)
         const fetchRecipes = async () => {
             try {
-                const generalResponse = await axios.get("http://localhost:8080/recipes?page=0&size=8");
+                const generalResponse = await axios.get("http://localhost:8080/recipes?page=0&size=16");
                 setRecipes(generalResponse.data.data.content);
 
                 if (user) {
@@ -85,7 +85,7 @@ function HomePage() {
 
     return (
         <div>
-            <h2 sx={{ mt:5 }} >Welcome to Mealify!</h2>
+            <h2 style={{ textAlign: 'center', margin: '20px 0' }}>Welcome to Mealify!</h2>
             <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column'}} justifyContent='center' alignItems="center">
                 <Box sx={{
                     maxWidth:'100%',

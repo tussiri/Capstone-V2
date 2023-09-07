@@ -10,6 +10,11 @@
     justify-content: space-around;
     margin-bottom: 20px;
 }
+.recipe-card {
+    flex: 0 1 calc(100% / 7 - 16px); /* 16px is for margin, you can adjust as needed */
+    max-width: calc(100% / 7 - 16px);
+    margin: 8px; /* Half of 16px to each side */
+}
 
 h2 {
     margin-top: 20px;
@@ -20,4 +25,16 @@ h2 {
         width: 90%;
         /* other styles as needed */
     }
+}
+@media (max-width: 768px) {
+    .recipe-section {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+.box-shadow {
+    box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.3);
+}
+
+.recipe-card:focus {
+    outline: 2px solid #434382;
 }
