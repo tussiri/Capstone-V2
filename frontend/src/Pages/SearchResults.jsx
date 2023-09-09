@@ -5,7 +5,7 @@ import {useNavigate} from "react-router-dom";
 import unAuthAxios from '../utility/unAuthAxios'
 import authAxios from "../utility/authAxios";
 import FoodCard from "../Components/FoodCard";
-import LoadingScreen from "./LoadingPage";
+import LoadingWave from "./LoadingWave";
 
 import Box from '@mui/material/Box';
 
@@ -38,7 +38,7 @@ function SearchResults() {
 
 
     if (isLoading) {
-        return <LoadingScreen/>
+        return <LoadingWave/>
     }
 
     if (searchResults.length > 0) {

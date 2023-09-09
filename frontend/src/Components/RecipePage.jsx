@@ -4,7 +4,7 @@ import axios from "axios";
 import Button from "@mui/material/Button";
 import authAxios from "../utility/authAxios";
 import {UserContext} from "../stores/UserStore";
-import LoadingScreen from "../Pages/LoadingPage";
+import LoadingWave from "../Pages/LoadingWave";
 import stockImage from '../Assets/MealifyNoImage.png'
 
 import Box from '@mui/material/Box';
@@ -102,7 +102,7 @@ function RecipePage({match}) {
 
 
     if (!recipe) {
-        return <LoadingScreen/>;
+        return <LoadingWave/>;
     }
 
     return (
