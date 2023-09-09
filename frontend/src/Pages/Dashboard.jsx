@@ -8,7 +8,7 @@ import authAxios from "../utility/authAxios";
 // import Sidebar from "../Components/SideBar";
 // import NavBar from "../Components/NavBar";
 // import Button from "@mui/material/Button";
-import LoadingScreen from "./LoadingPage";
+import LoadingWave from "./LoadingWave";
 import SearchResults from "./SearchResults";
 import {UserContext} from "../stores/UserStore";
 import Box from '@mui/material/Box';
@@ -114,7 +114,7 @@ function Dashboard() {
         <>
             <Box sx={{maxWidth: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 {isLoading ? (
-                    <LoadingScreen />
+                    <LoadingWave />
                 ) : (
                     user ? (
                         <>
@@ -177,7 +177,7 @@ function Dashboard() {
                         <>
                             {
                                 isSearching && hasSearched ? (
-                                    <LoadingScreen/>
+                                    <LoadingWave/>
                                 ) : (
                                     <SearchResults query={searchQuery} onSearchComplete={handleSearchComplete}/>
                                 )
@@ -189,54 +189,4 @@ function Dashboard() {
         </>
     );
 }
-
-//     return (
-//         <>
-//             <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-//                 {user ? (
-//                     <>
-//                         <h2>Your Recipes</h2>
-//                         <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
-//                             {recipes && recipes.length > 0 && recipes.map((recipeId) => (
-//                                 <Box sx={{ maxWidth: '23%', margin: '1%' }}>
-//                                     <FoodCard
-//                                         key={recipeId}
-//                                         recipe={recipeId}
-//                                         onClick={() => handleCardClick(recipeId)}
-//                                     />
-//                                 </Box>
-//                             ))}
-//                         </Box>
-//                         <h2>Liked Recipes</h2>
-//                         <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-//                             {likedRecipes && likedRecipes.length > 0 && likedRecipes.map((recipeId) => (
-//                                 <Box sx={{ maxWidth: '100%', margin: '1%' }}>
-//                                     <FoodCard
-//                                         key={recipeId}
-//                                         recipe={recipeId}
-//                                         onClick={() => handleCardClick(recipeId)}
-//                                         onFavorite={() => onFavorite(recipeId)}
-//                                         onUnfavorite={() => onUnfavorite(recipeId)}
-//                                     />
-//                                 </Box>
-//                             ))}
-//                         </Box>
-//                     </>
-//                 ) : (
-//                     <>
-//                         {
-//                             isSearching && hasSearched ? (
-//                                 <LoadingScreen/>
-//                             ) : (
-//                                 <SearchResults query={searchQuery} onSearchComplete={handleSearchComplete}/>
-//                             )
-//                         }
-//                     </>
-//                 )}
-//             </Box>
-//         </>
-//     );
-//
-// }
-
 export default Dashboard;

@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid';
 import {useNavigate, useParams} from "react-router-dom";
 import NavBar from "../Components/NavBar";
 import Box from '@mui/material/Box';
-import LoadingScreen from "./LoadingPage";
+import LoadingWave from "./LoadingWave";
 
 const RandomRecipes = () => {
     const [recipes, setRecipes] = useState([]);
@@ -54,7 +54,7 @@ const RandomRecipes = () => {
     };
 
     if (loading) {
-        return <LoadingScreen/>
+        return <LoadingWave/>
     }
 
 

@@ -3,10 +3,9 @@ import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import Button from "@mui/material/Button";
 import axios from 'axios';
 import SearchResults from "./SearchResults";
-import LoadingScreen from "./LoadingPage";
+import LoadingWave from "./LoadingWave";
 import authAxios from "../utility/authAxios";
 import {UserContext} from "../stores/UserStore";
-import LoadingPage from "./LoadingPage";
 import FoodCard from "../Components/FoodCard";
 import Box from '@mui/material/Box';
 import Grid from "@mui/material/Grid";
@@ -24,9 +23,10 @@ function AllRecipes() {
 
     const [totalPages, setTotalPages] = useState(0);
 
+
     useEffect(() => {
         setIsLoading(true);
-        authAxios.get(`http://localhost:8080/recipes?page=${page - 1}&size=10`)
+        authAxios.get(`http://localhost:8080/recipes?page=${page - 1}&size=12`)
             .then((response) => {
                 console.log("API response:", response.data);
                 if (response.status === 200) {
@@ -70,26 +70,16 @@ function AllRecipes() {
     };
 
     if (isLoading) {
-        return <LoadingPage/>
+        return <LoadingWave/>
     }
 
     return (
         <div>
-            <Box sx={{maxWidth: '100%', display: 'flex', flexDirection: 'column'}} justifyContent='center'
-                 alignItems="center">
+            <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <h2>All Recipes</h2>
-                <Box sx={{
-                    maxWidth: '100%',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    flexWrap: 'wrap',
-                    alignContent: 'start'
-                }}
-                     justifyContent='center' alignItems="center"
-                     container spacing={1}>
+                <Grid container spacing={3}>
                     {recipes.map((recipe) => (
-                        // <Box sx={{ maxWidth:'23%' }}>
-                        <Grid item xs={12} sm={6} md={4} lg={2}>
+                        <Grid item xs={12} sm={6} md={3} lg={2}>
                             <FoodCard
                                 key={recipe.id}
                                 recipe={recipe}
@@ -98,16 +88,13 @@ function AllRecipes() {
                             />
                         </Grid>
                     ))}
-
-                </Box>
-                <Box sx={{maxWidth: '23%', m: 5, display:'flex', gap: '2rem'}}>
+                </Grid>
+                <Box sx={{ m: 5, display: 'flex', gap: '2rem' }}>
                     {page > 1 && (
-                        <Button sx={{color: 'white'}} variant="contained" fullWidth onClick={handlePreviousPage}>Previous
-                            Page</Button>
+                        <Button sx={{ color: 'white' }} variant="contained" onClick={handlePreviousPage}>Previous Page</Button>
                     )}
                     {page < totalPages && (
-                        <Button sx={{color: 'white'}} variant="contained" fullWidth onClick={handleNextPage}>Next
-                            Page</Button>
+                        <Button sx={{ color: 'white' }} variant="contained" onClick={handleNextPage}>Next Page</Button>
                     )}
                 </Box>
             </Box>

@@ -82,7 +82,7 @@ function FoodCard({recipe, onClick, user, token}) {
                     className='card-media'
                     component="img"
                     height="150"
-                    image={recipe.picture ? recipe.picture : stockImage}
+                    image={recipe.picture ? recipe.picture : stockImage} loading="lazy"
                     alt={recipe.name}
                 />
                 <CardContent>
