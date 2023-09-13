@@ -96,7 +96,7 @@ function FoodCard({recipe, onClick, user, token}) {
                         Category: {recipe.category}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        Preparation Time: {recipe.time} minutes
+                        Preparation Timesss: {recipe.time} minutes
                     </Typography>
                     <IconButton aria-label="add to favorites" onClick={onFavorite}>
                         <ThumbUp color={isFavorite ? "primary" : "action"} />
