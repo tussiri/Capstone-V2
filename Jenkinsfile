@@ -15,6 +15,19 @@ pipeline {
             }
         }
 
+        stage('Print Workspace') {
+            steps {
+                sh 'ls -al'
+            }
+        }
+
+        stage('Debug: Print Directory Structure') {
+            steps {
+                sh 'find . -type d'
+            }
+        }
+
+
         stage('Build and Test') {
             steps {
                 // Run Gradle build and test
