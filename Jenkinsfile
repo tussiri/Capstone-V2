@@ -52,9 +52,4 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            // Actions to perform after the pipeline finishes, such as sending notifications
-        }
-    }
 }
