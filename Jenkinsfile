@@ -1,19 +1,40 @@
 pipeline {
     agent any
 
+    tools {
+        // Define JDK tool
+        jdk 'JDK 11'
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from the Git repository
                 checkout scm
             }
         }
 
-        stage('Build and Test') {
+        stage('Build') {
             steps {
-                // Use the Gradle Wrapper to build and test the project
-                sh './gradlew clean build'
+                sh './gradlew build'
             }
+        }
+
+        stage('Test') {
+            steps {
+                sh './gradlew test'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh './gradlew bootRun'
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: '**/target/*.jar', allowEmptyArchive: true
         }
     }
 }
