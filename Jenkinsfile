@@ -2,6 +2,12 @@ pipeline {
     agent any
 
     stages {
+        stage('Print Workspace') {
+            steps {
+                sh 'ls -al'
+            }
+        }
+
         stage('Checkout') {
             steps {
                 // Get the code from the version control system.
