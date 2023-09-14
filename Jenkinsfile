@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        // Define environment variables if needed
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -32,16 +28,4 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
-                // Add your deployment steps here
-            }
-        }
-    }
-
-    post {
-        always {
-            // Actions to perform after the pipeline finishes, like sending notifications
-        }
-    }
 }
