@@ -7,6 +7,7 @@ pipeline {
                 sh 'ls -al'
             }
         }
+        }
 
         stage('Checkout') {
             steps {
@@ -14,6 +15,7 @@ pipeline {
                 checkout scm
             }
         }
+
 
         stage('Print Workspace') {
             steps {
