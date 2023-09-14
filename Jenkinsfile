@@ -2,15 +2,22 @@ pipeline {
     agent any
 
     stages {
-        stage('Print Workspace Before Checkout') {
-            steps {
-                sh 'ls -al'
-            }
-        }
-
         stage('Checkout') {
             steps {
                 checkout scm
+            }
+        }
+
+        stage('Set Permissions') {
+                    steps {
+                        // Set execute permissions for gradlew
+                        sh 'chmod +x backend/gradlew'
+                    }
+                }
+
+        stage('Print Workspace Before Checkout') {
+            steps {
+                sh 'ls -al'
             }
         }
 
@@ -28,14 +35,22 @@ pipeline {
 
         stage('Build and Test') {
             steps {
-                sh './backend/gradlew clean build test'
+                dir('backend') { // Navigate to the backend directory
+                    sh './gradlew clean build test'
+                }
             }
         }
     }
 
     post {
         always {
-            junit '**/build/test-results/**/*.xml'
+            echo 'This will always run'
+        }
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed!'
         }
     }
 }
