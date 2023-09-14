@@ -12,7 +12,7 @@ pipeline {
         stage('Build and Test') {
             steps {
                 // Run Gradle build and test
-                sh './gradlew clean build test'
+                sh './backend/gradlew clean build test'
             }
         }
     }
