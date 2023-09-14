@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         // Define JDK tool
-        jdk 'JDK 11'
+        jdk 'JDK 21'
     }
 
     stages {
