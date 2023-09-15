@@ -1,7 +1,7 @@
 pipeline {
     agent any
      environment {
-            JAVA_HOME = '/Library/Java/JavaVirtualMachines/jdk-19.jdk/Contents/Home'
+    JAVA_HOME = '/Users/tumaussiri/Library/Java/JavaVirtualMachines/jdk-19.jdk/Contents/Home'
         }
 
 
