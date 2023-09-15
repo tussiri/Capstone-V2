@@ -1,5 +1,9 @@
 pipeline {
     agent any
+     environment {
+            JAVA_HOME = '/Library/Java/JavaVirtualMachines/jdk-19.jdk/Contents/Home'
+        }
+
 
     stages {
         stage('Checkout') {
@@ -34,8 +38,12 @@ pipeline {
         }
 
         stage('Build and Test') {
+            environment {
+                JAVA_HOME = tool name: 'JDK 19', type: 'jdk'
+                PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
+            }
             steps {
-                dir('backend') { // Navigate to the backend directory
+                dir('backend') {
                     sh './gradlew clean build test'
                 }
             }
