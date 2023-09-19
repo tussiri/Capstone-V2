@@ -57,7 +57,7 @@ pipeline {
             echo 'This will always run'
         }
         success {
-            echo 'Pipeline succeeded!'
+            echo 'Pipeline succeeded! Well Done'
         }
         failure {
             echo 'Pipeline failed!'
