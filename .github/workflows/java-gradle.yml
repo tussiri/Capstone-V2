@@ -1,0 +1,51 @@
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ upgrading-depend ]
+  pull_request:
+    branches: [ upgrading-depend ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    env:
+      JAVA_HOME: /opt/hostedtoolcache/jdk/19.0.2/x64
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up JDK 19
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '19'
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x ./backend/gradlew
+
+    - name: Print Workspace Before Checkout
+      run: ls -al
+
+    - name: Print Workspace After Checkout
+      run: ls -al
+
+    - name: Debug Print Directory Structure
+      run: find . -type d
+
+    - name: Build and Test
+      run: cd backend && ./gradlew clean build test
+
+    - name: Post Actions
+      if: always()
+      run: echo "This will always run"
+
+    - name: On Success
+      if: success()
+      run: echo "Pipeline succeeded! Well Done"
+
+    - name: On Failure
+      if: failure()
+      run: echo "Pipeline failed!"
