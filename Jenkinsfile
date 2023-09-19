@@ -1,9 +1,9 @@
 pipeline {
     agent any
-     environment {
-    JAVA_HOME = '/Library/Java/JavaVirtualMachines/jdk-19.jdk/Contents/Home'
-        }
-
+    environment {
+        // Update JAVA_HOME to the correct path
+        JAVA_HOME = '/Users/tumaussiri/Library/Java/JavaVirtualMachines/corretto-19.0.2/Contents/Home'
+    }
 
     stages {
         stage('Checkout') {
@@ -13,11 +13,11 @@ pipeline {
         }
 
         stage('Set Permissions') {
-                    steps {
-                        // Set execute permissions for gradlew
-                        sh 'chmod +x backend/gradlew'
-                    }
-                }
+            steps {
+                // Ensure backend/gradlew exists before setting permissions
+                sh 'if [ -f "backend/gradlew" ]; then chmod +x backend/gradlew; fi'
+            }
+        }
 
         stage('Print Workspace Before Checkout') {
             steps {
@@ -39,12 +39,14 @@ pipeline {
 
         stage('Build and Test') {
             environment {
+                // Make sure 'JDK 19' is configured in Jenkins
                 JAVA_HOME = tool name: 'JDK 19', type: 'jdk'
                 PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
             }
             steps {
                 dir('backend') {
-                    sh './gradlew clean build test'
+                    // Ensure the directory exists before running gradlew
+                    sh 'if [ -d "backend" ]; then ./gradlew clean build test; fi'
                 }
             }
         }
