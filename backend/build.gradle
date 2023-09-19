@@ -9,6 +9,7 @@ plugins {
 group = 'org.launchcode'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '19'
+targetCompatibility = '19'
 
 repositories {
 	mavenCentral()
@@ -44,10 +45,10 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-jacocoTestReport {
-	reports {
-		xml.enabled false
-		csv.enabled false
-		html.destination file("${buildDir}/jacocoHtml")
-	}
-}
+//jacocoTestReport {
+//	reports {
+//		xml.enabled false
+//		csv.enabled false
+//		html.destination file("${buildDir}/jacocoHtml")
+//	}
+//}

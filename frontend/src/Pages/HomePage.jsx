@@ -1,12 +1,14 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import axios from 'axios';
+import '../Styles/HomePage.css';
+import heroVideo from '../Assets/MealifyHero.mp4';
 
 import FoodCard from "../Components/FoodCard"
 import NavBar from "../Components/NavBar"
 import SearchBar from "../Components/SearchBar"
 import SearchResults from "./SearchResults";
-import LoadingScreen from "./LoadingPage";
+import LoadingWave from "./LoadingWave";
 import authAxios from "../utility/authAxios";
 import {UserContext} from "../stores/UserStore";
 import Sidebar from "../Components/SideBar";
@@ -23,7 +25,16 @@ function HomePage() {
     const [recipes, setRecipes] = useState([]);
     const [likedRecipes, setLikedRecipes] = useState([]);
     const userId = localStorage.getItem("userId")
+
     // const [userRecipes, setUserRecipes] = useState([]);
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
 
 
     const navigate = useNavigate();
@@ -56,8 +67,10 @@ function HomePage() {
         setIsLoading(true)
         const fetchRecipes = async () => {
             try {
-                const generalResponse = await axios.get("http://localhost:8080/recipes?page=0&size=16");
-                setRecipes(generalResponse.data.data.content);
+                const generalResponse = await axios.get("http://localhost:8080/recipes?page=0&size=12");
+                const shuffledRecipes = shuffleArray(generalResponse.data.data.content);
+                setRecipes(shuffledRecipes.slice(0, 14));
+                // setRecipes(generalResponse.data.data.content);
 
                 if (user) {
                     const userResponse = await authAxios.get(`http://localhost:8080/recipes/user/${userId}`);
@@ -80,36 +93,52 @@ function HomePage() {
 
 
     if (isLoading) {
-        return <LoadingScreen/>
+        return <LoadingWave/>
     }
 
     return (
-        <div>
-            <h2 style={{ textAlign: 'center', margin: '20px 0' }}>Welcome to Mealify!</h2>
-            <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column'}} justifyContent='center' alignItems="center">
-                <Box sx={{
-                    maxWidth:'100%',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    flexWrap: 'wrap',
-                    alignContent: 'start'
-                    }}
-                    justifyContent='center'
-                    alignItems="center">
-                    {recipes.map((recipe) => (
-                        <Box sx={{maxWidth:'23%'}}>
-                            <FoodCard
-                                key={recipe.id}
-                                recipe={recipe}
-                                onClick={() => handleCardClick(recipe.id)}
-                            />
-                        </Box>
-                    ))}
+        <>
+            <div className="hero-section">
+                <div className="hero-background">
+                    <video autoPlay loop muted>
+                        <source src={heroVideo} type="video/mp4"/>
+                    </video>
+                </div>
+                <div className="hero-content">
+                    <h1>Welcome to Mealify!</h1>
+                    <p>Discover and share amazing recipes with the world.</p>
+                    <div className="hero-buttons">
+                        <button className="explore-button" onClick={()=>navigate('/allrecipes')} >Explore Recipes</button>
+                        <button className="create-button" onClick={() => {
+                            const token = localStorage.getItem("token");
+                            if (token) {
+                                navigate('/recipes/newrecipe');
+                            } else {
+                                navigate('/login');
+                            }
+                        }}>Create Your Own</button>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h2 style={{ textAlign: 'center', margin: '20px 0' }}>Welcome to Mealify!</h2>
+                <Box style={{ padding: '0 0' }}> {/* Added Box */}
+                    <Grid container spacing={1}>
+                        {recipes.map((recipe) => (
+                            <Grid item key={recipe.id} xs={12} sm={5} md={3} lg={2}>
+                                <FoodCard
+                                    recipe={recipe}
+                                    onClick={() => handleCardClick(recipe.id)}
+                                />
+                            </Grid>
+                        ))}
+                    </Grid>
                 </Box>
-            </Box>
-        </div>
+            </div>
+        </>
     )
         ;
+
 }
 
 export default HomePage;

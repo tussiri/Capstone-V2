@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" tests="23" skipped="0" failures="0" errors="0" timestamp="2023-09-14T20:51:52" hostname="Tumas-MacBook-Pro.local" time="0.998">
+  <properties/>
+  <testcase name="testGetAllRecipes_WhenNoneExist()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.704"/>
+  <testcase name="testGetRecipeByUser()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.051"/>
+  <testcase name="testCreateRecipe()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.118"/>
+  <testcase name="testUserNotFoundGetRecipesByUser()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.007"/>
+  <testcase name="testSearchRecipesByIngredient_WhitespaceIngredients()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.008"/>
+  <testcase name="testInvalidUserIdForRecipeCreation()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.003"/>
+  <testcase name="testSearchRecipesByIngredient_NullPageable()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.004"/>
+  <testcase name="testGetAllRecipes()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.004"/>
+  <testcase name="testSearchRecipesByIngredient_EmptyIngredients()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.002"/>
+  <testcase name="testSearchRecipes()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.004"/>
+  <testcase name="testUpdateRecipe()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.004"/>
+  <testcase name="testDeleteRecipe()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.007"/>
+  <testcase name="testInvalidRecipeIdForUpdate()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.004"/>
+  <testcase name="testSearchRecipesByIngredient()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.003"/>
+  <testcase name="testInvalidParametersCreateRecipe()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.004"/>
+  <testcase name="testGetRandomRecipe()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.003"/>
+  <testcase name="testSearchRecipesByIngredient_NullIngredients()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.004"/>
+  <testcase name="testGetRecipe()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.006"/>
+  <testcase name="testInvalidSearchCriteria()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.004"/>
+  <testcase name="testUnauthorizedUserUpdateRecipe()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.002"/>
+  <testcase name="testUnauthorizedUserDeleteRecipe()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.004"/>
+  <testcase name="testGetRecipesByUser_WhenUserHasNoRecipes()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.003"/>
+  <testcase name="testGetRecipe_WhenRecipeNotFound()" classname="org.launchcode.LiftoffRecipeProject.RecipeControllerTest" time="0.003"/>
+  <system-out><![CDATA[2023-09-14T15:51:53.227-05:00  INFO 51824 --- [    Test worker] o.l.L.controllers.RecipeController       : Search parameters: name=null, category=null, ingredients=  , time=null, rating=null
+2023-09-14T15:51:53.240-05:00  INFO 51824 --- [    Test worker] o.l.L.controllers.RecipeController       : Search parameters: name=null, category=null, ingredients=flour,sugar, time=null, rating=null
+2023-09-14T15:51:53.250-05:00  INFO 51824 --- [    Test worker] o.l.L.controllers.RecipeController       : Search parameters: name=null, category=null, ingredients=, time=null, rating=null
+2023-09-14T15:51:53.258-05:00  INFO 51824 --- [    Test worker] o.l.L.controllers.RecipeController       : Search parameters: name=recipeName, category=recipeCategory, ingredients=ingredient1,ingredient2, time=>30, rating=<5
+2023-09-14T15:51:53.281-05:00  INFO 51824 --- [    Test worker] o.l.L.controllers.RecipeController       : Search parameters: name=null, category=null, ingredients=flour,sugar, time=null, rating=null
+2023-09-14T15:51:53.296-05:00  INFO 51824 --- [    Test worker] o.l.L.controllers.RecipeController       : Search parameters: name=null, category=null, ingredients=null, time=null, rating=null
+2023-09-14T15:51:53.308-05:00  INFO 51824 --- [    Test worker] o.l.L.controllers.RecipeController       : Search parameters: name=recipeName, category=recipeCategory, ingredients=ingredient1,ingredient2, time=>30, rating=<5
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
