@@ -27,6 +27,8 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+    - name: Check file permissions
+      run: ls -la ./backend/gradlew
     - name: Make gradlew executable
       run: chmod +x ./backend/gradlew
     - name: Build with Gradle
