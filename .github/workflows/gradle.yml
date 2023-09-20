@@ -47,5 +47,5 @@ jobs:
       working-directory: ${{ github.workspace }}/backend
 
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew build --stacktrace
       working-directory: ${{ github.workspace }}/backend
