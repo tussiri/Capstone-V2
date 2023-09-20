@@ -30,7 +30,7 @@ jobs:
     - name: Check file permissions
       run: ls -la ./backend/gradlew
     - name: Make gradlew executable
-      run: chmod +x ./backend/gradlew
+      run: chmod +x .backend/gradlew
     - name: Build with Gradle
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
       with:
