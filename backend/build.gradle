@@ -8,8 +8,8 @@ plugins {
 
 group = 'org.launchcode'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '21'
-targetCompatibility = '21'
+sourceCompatibility = '19'
+targetCompatibility = '19'
 
 repositories {
 	mavenCentral()
