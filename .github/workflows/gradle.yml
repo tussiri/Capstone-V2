@@ -21,20 +21,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
+
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
-    - name: Debug - List files
-      run: ls -la ./backend/
+
+    - name: Debug - List files in backend
+      run: ls -la ${{ github.workspace }}/backend
+      working-directory: ${{ github.workspace }}/backend
+
     - name: Debug - File type
-      run: file ./backend/gradlew
+      run: file ${{ github.workspace }}/backend/gradlew
+      working-directory: ${{ github.workspace }}/backend
+
     - name: Make gradlew executable
-      run: chmod +x ./backend/gradlew
+      run: chmod +x ${{ github.workspace }}/backend/gradlew
+      working-directory: ${{ github.workspace }}/backend
+
     - name: Debug - Check permissions again
-      run: ls -la ./backend/
+      run: ls -la ${{ github.workspace }}/backend
+      working-directory: ${{ github.workspace }}/backend
+
     - name: Build with Gradle
-      run: ./backend/gradlew build
-      working-directory: ./backend
+      run: ./gradlew build
+      working-directory: ${{ github.workspace }}/backend
