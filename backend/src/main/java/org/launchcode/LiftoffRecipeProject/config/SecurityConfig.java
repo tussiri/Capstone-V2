@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -37,8 +38,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .authorizeHttpRequests()
+        http.csrf(csrf->csrf.disable())
+                .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                         PathRequest.toStaticResources().atCommonLocations(),
                         new AntPathRequestMatcher("/auth/register"),
@@ -60,11 +61,10 @@ public class SecurityConfig {
                         new AntPathRequestMatcher("/users/{userId}/favorites/{recipeId}", "POST"),
                         new AntPathRequestMatcher("/users/{userId}/favorites/{recipeId}", "DELETE"))
                 .permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .anyRequest().authenticated())
+                .exceptionHandling(config-> config.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                )
+                .sessionManagement(config->config.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
