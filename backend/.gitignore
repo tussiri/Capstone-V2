@@ -7,7 +7,8 @@ build/
 .env
 
 application.properties
-application-test.properties
+backend/src/test/resources/application-test.properties
+
 
 ### STS ###
 .apt_generated
