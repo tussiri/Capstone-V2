@@ -10,12 +10,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 
 @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.MOCK)
 @ExtendWith(SpringExtension.class)
+@TestPropertySource(locations="classpath:application-test.properties")
 public class JwtTokenUtilTest {
 
     @Autowired
@@ -27,6 +29,8 @@ public class JwtTokenUtilTest {
     @Test
     public void testGenerateToken() {
         // Create a UserDetails instance with mock data
+        Assertions.assertNotNull(jwtTokenUtil);
+
         Integer userId=1;
         UserDetails userDetails = new User("testuser", "password", new ArrayList<>());
 

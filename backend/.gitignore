@@ -4,8 +4,10 @@ build/
 !backend/gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+.env
 
 application.properties
+application-test.properties
 
 ### STS ###
 .apt_generated
