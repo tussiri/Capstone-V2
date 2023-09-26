@@ -1,20 +1,17 @@
 version: '3'
 
 services:
-  localhost.f:
-    build: ./backend
+  unified-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+        SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+        SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+        APP_JWTSECRET: ${APP_JWTSECRET}
+        APP_JWTEXPIRATIONINMS: ${APP_JWTEXPIRATIONINMS}
     ports:
       - "8080:8080"
-    networks:
-      - app-network
-
-  frontend:
-    build: ./frontend
-    ports:
-      - "80:80"
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
+    env_file:
+      - .env

@@ -78,7 +78,7 @@ function AccountEdit() {
 
             console.log("Updated user: ", updatedUser)
 
-            const response = await authAxios.put(`http://localhost:8080/users/${userId}`, updatedUser);
+            const response = await authAxios.put(`${process.env.REACT_APP_BACKEND_URL}/users/${userId}`, updatedUser);
             console.log("Server response: ", response)
             setFormData(prevFormData => ({
                 ...prevFormData,
@@ -106,7 +106,7 @@ function AccountEdit() {
                 password: formData.password
             };
 
-            const response = await authAxios.put(`http://localhost:8080/users/${userId}`, updatedUser);
+            const response = await authAxios.put(`${process.env.REACT_APP_BACKEND_URL}/users/${userId}`, updatedUser);
             console.log("Server response for password: ", response)
             setFormData(prevFormData => ({
                 ...prevFormData,

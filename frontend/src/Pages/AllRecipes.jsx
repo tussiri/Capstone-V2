@@ -26,7 +26,7 @@ function AllRecipes() {
 
     useEffect(() => {
         setIsLoading(true);
-        authAxios.get(`http://localhost:8080/recipes?page=${page - 1}&size=12`)
+        authAxios.get(`${process.env.REACT_APP_BACKEND_URL}/recipes?page=${page - 1}&size=12`)
             .then((response) => {
                 console.log("API response:", response.data);
                 if (response.status === 200) {
@@ -62,7 +62,7 @@ function AllRecipes() {
 
     const handleCardClick = async (recipeId) => {
         try {
-            const recipeResponse = await axios.get(`http://localhost:8080/recipes/${recipeId}`);
+            const recipeResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/recipes/${recipeId}`);
             navigate(`/recipes/${recipeId}`);
         } catch (error) {
             console.error(error);
@@ -75,9 +75,9 @@ function AllRecipes() {
 
     return (
         <div>
-            <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent:'center' }}>
                 <h2>All Recipes</h2>
-                <Grid container spacing={3}>
+                <Grid container spacing={3} justifyContent="center">
                     {recipes.map((recipe) => (
                         <Grid item xs={12} sm={6} md={3} lg={2}>
                             <FoodCard

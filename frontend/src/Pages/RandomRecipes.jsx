@@ -19,7 +19,7 @@ const RandomRecipes = () => {
         const fetchRandomRecipes = async () => {
 
             try {
-                const response = await axios.get(`http://localhost:8080/recipes/random`);
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/recipes/random`);
                 console.log("Response: ", response.data.data);
                 setRecipes([response.data.data]);
                 setTimeout(() => {
@@ -46,7 +46,7 @@ const RandomRecipes = () => {
 
     const handleCardClick = async (recipeId) => {
         try {
-            const recipeResponse = await axios.get(`http://localhost:8080/recipes/${recipeId}`);
+            const recipeResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/recipes/${recipeId}`);
             navigate(`/recipes/${recipeId}`);
         } catch (error) {
             console.error(error);

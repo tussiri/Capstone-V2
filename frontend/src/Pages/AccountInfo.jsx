@@ -20,7 +20,7 @@ function AccountInfo({onEdit}) {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await authAxios.get(`http://localhost:8080/users/${userId}`);
+                const response = await authAxios.get(`${process.env.REACT_APP_BACKEND_URL}/users/${userId}`);
                 console.log("Users information: ", response.data.data)
                 setUser(response.data.data);
                 setLoading(false)
@@ -44,7 +44,7 @@ function AccountInfo({onEdit}) {
             const deleteRecipes = window.confirm('Do you also want to delete all your recipes?');
 
             try {
-                await authAxios.delete(`http://localhost:8080/users/${userId}?deleteRecipes=${deleteRecipes}`);
+                await authAxios.delete(`${process.env.REACT_APP_BACKEND_URL}/users/${userId}?deleteRecipes=${deleteRecipes}`);
                 logout();
                 navigate('/');
             } catch (error) {

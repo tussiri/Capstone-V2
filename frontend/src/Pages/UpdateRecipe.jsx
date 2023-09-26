@@ -27,7 +27,7 @@ function UpdateRecipe() {
     useEffect(() => {
         const fetchRecipe = async () => {
             try {
-                const response = await authAxios.get(`http://localhost:8080/recipes/${recipeId}`)
+                const response = await authAxios.get(`${process.env.REACT_APP_BACKEND_URL}/recipes/${recipeId}`)
                 setRecipe(response.data.data);
             } catch (error) {
                 console.log("Error fetching recipes: ", error);
@@ -72,7 +72,7 @@ function UpdateRecipe() {
         console.log(recipeId)
 
         try {
-            await authAxios.put(`http://localhost:8080/recipes/update/${recipeId}`, recipe, {
+            await authAxios.put(`${process.env.REACT_APP_BACKEND_URL}/recipes/update/${recipeId}`, recipe, {
                 headers: {
                     'userId': user.userId // Include the userId from the context
                 }

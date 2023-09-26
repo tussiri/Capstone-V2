@@ -38,7 +38,7 @@ const NewRecipePage = () => {
         // const formattedIngredients = ingredients.split(',').filter(ingredient => ingredient.trim() !== '');
 
         try {
-            const response = await authAxios.post(`http://localhost:8080/recipes/${userId}`, {
+            const response = await authAxios.post(`${process.env.REACT_APP_BACKEND_URL}/recipes/${userId}`, {
                 ...recipe
             });
             console.log("recipe sent: ", response)

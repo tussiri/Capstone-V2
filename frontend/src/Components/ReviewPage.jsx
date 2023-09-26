@@ -61,7 +61,7 @@ function ReviewPage() {
     const fetchReviews = () => {
         console.log(recipeId);
         authAxios
-            .get(`http://localhost:8080/review/recipe/${recipeId}`)
+            .get(`${process.env.REACT_APP_BACKEND_URL}/review/recipe/${recipeId}`)
             .then(response => {
                 console.log("Response Data: ", response.data)
                 setReviews(response.data);
@@ -90,7 +90,7 @@ function ReviewPage() {
 
         // submit the review
         authAxios
-            .post(`http://localhost:8080/review/user/${userId}/recipe/${recipeId}`, review)
+            .post(`${process.env.REACT_APP_BACKEND_URL}/review/user/${userId}/recipe/${recipeId}`, review)
             .then(response => {
                 // console.log(response.data.data.id);
                 fetchReviews();
@@ -101,7 +101,7 @@ function ReviewPage() {
             });
     }
     useEffect(() => {
-        authAxios.get(`http://localhost:8080/recipes/${recipeId}`)
+        authAxios.get(`${process.env.REACT_APP_BACKEND_URL}/recipes/${recipeId}`)
             .then((response) => {
                 setRecipe(response.data.data);
             })

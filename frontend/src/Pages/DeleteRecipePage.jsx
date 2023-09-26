@@ -18,7 +18,7 @@ function DeleteRecipe() {
 
     useEffect(() => {
         const fetchRecipe = async () => {
-            const response = await authAxios.get(`http://localhost:8080/recipes/${recipeId}`);
+            const response = await authAxios.get(`${process.env.REACT_APP_BACKEND_URL}/recipes/${recipeId}`);
             setRecipeName(response.data.name);
         };
         fetchRecipe();
@@ -33,7 +33,7 @@ function DeleteRecipe() {
             console.log("UserId Passed: ", userId)
             console.log("Token: ", token)
             console.log("RecipeId: ", recipeId);
-            await authAxios.delete(`http://localhost:8080/recipes/delete/${recipeId}`, {
+            await authAxios.delete(`${process.env.REACT_APP_BACKEND_URL}/recipes/delete/${recipeId}`, {
                 headers: {
                     'userId': userId
                 }

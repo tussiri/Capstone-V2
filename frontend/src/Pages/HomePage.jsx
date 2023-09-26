@@ -51,7 +51,7 @@ function HomePage() {
 
     const handleCardClick = async (recipeId) => {
         try {
-            const recipeResponse = await axios.get(`http://localhost:8080/recipes/${recipeId}`);
+            const recipeResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/recipes/${recipeId}`);
             navigate(`/recipes/${recipeId}`);
         } catch (error) {
             console.error(error);
@@ -67,13 +67,13 @@ function HomePage() {
         setIsLoading(true)
         const fetchRecipes = async () => {
             try {
-                const generalResponse = await axios.get("http://localhost:8080/recipes?page=0&size=12");
+                const generalResponse = await axios.get("${process.env.REACT_APP_BACKEND_URL}/recipes?page=0&size=12");
                 const shuffledRecipes = shuffleArray(generalResponse.data.data.content);
                 setRecipes(shuffledRecipes.slice(0, 14));
                 // setRecipes(generalResponse.data.data.content);
 
                 if (user) {
-                    const userResponse = await authAxios.get(`http://localhost:8080/recipes/user/${userId}`);
+                    const userResponse = await authAxios.get(`V/recipes/user/${userId}`);
                     setLikedRecipes(userResponse.data.data.content); // set another state for user's recipes
                 }
             } catch (error) {

@@ -8,6 +8,9 @@ import FoodCard from "../Components/FoodCard";
 import LoadingWave from "./LoadingWave";
 
 import Box from '@mui/material/Box';
+import Grid from "@mui/material/Grid";
+
+import NoResultsFound from "../Pages/NoResultsFound";
 
 function SearchResults() {
     const location = useLocation();
@@ -42,38 +45,31 @@ function SearchResults() {
     }
 
     if (searchResults.length > 0) {
-
         return (
             <div>
-               <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column'}} justifyContent='center' alignItems="center">
-               <h2>Search results:</h2>
-                  <Box sx={{
-                        maxWidth:'100%',
-                        display: 'flex',
-                        flexDirection: 'row',
-                        flexWrap: 'wrap',
-                        alignContent: 'start'
-                        }}
-                        justifyContent='center'
-                        alignItems="center">
-                            {searchResults.map(recipe => (
-                                <Box sx={{ maxWidth:'23%' }}>
-                                    <FoodCard
-                                        recipe={recipe}
-                                        key={recipe.id}
-                                        onClick={() => navigate(`/recipes/${recipe.id}`)}
-                                    />
-                               </Box>
-                            ))}
-
-                  </Box>
-               </Box>
+                <Box sx={{ maxWidth: '100%', display: 'flex', flexDirection: 'column', justifyContent:'center', alignItems: 'center' }}>
+                    <h2>Search results:</h2>
+                    <Grid container spacing={3} justifyContent="center">
+                        {searchResults.map((recipe) => (
+                            <Grid item xs={12} sm={6} md={3} lg={2}>
+                                <FoodCard
+                                    recipe={recipe}
+                                    key={recipe.id}
+                                    onClick={() => navigate(`/recipes/${recipe.id}`)}
+                                />
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Box>
             </div>
-
         );
     }
 
-    return null;
+    return(
+        <div>
+            <NoResultsFound/>
+        </div>
+    );
 };
 
 export default SearchResults;

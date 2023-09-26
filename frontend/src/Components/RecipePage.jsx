@@ -27,7 +27,7 @@ function RecipePage({match}) {
         console.log(loggedUserId);
         setIsLoading(true)
         axios
-            .get(`http://localhost:8080/recipes/${recipeId}`)
+            .get(`${process.env.REACT_APP_BACKEND_URL}/recipes/${recipeId}`)
             .then((response) => {
                 setRecipe(response.data.data);
                 console.log(response.data.data)
@@ -36,7 +36,7 @@ function RecipePage({match}) {
             .catch((error) => console.error(error));
 
         authAxios
-            .get(`http://localhost:8080/review/recipe/${recipeId}`)
+            .get(`${process.env.REACT_APP_BACKEND_URL}/review/recipe/${recipeId}`)
             .then((response) => {
                 setReviews(response.data.slice(0, 5));
             })

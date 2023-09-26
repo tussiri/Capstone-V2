@@ -33,7 +33,7 @@ function FoodCard({recipe, onClick, user, token}) {
         event.stopPropagation();
         try {
             console.log("Before favorite API request");
-            const response = await authAxios.post(`http://localhost:8080/users/${userId}/favorites/${recipeDetails.id}`);
+            const response = await authAxios.post(`${process.env.REACT_APP_BACKEND_URL}/users/${userId}/favorites/${recipeDetails.id}`);
             console.log("Heart clicked: ", response.data.data);
             setIsFavorite(true);
         } catch (error) {
@@ -45,7 +45,7 @@ function FoodCard({recipe, onClick, user, token}) {
         event.stopPropagation();
         try {
             console.log("Before unfavorite API request");
-            const response = await authAxios.delete(`http://localhost:8080/users/${userId}/favorites/${recipeDetails.id}`);
+            const response = await authAxios.delete(`${process.env.REACT_APP_BACKEND_URL}/users/${userId}/favorites/${recipeDetails.id}`);
             console.log(response.data.data);
             setIsFavorite(false);
             console.log('After unlike:', isFavorite);
@@ -61,7 +61,7 @@ function FoodCard({recipe, onClick, user, token}) {
     useEffect(() => {
         const checkIfFavorited = async () => {
             try {
-                const response = await authAxios.get(`http://localhost:8080/users/${userId}/favorites`);
+                const response = await authAxios.get(`${process.env.REACT_APP_BACKEND_URL}/users/${userId}/favorites`);
                 const favoritedRecipes = response.data.data;
 
                 const isFavorited = favoritedRecipes.some(favoritedRecipe => favoritedRecipe.id === recipeDetails.id);

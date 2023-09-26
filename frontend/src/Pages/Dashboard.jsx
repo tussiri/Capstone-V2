@@ -44,7 +44,7 @@ function Dashboard() {
             try {
                 if (userId) {
                     console.log("Fetching recipes...");
-                    const response = await authAxios.get(`http://localhost:8080/recipes/user/${userId}`);
+                    const response = await authAxios.get(`${process.env.REACT_APP_BACKEND_URL}/recipes/user/${userId}`);
                     const data = response.data.data;
                     console.log("Fetched recipes:", data);
                     setRecipes(data.content);
@@ -62,7 +62,7 @@ function Dashboard() {
         const userId = localStorage.getItem('userId');
         try {
             console.log("Before favorite API request");
-            const response = await authAxios.post(`http://localhost:8080/users/${userId}/favorites/${recipeId}`);
+            const response = await authAxios.post(`${process.env.REACT_APP_BACKEND_URL}/users/${userId}/favorites/${recipeId}`);
             console.log("Heart clicked: ", response.data.data);
             setIsFavorite(true);
         } catch (error) {
@@ -73,7 +73,7 @@ function Dashboard() {
     const onUnfavorite = async (recipeId) => {
         try {
             console.log("Before unfavorite API request");
-            const response = await authAxios.delete(`http://localhost:8080/users/${userId}/favorites/${recipeId}`);
+            const response = await authAxios.delete(`${process.env.REACT_APP_BACKEND_URL}/users/${userId}/favorites/${recipeId}`);
             console.log(response.data.data);
             setIsFavorite(false);
         } catch (error) {
@@ -84,7 +84,7 @@ function Dashboard() {
     useEffect(() => {
         const fetchLikedRecipes = async () => {
             if (userId) {
-                const response = await authAxios.get(`http://localhost:8080/users/${userId}/recipes/favorites`);
+                const response = await authAxios.get(`${process.env.REACT_APP_BACKEND_URL}/users/${userId}/recipes/favorites`);
                 console.log("Fetched liked recipes: ", response.data.data);
                 setLikedRecipes(response.data.data);
                 setIsLoading(false);
