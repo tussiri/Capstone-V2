@@ -19,8 +19,11 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOrigin("http://localhost:3000"); // Allow requests from this origin
+        config.addAllowedOrigin("http://d21t25tf7usm2m.cloudfront.net");
+//        config.addAllowedOrigin("https://d21t25tf7usm2m.cloudfront.net");
         config.addAllowedHeader("*"); // Allow all headers
         config.addAllowedMethod("*"); // Allow all HTTP methods (GET, POST, etc.)
+        config.addExposedHeader("Authorization");
         source.registerCorsConfiguration("/**", config);
         CorsFilter corsFilter=new CorsFilter(source);
 
