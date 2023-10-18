@@ -60,7 +60,7 @@ export function UserProvider({children}) {
     async function login(email, password) {
         navigate('/login')
         try {
-            const response = await axios.post('${process.env.REACT_APP_BACKEND_URL}/auth/login', {
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, {
                 email,
                 password
             });

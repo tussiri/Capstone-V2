@@ -26,7 +26,7 @@ function AllRecipes() {
 
     useEffect(() => {
         setIsLoading(true);
-        authAxios.get(`${process.env.REACT_APP_BACKEND_URL}/recipes?page=${page - 1}&size=12`)
+        authAxios.get(`http://localhost:8080/recipes?page=${page - 1}&size=12`)
             .then((response) => {
                 console.log("API response:", response.data);
                 if (response.status === 200) {
@@ -62,7 +62,7 @@ function AllRecipes() {
 
     const handleCardClick = async (recipeId) => {
         try {
-            const recipeResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/recipes/${recipeId}`);
+            const recipeResponse = await axios.get(`http://localhost:8080/recipes/${recipeId}`);
             navigate(`/recipes/${recipeId}`);
         } catch (error) {
             console.error(error);
