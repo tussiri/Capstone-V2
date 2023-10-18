@@ -8,8 +8,11 @@ plugins {
 
 group = 'org.launchcode'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '19'
-targetCompatibility = '19'
+//sourceCompatibility = '19'
+//targetCompatibility = '19'
+
+sourceCompatibility = '17'
+targetCompatibility = '17'
 
 repositories {
 	mavenCentral()
@@ -30,6 +33,7 @@ dependencies {
 	implementation 'com.sun.xml.bind:jaxb-core:2.3.0.1'
 	implementation 'com.sun.xml.bind:jaxb-impl:2.3.3'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	testImplementation 'junit:junit:4.13.1'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'

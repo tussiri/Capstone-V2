@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.*;
 
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@TestPropertySource(locations="classpath:application-test.properties")
 public class RecipeServiceTest {
 
     @InjectMocks
@@ -53,10 +55,10 @@ public class RecipeServiceTest {
     @Mock
     private RecipeData recipeData ;
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-    }
+//    @BeforeEach
+//    public void setup() {
+//        MockitoAnnotations.initMocks(this);
+//    }
 
     @Test
     public void testFindByIdNotFound() {
